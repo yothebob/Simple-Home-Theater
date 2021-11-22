@@ -1,4 +1,4 @@
-from models import Category, Genre, Tag
+from models import Category, Account, Genre, Tag, Content
 import flaskapp
 
 
@@ -6,7 +6,6 @@ def query(filename, argument):
     '''a very simple function for returning a line from a csv (place holder for real db query)'''
     f = open(filename, 'r')
     for line in f:
-        print(line)
         if argument in line:
             f.close()
             return line
@@ -16,12 +15,13 @@ def create_user():
     '''create and save a new user to database '''
     #maybe i should store them as .lower() and as regular (so I know if there is just a caps problem)?
     print("creating user")
+
     username = input("Username: ")
     password = input("Password: ")
     password_again = input("Password: ")
     username_taken = query("accounts.csv",username)
-    print(username_taken)
-    while username_taken is not None:
+
+    while username_taken == username and len(username) > 5:
         print("username taken")
         username = input("Username: ")
 
@@ -36,6 +36,7 @@ def create_user():
     database.close()
 
 
+
 def login():
     print("login")
     username = input("Username: ")
@@ -46,35 +47,32 @@ def login():
     if verify_credidentials is not None:
         #user found, attempting to authenticate
         if verify_credidentials[0] == username and verify_credidentials[1] == password:
+            current_account = load_user(username)
+            print(current_account.password)
             '''take to movie screen'''
-            return "logged in"
+            return print("logged in")
         else:
-            return "User name or password not correct! please try again!"
+            return print("User name or password not correct! please try again!")
     else:
         #query could not find user
-        return "Cound not find username, please try again"
+        return print("Cound not find username, please try again") 
 
 
-class Account():
-
-    def __init__(self):
-        self.watched = []
-        self.categories = []
-
-
-    def load_user(self, username):
-        return query("accounts.csv", username)
-
-
-    def get_watched(self):
-        ''' get list of watched movies per username'''
-
-        pass
+def load_user(username):
+    # return query("accounts.csv", username)
+    load = query("accounts.csv", username)
+    user = Account()
+    user.username = load[0]
+    user.password = load[1]
+    user.categories = load[2]
+    user.watched = load[3]
 
 
-    def get_categories(self):
-        '''get list of category objects the user has'''
-        pass
+
+#
+#       FOR TESTING PURPOSES
+#
+
 
 
 def test_run():

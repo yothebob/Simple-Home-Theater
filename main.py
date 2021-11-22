@@ -4,34 +4,40 @@ import flaskapp
 
 def query(filename, argument):
     '''a very simple function for returning a line from a csv (place holder for real db query)'''
-    for line in filename:
+    f = open(filename, 'r')
+    for line in f:
+        print(line)
         if argument in line:
+            f.close()
             return line
 
 
 def create_user():
     '''create and save a new user to database '''
     #maybe i should store them as .lower() and as regular (so I know if there is just a caps problem)?
+    print("creating user")
     username = input("Username: ")
     password = input("Password: ")
     password_again = input("Password: ")
     username_taken = query("accounts.csv",username)
-
+    print(username_taken)
     while username_taken is not None:
+        print("username taken")
         username = input("Username: ")
 
-    while password is not password_again:
+    while password != password_again:
         password = input("Password: ")
         password_again = input("Password: ")
 
     database = open("accounts.csv", "a")
     categories = []
     watched = []
-    database.write(f"{username},{password},{categories},{watched},\n)
+    database.write(f"{username},{password},{categories},{watched},\n")
     database.close()
 
 
-def login(username, password):
+def login():
+    print("login")
     username = input("Username: ")
     password = input("Password: ")
 
@@ -41,7 +47,7 @@ def login(username, password):
         #user found, attempting to authenticate
         if verify_credidentials[0] == username and verify_credidentials[1] == password:
             '''take to movie screen'''
-            return
+            return "logged in"
         else:
             return "User name or password not correct! please try again!"
     else:
@@ -50,6 +56,11 @@ def login(username, password):
 
 
 class Account():
+
+    def __init__(self):
+        self.watched = []
+        self.categories = []
+
 
     def load_user(self, username):
         return query("accounts.csv", username)
@@ -67,5 +78,10 @@ class Account():
 
 
 def test_run():
-    test_user = Account()
-    test_user.create_user()
+    create_user()
+    login()
+    # print(test_user.watched,test_user.categories)
+    # print(test_user.username,test_user.password)
+
+
+test_run()

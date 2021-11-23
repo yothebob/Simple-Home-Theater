@@ -45,12 +45,16 @@ def create_user():
     password = input("Password: ")
     password_again = input("Password: ")
     username_taken = query("accounts.csv",username)
-
-    while username_taken[0] == username and len(username) > 5:
-        print("username taken")
-        username = input("Username: ")
+    if username_taken is not None:
+        while username_taken[0] == username:
+            print("username taken")
+            username = input("Username: ")
+            password = input("Password: ")
+            password_again = input("Password: ")
+            username_taken = query("accounts.csv",username)
 
     while password != password_again:
+        print("not matching passwords, please try again")
         password = input("Password: ")
         password_again = input("Password: ")
 
@@ -75,12 +79,15 @@ def login():
             instance = load_user(username)
             print(instance.password)
             '''take to movie screen'''
-            return print("logged in")
+            print("logged in")
+            return instance
         else:
-            return print("User name or password not correct! please try again!")
+            print("User name or password not correct! please try again!")
+            return
     else:
         #query could not find user
-        return print("Cound not find username, please try again")
+        print("Cound not find username, please try again")
+        return
 
 
 
@@ -110,6 +117,8 @@ def load_user(username):
     return user
 
 
+def add_content():
+    pass
 
 #
 #       FOR TESTING PURPOSES
@@ -118,8 +127,8 @@ def load_user(username):
 
 
 def test_run():
-    create_user()
-    login()
+    # create_user()
+    instance = login()
     # print(test_user.watched,test_user.categories)
     # print(test_user.username,test_user.password)
 

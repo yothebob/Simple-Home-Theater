@@ -19,6 +19,16 @@ class Account():
         '''get list of category objects the user has'''
         pass
 
+    def change_password(self):
+        old_password = input("Old Password:")
+        new_password = input("New Password: ")
+        new_password_again = input("Password Again: ")
+
+        if new_password == new_password_again:
+            self.password = new_password
+        else:
+            print("passwords did not match please try again")
+        return
 
 
 class Category():
@@ -41,9 +51,11 @@ class Tag():
         self.name = name
 
 class Content():
-
-    def __init__(name, category, genre, tags):
+'''a base class that will store any piece of media content, and hold relationships to its
+tags, categories, genre, type and etc'''
+    def __init__(name, category, type, genre, tags):
         self.name = name
         self.category = category
+        self.type = type
         self.genre = genre
         self.tags = tags

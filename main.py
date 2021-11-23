@@ -7,11 +7,13 @@ def query(filename, argument):
     f = open(filename, 'r')
     for line in f:
         if argument in line:
-            f.close()
             line_array = [item for item in line.split(",")]
-            print(line_array)
-            print(line_array[0])
-            return line_array
+            for column in line_array:
+                if column == argument:
+                    print(line_array)
+                    print(line_array[0])
+                    f.close()
+                    return line_array
 
 
 
@@ -42,9 +44,9 @@ def create_user():
     username = input("Username: ")
     password = input("Password: ")
     password_again = input("Password: ")
-    username_taken = query("accounts.csv",username)[0]
+    username_taken = query("accounts.csv",username)
 
-    while username_taken == username and len(username) > 5:
+    while username_taken[0] == username and len(username) > 5:
         print("username taken")
         username = input("Username: ")
 
@@ -66,7 +68,7 @@ def login():
     password = input("Password: ")
 
     verify_credidentials = query("accounts.csv", username)
-
+    print("verify", verify_credidentials)
     if verify_credidentials is not None:
         #user found, attempting to authenticate
         if verify_credidentials[0] == username and verify_credidentials[1] == password:

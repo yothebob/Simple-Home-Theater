@@ -8,7 +8,30 @@ def query(filename, argument):
     for line in f:
         if argument in line:
             f.close()
-            return line
+            line_array = [item for item in line.split(",")]
+            print(line_array)
+            print(line_array[0])
+            return line_array
+
+
+
+def delete_query(filename, argument ,amount="all"):
+    '''a simple function for deleting a whole column if amount is set to "all"
+    or just a single argument '''
+    f = open(filename, 'r')
+    for line in f:
+        if argument in line:
+            if amount == "full":
+                line_array = [item == None for item in line.split(",")] #delete while line/row
+                print(line_array)
+                print(line_array[0])
+                return line_array
+            else:
+                line_array = [item for item in line.split(",") if item != argument]
+                print(line_array)
+                print(line_array[0])
+                return line_array
+
 
 
 def create_user():
@@ -19,7 +42,7 @@ def create_user():
     username = input("Username: ")
     password = input("Password: ")
     password_again = input("Password: ")
-    username_taken = query("accounts.csv",username)
+    username_taken = query("accounts.csv",username)[0]
 
     while username_taken == username and len(username) > 5:
         print("username taken")
@@ -47,15 +70,31 @@ def login():
     if verify_credidentials is not None:
         #user found, attempting to authenticate
         if verify_credidentials[0] == username and verify_credidentials[1] == password:
-            current_account = load_user(username)
-            print(current_account.password)
+            instance = load_user(username)
+            print(instance.password)
             '''take to movie screen'''
             return print("logged in")
         else:
             return print("User name or password not correct! please try again!")
     else:
         #query could not find user
-        return print("Cound not find username, please try again") 
+        return print("Cound not find username, please try again")
+
+
+
+def delete_user():
+    print("deleting user...")
+    username = input("Username:")
+    password = input("Password:")
+    password_again = input("Password:")
+
+    if password == password_again:
+        verify_username = query("accounts.csv",username)
+        verify_password = query("accounts.csv", password)
+
+    if verify_username is not None and verify_password is not None:
+        delete_query("accounts.csv")
+
 
 
 def load_user(username):
@@ -66,6 +105,7 @@ def load_user(username):
     user.password = load[1]
     user.categories = load[2]
     user.watched = load[3]
+    return user
 
 
 

@@ -51,8 +51,8 @@ class Tag():
         self.name = name
 
 class Content():
-'''a base class that will store any piece of media content, and hold relationships to its
-tags, categories, genre, type and etc'''
+    '''a base class that will store any piece of media content, and hold relationships to its
+    tags, categories, genre, type and etc'''
     def __init__(name, category, type, genre, tags):
         self.name = name
         self.category = category

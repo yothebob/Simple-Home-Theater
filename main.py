@@ -1,38 +1,13 @@
 from models import Category, Account, Genre, Tag, Content
 import flaskapp
-
-
-def query(filename, argument):
-    '''a very simple function for returning a line from a csv (place holder for real db query)'''
-    f = open(filename, 'r')
-    for line in f:
-        if argument in line:
-            line_array = [item for item in line.split(",")]
-            for column in line_array:
-                if column == argument:
-                    print(line_array)
-                    print(line_array[0])
-                    f.close()
-                    return line_array
+from orm import query, write_query, delete_query
 
 
 
-def delete_query(filename, argument ,amount="all"):
-    '''a simple function for deleting a whole column if amount is set to "all"
-    or just a single argument '''
-    f = open(filename, 'r')
-    for line in f:
-        if argument in line:
-            if amount == "full":
-                line_array = [item == None for item in line.split(",")] #delete while line/row
-                print(line_array)
-                print(line_array[0])
-                return line_array
-            else:
-                line_array = [item for item in line.split(",") if item != argument]
-                print(line_array)
-                print(line_array[0])
-                return line_array
+#
+# User managment
+#
+
 
 
 
@@ -58,11 +33,7 @@ def create_user():
         password = input("Password: ")
         password_again = input("Password: ")
 
-    database = open("accounts.csv", "a")
-    categories = []
-    watched = []
-    database.write(f"{username},{password},{categories},{watched},\n")
-    database.close()
+    write_query("accounts.csv",[username,password,[],[]])
 
 
 
@@ -110,17 +81,46 @@ def load_user(username):
     # return query("accounts.csv", username)
     load = query("accounts.csv", username)
     user = Account()
-    user.username = load[0]
-    user.password = load[1]
-    user.categories = load[2]
-    user.watched = load[3]
+    user.username = load[1]
+    user.password = load[2]
+    user.categories = load[3]
+    user.watched = load[4]
     return user
 
 
-def add_content():
-    pass
+
 
 #
+# Category managment
+#
+
+def add_category():
+    ''' a function for pointing to a file for a category '''
+    name = input("What is the name of the New Category?: ")
+    folder_location = input("What is the path the the folder?: ")
+    write_query("categories.csv", [name,folder_location])
+    return
+
+
+def load_category(name):
+    load = query("categories.csv",name)
+    category = Category()
+    category.name = load[1]
+    category.folder_location = load[2]
+    return category
+
+
+
+
+
+
+
+
+
+
+
+
+
 #       FOR TESTING PURPOSES
 #
 

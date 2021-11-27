@@ -2,9 +2,10 @@ import os
 import sys
 
 
-class Account():
+class User():
 
     def __init__(self):
+
         self.watched = []
         self.categories = []
 
@@ -34,6 +35,7 @@ class Account():
 class Category():
 
     def __init__(self,folder_location, name):
+        self.pk = 0
         self.folder_location = folder_location
         self.name = name
 

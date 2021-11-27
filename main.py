@@ -1,4 +1,4 @@
-from models import Category, Account, Genre, Tag, Content
+from models import Category, User, Genre, Tag, Content
 import flaskapp
 from orm import query, write_query, delete_query
 
@@ -19,21 +19,21 @@ def create_user():
     username = input("Username: ")
     password = input("Password: ")
     password_again = input("Password: ")
-    username_taken = query("accounts.csv",username)
+    username_taken = query("data/users.csv",username)
     if username_taken is not None:
         while username_taken[0] == username:
             print("username taken")
             username = input("Username: ")
             password = input("Password: ")
             password_again = input("Password: ")
-            username_taken = query("accounts.csv",username)
+            username_taken = query("data/users.csv",username)
 
     while password != password_again:
         print("not matching passwords, please try again")
         password = input("Password: ")
         password_again = input("Password: ")
 
-    write_query("accounts.csv",[username,password,[],[]])
+    write_query("data/users.csv",[username,password,[],[]])
 
 
 
@@ -42,7 +42,7 @@ def login():
     username = input("Username: ")
     password = input("Password: ")
 
-    verify_credidentials = query("accounts.csv", username)
+    verify_credidentials = query("data/users.csv", username)
     print("verify", verify_credidentials)
     if verify_credidentials is not None:
         #user found, attempting to authenticate
@@ -69,18 +69,19 @@ def delete_user():
     password_again = input("Password:")
 
     if password == password_again:
-        verify_username = query("accounts.csv",username)
-        verify_password = query("accounts.csv", password)
+        verify_username = query("data/users.csv",username)
+        verify_password = query("data/users.csv", password)
 
     if verify_username is not None and verify_password is not None:
-        delete_query("accounts.csv")
+        delete_query("data/users.csv")
 
 
 
 def load_user(username):
-    # return query("accounts.csv", username)
-    load = query("accounts.csv", username)
-    user = Account()
+    # return query("data/users.csv", username)
+    load = query("data/users.csv", username)
+    user = User()
+    user.pk = load[0]
     user.username = load[1]
     user.password = load[2]
     user.categories = load[3]
@@ -98,20 +99,35 @@ def add_category():
     ''' a function for pointing to a file for a category '''
     name = input("What is the name of the New Category?: ")
     folder_location = input("What is the path the the folder?: ")
-    write_query("categories.csv", [name,folder_location])
+    write_query("data/categories.csv", [name,folder_location])
     return
 
 
 def load_category(name):
-    load = query("categories.csv",name)
+    load = query("data/categories.csv",name)
     category = Category()
+    category.pk = load[0]
     category.name = load[1]
     category.folder_location = load[2]
     return category
 
 
+def write_category_contents(category):
+    '''
+    for initial writing to db
+    Create content objects for (many to many relationship) a Category Object
+    arg : content - instance of Category()
+    '''
+    for file in os.listdir(category.filename):
+        write_query("data/contents.csv",[str(category.pk),str(file),[],[],[],[]])
+    return
 
-
+def load_category_contents(category):
+    '''
+    for loading exsisting category
+    quering the db to load the Category object with contents
+    '''
+    pass
 
 
 

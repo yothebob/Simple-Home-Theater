@@ -76,9 +76,12 @@ def query(filename, argument,column_name=None,search_method=None):
 
 
 
-def delete_query(filename, argument ,amount="all"):
+def delete_query(filename, argument ,amount="full"):
     '''a simple function for deleting a whole column if amount is set to "all"
-    or just a single argument '''
+    or just a single argument
+    filename: (str) the name of the db file
+    argument: (str) the thing you are trying to find
+    amount: optional (str) if amount == "full" then it will erase the entire row else it will only delete the arguement column'''
     f = open(filename, 'r')
     for line in f:
         if argument in line:
@@ -88,7 +91,7 @@ def delete_query(filename, argument ,amount="all"):
                 print(line_array[0])
                 return line_array
             else:
-                line_array = [item for item in line.split(",") if item != argument]
+                line_array = [item for item in line.split(",") if item != argument else item == ""]
                 print(line_array)
                 print(line_array[0])
                 return line_array

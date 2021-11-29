@@ -127,11 +127,23 @@ def load_category_contents(category):
     for loading exsisting category
     quering the db to load the Category object with contents
     '''
-    pass
+    load_contents = query('data/categories_contents.csv',category.pk,"fk","find all")
+    category_contents_list = []
+    for item in load_contents:
 
 
 
 
+
+def load_content(data):
+    instance = Content()
+    instance.pk = data[0]
+    instance.fk = data[1]
+    isntance.name = data[2]
+    instance.category = data[3]
+    instance.type = data[4]
+    instance.genre = data[5]
+    instance.tags = data[6]
 
 
 

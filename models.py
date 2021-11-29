@@ -61,3 +61,6 @@ class Content():
         self.type = type
         self.genre = genre
         self.tags = tags
+
+    description = ""
+    rating = 0

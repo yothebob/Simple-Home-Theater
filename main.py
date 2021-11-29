@@ -103,8 +103,8 @@ def add_category():
     return
 
 
-def load_category(name):
-    load = query("data/categories.csv",name)
+def load_category(pk):
+    load = query("data/categories.csv",pk)
     category = Category()
     category.pk = load[0]
     category.name = load[1]
@@ -128,6 +128,7 @@ def load_category_contents(category):
     quering the db to load the Category object with contents
     '''
     pass
+
 
 
 

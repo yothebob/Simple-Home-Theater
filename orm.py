@@ -26,16 +26,18 @@ def write_query(filename,arguments,new=True,pk=None):
 
 
 
-def query(filename, argument,column_name=None):
+def query(filename, argument,column_name=None,search_method=None):
     '''a very simple function for returning a line from a csv (place holder for real db query)
         filename : (str) the name of the csv file
         argument : (str) a string you are trying to match
         column_name: (str) an optional arg to confirm you are searching for the right item and do not git mismatched (use for pk an foreign keys)
+        search_method: (str or None) if you write "find all" it will append each match to a list
     '''
     f = open(filename, 'r')
     iteration = 0
     column_names = []
     column_index = None
+    found_matches = []
     for line in f:
         if iteration == 0 and column_name is not None:
             '''get column name index'''
@@ -54,11 +56,22 @@ def query(filename, argument,column_name=None):
                     if column == argument:
                         print(line_array)
                         f.close()
-                        return line_array
+                        if search_method == "find all":
+                            found_matches += line_array
+                        else:
+                            return line_array
             else:
                 '''look in column index only'''
                     if line_array[column_index] == argument:
-                        return line_array
+                        if search_method == "find all":
+                            found_matches += line_array
+                        else:
+                            return line_array
+
+    if search_method == "find all":
+        return found_matches
+    else:
+        return None
 
 
 

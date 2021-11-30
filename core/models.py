@@ -44,7 +44,6 @@ class User():
 
     def get_watched(self):
         ''' get list of watched movies per username'''
-
         pass
 
 
@@ -69,9 +68,64 @@ class Category():
     # def __init__(self, user, folder_location, name):
 
     pk = 0
+    fk = 0
     user = ""
     folder_location = ""
     name = ""
+    content_list = []
+
+
+    def load_content(self,list):
+        instance = Content()
+        instance.pk = list[0]
+        instance.fk = list[1]
+        instance.name = list[2]
+        instance.category = list[3]
+        instance.type = list[4]
+        instance.genre = list[5]
+        instance.tags = list[6]
+        return instance
+
+
+    def write_category_contents(self):
+        '''
+        for initial writing to db
+        Create content objects for (many to many relationship) a Category Object
+        arg : content - instance of Category()
+        '''
+        for file in os.listdir(self.folder_location):
+            write_query("data/contents.csv",[str(self.pk),str(file),[],[],[],[]])
+        return
+
+    def load_category_contents(self):
+        '''
+        for loading exsisting category
+        quering the db to load the Category object with contents
+        '''
+        load_contents = query('data/contents.csv',self.pk,"fk","find all")
+        print(load_contents)
+        for content in load_contents:
+            self.content_list.append(self.load_content(content))
+        return self.content_list
+
+
+
+
+
+
+class Content():
+    '''a base class that will store any piece of media content, and hold relationships to its
+    tags, categories, genre, type and etc'''
+    # def __init__(name, category, type, genre, tags):
+    name = ""
+    category = ""
+    type = ""
+    genre = ""
+    tags = []
+    description = ""
+    rating = 0
+
+
 
 
 class Genre():
@@ -81,20 +135,11 @@ class Genre():
         self.name = name
 
 
+
+
+
+
 class Tag():
 
     def __init__():
         self.name = name
-
-class Content():
-    '''a base class that will store any piece of media content, and hold relationships to its
-    tags, categories, genre, type and etc'''
-    def __init__(name, category, type, genre, tags):
-        self.name = name
-        self.category = category
-        self.type = type
-        self.genre = genre
-        self.tags = tags
-
-    description = ""
-    rating = 0

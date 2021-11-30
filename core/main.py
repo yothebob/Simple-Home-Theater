@@ -121,40 +121,18 @@ def load_user(username):
 #
 
 
-def write_category_contents(category):
-    '''
-    for initial writing to db
-    Create content objects for (many to many relationship) a Category Object
-    arg : content - instance of Category()
-    '''
-    for file in os.listdir(category.filename):
-        write_query("data/contents.csv",[str(category.pk),str(file),[],[],[],[]])
-    return
 
-def load_category_contents(category):
-    '''
-    for loading exsisting category
-    quering the db to load the Category object with contents
-    '''
-    load_contents = query('data/categories_contents.csv',category.pk,"fk","find all")
-    category_contents_list = []
-    for content in load_contents:
-        content[2] = category_contents_list.append(load_content(content))
-    return category_contents_list
+# def load_category_contents(category):
+#     '''
+#     for loading exsisting category
+#     quering the db to load the Category object with contents
+#     '''
+#     load_contents = query('data/categories_contents.csv',category.pk,"fk","find all")
+#     category_contents_list = []
+#     for content in load_contents:
+#         content[2] = category_contents_list.append(load_content(content))
+#     return category_contents_list
 
-
-
-
-
-def load_content(data):
-    instance = Content()
-    instance.pk = data[0]
-    instance.fk = data[1]
-    isntance.name = data[2]
-    instance.category = data[3]
-    instance.type = data[4]
-    instance.genre = data[5]
-    instance.tags = data[6]
 
 
 
@@ -170,7 +148,7 @@ def test_run():
     # create_user()
     instance = login()
     instance.load_categories()
-    
+
     return instance
     # print(test_user.watched,test_user.categories)
     # print(test_user.username,test_user.password)

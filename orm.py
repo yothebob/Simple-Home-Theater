@@ -50,7 +50,7 @@ def query(filename, argument,column_name=None,search_method=None):
         if argument in line:
             line_array = [item for item in line.split(",")]
 
-            if column_index is not None:
+            if column_index is None:
                 '''look over whole line'''
                 for column in line_array:
                     if column == argument:
@@ -62,11 +62,11 @@ def query(filename, argument,column_name=None,search_method=None):
                             return line_array
             else:
                 '''look in column index only'''
-                    if line_array[column_index] == argument:
-                        if search_method == "find all":
-                            found_matches += line_array
-                        else:
-                            return line_array
+                if line_array[column_index] == argument:
+                    if search_method == "find all":
+                        found_matches += line_array
+                    else:
+                        return line_array
 
     if search_method == "find all":
         return found_matches
@@ -82,16 +82,18 @@ def delete_query(filename, argument ,amount="full"):
     filename: (str) the name of the db file
     argument: (str) the thing you are trying to find
     amount: optional (str) if amount == "full" then it will erase the entire row else it will only delete the arguement column'''
-    f = open(filename, 'r')
+    f = open(filename, 'w+')
     for line in f:
         if argument in line:
             if amount == "full":
-                line_array = [item == None for item in line.split(",")] #delete while line/row
+                line_array = [item == '' for item in line.split(",")] #delete while line/row
                 print(line_array)
+                line = [f.write(str(item) + ",") for item in line_array]
                 print(line_array[0])
-                return line_array
+                return
             else:
-                line_array = [item for item in line.split(",") if item != argument else item == ""]
+                line_array = [item for item in line.split(",") if item != argument]
                 print(line_array)
+                line = [f.write(str(item) + ",") for item in line_array]
                 print(line_array[0])
-                return line_array
+                return

@@ -4,6 +4,15 @@ from orm import query, write_query, delete_query
 
 
 
+
+
+
+
+
+
+
+
+
 #
 # User managment
 #
@@ -46,7 +55,7 @@ def login():
     print("verify", verify_credidentials)
     if verify_credidentials is not None:
         #user found, attempting to authenticate
-        if verify_credidentials[0] == username and verify_credidentials[1] == password:
+        if verify_credidentials[1] == username and verify_credidentials[2] == password:
             instance = load_user(username)
             print(instance.password)
             '''take to movie screen'''
@@ -73,7 +82,7 @@ def delete_user():
         verify_password = query("data/users.csv", password)
 
     if verify_username is not None and verify_password is not None:
-        delete_query("data/users.csv")
+        delete_query("data/users.csv",username)
 
 
 
@@ -91,16 +100,12 @@ def load_user(username):
 
 
 
+
+
+
 #
 # Category managment
 #
-
-def add_category():
-    ''' a function for pointing to a file for a category '''
-    name = input("What is the name of the New Category?: ")
-    folder_location = input("What is the path the the folder?: ")
-    write_query("data/categories.csv", [name,folder_location])
-    return
 
 
 def load_category(pk):
@@ -108,7 +113,8 @@ def load_category(pk):
     category = Category()
     category.pk = load[0]
     category.name = load[1]
-    category.folder_location = load[2]
+    category.user = load[2]
+    category.folder_location = load[3]
     return category
 
 
@@ -129,7 +135,9 @@ def load_category_contents(category):
     '''
     load_contents = query('data/categories_contents.csv',category.pk,"fk","find all")
     category_contents_list = []
-    for item in load_contents:
+    for content in load_contents:
+        content[2] = category_contents_list.append(load_content(content))
+    return category_contents_list
 
 
 

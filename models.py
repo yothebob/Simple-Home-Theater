@@ -10,6 +10,16 @@ class User():
         self.categories = []
 
 
+    def add_category(self):
+        ''' a function for pointing to a file for a category '''
+        name = input("What is the name of the New Category?: ")
+        folder_location = input("What is the path the the folder?: ")
+        user = self.username
+        write_query("data/categories.csv", [name,user,folder_location])
+        return
+
+
+
     def get_watched(self):
         ''' get list of watched movies per username'''
 
@@ -34,8 +44,9 @@ class User():
 
 class Category():
 
-    def __init__(self,folder_location, name):
+    def __init__(self, user, folder_location, name):
         self.pk = 0
+        self.user = user
         self.folder_location = folder_location
         self.name = name
 

@@ -44,7 +44,7 @@ def query(filename, argument,column_name=None,search_method=None):
             column_names = [item for item in line.split(",")]
             for index in range(len(column_names)):
                 if column_names[index] == column_name:
-                    column_index = column_names[index]
+                    column_index = index
                     continue
         iteration += 1
         if argument in line:
@@ -55,22 +55,26 @@ def query(filename, argument,column_name=None,search_method=None):
                 for column in line_array:
                     if column == argument:
                         print(line_array)
-                        f.close()
+                        # f.close()
                         if search_method == "find all":
                             found_matches += line_array
                         else:
+                            f.close()
                             return line_array
             else:
                 '''look in column index only'''
-                if line_array[column_index] == argument:
+                if str(line_array[int(column_index)]) == str(argument):
                     if search_method == "find all":
-                        found_matches += line_array
+                        found_matches.append(line_array)
                     else:
+                        f.close()
                         return line_array
 
     if search_method == "find all":
+        f.close()
         return found_matches
     else:
+        f.close()
         return None
 
 

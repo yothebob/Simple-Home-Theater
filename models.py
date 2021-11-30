@@ -1,6 +1,6 @@
 import os
 import sys
-
+from orm import query, write_query, delete_query
 
 class User():
 
@@ -18,6 +18,28 @@ class User():
         write_query("data/categories.csv", [name,user,folder_location])
         return
 
+
+    def load_categories(self):
+        '''
+        return all user categories
+        '''
+        categories_query_list = query("data/categories.csv",self.pk,"fk","find all")
+        print(categories_query_list)
+        categories_list = []
+        for category in categories_query_list:
+            categories_list.append(self.load_category(category))
+        print(categories_list)
+        return categories_list
+
+
+    def load_category(self, list):
+        category = Category()
+        category.pk = list[0]
+        category.fk = list[1]
+        category.name = list[2]
+        category.user = list[3]
+        category.folder_location = list[4]
+        return category
 
 
     def get_watched(self):
@@ -44,11 +66,12 @@ class User():
 
 class Category():
 
-    def __init__(self, user, folder_location, name):
-        self.pk = 0
-        self.user = user
-        self.folder_location = folder_location
-        self.name = name
+    # def __init__(self, user, folder_location, name):
+
+    pk = 0
+    user = ""
+    folder_location = ""
+    name = ""
 
 
 class Genre():

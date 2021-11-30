@@ -1,1 +1,5 @@
-0,Movies,~/Videos,
+pk,fk,name,user,folder location
+0,1,Movies,yothebob,~/Videos
+1,0,music,yothebob,~/Music
+2,0,tv shows,yothebob,~/Videos
+3,1,Movies,yeet,Videos

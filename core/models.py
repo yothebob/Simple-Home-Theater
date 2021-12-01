@@ -127,6 +127,8 @@ class Content():
     description = ""
     rating = 0
 
+    def play_content(self):
+        return os.system(settings.MEDIA_PLAYER + " " + self.name)
 
 
 

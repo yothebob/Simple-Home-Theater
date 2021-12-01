@@ -81,7 +81,7 @@ class Category():
         instance.pk = list[0]
         instance.fk = list[1]
         instance.name = list[2]
-        instance.category = list[3]
+        instance.category = self
         instance.type = list[4]
         instance.genre = list[5]
         instance.tags = list[6]
@@ -128,7 +128,7 @@ class Content():
     rating = 0
 
     def play_content(self):
-        return os.system(settings.MEDIA_PLAYER + " " + self.name)
+        return os.system(settings.MEDIA_PLAYER + " " + self.category.folder_location + "/" + self.name)
 
 
 

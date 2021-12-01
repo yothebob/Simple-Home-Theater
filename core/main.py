@@ -1,10 +1,7 @@
-from models import Category, User, Genre, Tag, Content
-import flaskapp
-from orm import query, write_query, delete_query
-
-
-
-
+from core.models import Category, User, Genre, Tag, Content
+# import flaskapp
+from core.orm import query, write_query, delete_query
+import core.core_settings as settings
 
 
 # def load_object(db_name,query_argument,object,object_variables):
@@ -40,21 +37,21 @@ def create_user():
     username = input("Username: ")
     password = input("Password: ")
     password_again = input("Password: ")
-    username_taken = query("data/users.csv",username)
+    username_taken = query(settings.PROJECT_FILEPATH +"/data/users.csv",username)
     if username_taken is not None:
         while username_taken[0] == username:
             print("username taken")
             username = input("Username: ")
             password = input("Password: ")
             password_again = input("Password: ")
-            username_taken = query("data/users.csv",username)
+            username_taken = query(settings.PROJECT_FILEPATH + "/data/users.csv",username)
 
     while password != password_again:
         print("not matching passwords, please try again")
         password = input("Password: ")
         password_again = input("Password: ")
 
-    write_query("data/users.csv",[username,password,[],[]])
+    write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[username,password,[],[]])
 
 
 
@@ -63,7 +60,7 @@ def login():
     username = input("Username: ")
     password = input("Password: ")
 
-    verify_credidentials = query("data/users.csv", username)
+    verify_credidentials = query(settings.PROJECT_FILEPATH + "/data/users.csv", username)
     print("verify", verify_credidentials)
     if verify_credidentials is not None:
         #user found, attempting to authenticate
@@ -90,18 +87,17 @@ def delete_user():
     password_again = input("Password:")
 
     if password == password_again:
-        verify_username = query("data/users.csv",username)
-        verify_password = query("data/users.csv", password)
+        verify_password = query(settings.PROJECT_FILEPATH + "/data/users.csv", password)
+        verify_username = query(settings.PROJECT_FILEPATH + "/data/users.csv",username)
 
     if verify_username is not None and verify_password is not None:
-        delete_query("data/users.csv",username)
+        delete_query(settings.PROJECT_FILEPATH + "/data/users.csv",username)
 
 
 
 def load_user(username):
     # return load_object("data/users.csv",username,User,[pk,username,password,categories,watched])
-    # return query("data/users.csv", username)
-    load = query("data/users.csv", username)
+    load = query(settings.PROJECT_FILEPATH + "/data/users.csv", username)
     user = User()
     user.pk = load[0]
     user.username = load[1]

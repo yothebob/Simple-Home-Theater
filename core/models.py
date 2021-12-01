@@ -1,6 +1,7 @@
 import os
 import sys
-from orm import query, write_query, delete_query
+from core.orm import query, write_query, delete_query
+import core.core_settings as settings
 
 class User():
 
@@ -8,14 +9,14 @@ class User():
 
         self.watched = []
         self.categories = []
-
+        self.categories_list= []
 
     def add_category(self):
         ''' a function for pointing to a file for a category '''
         name = input("What is the name of the New Category?: ")
         folder_location = input("What is the path the the folder?: ")
         user = self.username
-        write_query("data/categories.csv", [name,user,folder_location])
+        write_query(settings.PROJECT_FILEPATH + "/data/categories.csv", [name,user,folder_location])
         return
 
 
@@ -23,13 +24,12 @@ class User():
         '''
         return all user categories
         '''
-        categories_query_list = query("data/categories.csv",self.pk,"fk","find all")
-        print(categories_query_list)
-        categories_list = []
+        categories_query_list = query(settings.PROJECT_FILEPATH + "/data/categories.csv",self.pk,"fk","find all")
+        # print(categories_query_list)
         for category in categories_query_list:
-            categories_list.append(self.load_category(category))
-        print(categories_list)
-        return categories_list
+            self.categories_list.append(self.load_category(category))
+        # print(self.categories_list)
+        return self.categories_list
 
 
     def load_category(self, list):
@@ -77,6 +77,7 @@ class Category():
 
     def load_content(self,list):
         instance = Content()
+        print("load_content_list: ",list)
         instance.pk = list[0]
         instance.fk = list[1]
         instance.name = list[2]
@@ -94,7 +95,7 @@ class Category():
         arg : content - instance of Category()
         '''
         for file in os.listdir(self.folder_location):
-            write_query("data/contents.csv",[str(self.pk),str(file),[],[],[],[]])
+            write_query(settings.PROJECT_FILEPATH + "/data/contents.csv",[str(self.pk),str(file),[],[],[],[]])
         return
 
     def load_category_contents(self):
@@ -102,9 +103,10 @@ class Category():
         for loading exsisting category
         quering the db to load the Category object with contents
         '''
-        load_contents = query('data/contents.csv',self.pk,"fk","find all")
+        load_contents = query(settings.PROJECT_FILEPATH + '/data/contents.csv',self.pk,"fk","find all")
         print(load_contents)
         for content in load_contents:
+            print("content: ",content)
             self.content_list.append(self.load_content(content))
         return self.content_list
 

@@ -54,10 +54,10 @@ def query(filename, argument,column_name=None,search_method=None):
                 '''look over whole line'''
                 for column in line_array:
                     if column == argument:
-                        print(line_array)
+                        # print(line_array)
                         # f.close()
                         if search_method == "find all":
-                            found_matches += line_array
+                            found_matches.append(line_array)
                         else:
                             f.close()
                             return line_array
@@ -91,13 +91,13 @@ def delete_query(filename, argument ,amount="full"):
         if argument in line:
             if amount == "full":
                 line_array = [item == '' for item in line.split(",")] #delete while line/row
-                print(line_array)
+                # print(line_array)
                 line = [f.write(str(item) + ",") for item in line_array]
-                print(line_array[0])
+                # print(line_array[0])
                 return
             else:
                 line_array = [item for item in line.split(",") if item != argument]
-                print(line_array)
+                # print(line_array)
                 line = [f.write(str(item) + ",") for item in line_array]
-                print(line_array[0])
+                # print(line_array[0])
                 return

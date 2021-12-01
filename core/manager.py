@@ -22,34 +22,38 @@ import core.core_settings as settings
 
 
 
+
 #
 # User managment
 #
 
+class Manager():
+    '''
+    a class for managing the app, doing admin thing and etc
+    '''
 
 
-
-def create_user():
+def create_user(username,password,password_again):
     '''create and save a new user to database '''
     #maybe i should store them as .lower() and as regular (so I know if there is just a caps problem)?
     print("creating user")
 
-    username = input("Username: ")
-    password = input("Password: ")
-    password_again = input("Password: ")
+    # username = input("Username: ")
+    # password = input("Password: ")
+    # password_again = input("Password: ")
     username_taken = query(settings.PROJECT_FILEPATH +"/data/users.csv",username)
     if username_taken is not None:
         while username_taken[0] == username:
             print("username taken")
-            username = input("Username: ")
-            password = input("Password: ")
-            password_again = input("Password: ")
+            # username = input("Username: ")
+            # password = input("Password: ")
+            # password_again = input("Password: ")
             username_taken = query(settings.PROJECT_FILEPATH + "/data/users.csv",username)
 
     while password != password_again:
         print("not matching passwords, please try again")
-        password = input("Password: ")
-        password_again = input("Password: ")
+        # password = input("Password: ")
+        # password_again = input("Password: ")
 
     write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[username,password,[],[]])
 
@@ -105,49 +109,3 @@ def load_user(username):
     user.categories = load[3]
     user.watched = load[4]
     return user
-
-
-
-
-
-
-
-#
-# Category managment
-#
-
-
-
-# def load_category_contents(category):
-#     '''
-#     for loading exsisting category
-#     quering the db to load the Category object with contents
-#     '''
-#     load_contents = query('data/categories_contents.csv',category.pk,"fk","find all")
-#     category_contents_list = []
-#     for content in load_contents:
-#         content[2] = category_contents_list.append(load_content(content))
-#     return category_contents_list
-
-
-
-
-
-
-
-#       FOR TESTING PURPOSES
-#
-
-
-
-def test_run():
-    # create_user()
-    instance = login()
-    instance.load_categories()
-
-    return instance
-    # print(test_user.watched,test_user.categories)
-    # print(test_user.username,test_user.password)
-
-
-test_run()

@@ -2,7 +2,7 @@
 
 so far..
 
-main.py has a class categories, genres
+manager.py has a class categories, genres
 
 -- Categories - movies, tv shows, music, etc (This may be split up further because of the processing differences between them, but at the core they will be
 categories (even if categories is a a base inheritance))
@@ -32,5 +32,3 @@ update:
   Just because the functionaltity is too great, I will create a cli tool and a web app. At the moment
   everything is just kind of made for cli but I will make the functions take arguments instead of inputs, and
   that will just be taken care of in the different deployments of the base app.
-
-  

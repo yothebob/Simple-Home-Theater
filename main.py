@@ -1,4 +1,4 @@
-import core.main as m
+import core.manager as m
 instance = m.login()
 
 # instance.load_categories()[0].write_category_contents()

@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 def write_query(filename,arguments,new=True,pk=None):
     '''a function for writing to a "DB" file
         filename : str
@@ -26,7 +27,7 @@ def write_query(filename,arguments,new=True,pk=None):
 
 
 
-def query(filename, argument,column_name=None,search_method=None):
+def query(filename, argument,column_name=None,search_method=None): # TODO: FIX so it returns a dicitonary with the key being column name and value is column value
     '''a very simple function for returning a line from a csv (place holder for real db query)
         filename : (str) the name of the csv file
         argument : (str) a string you are trying to match

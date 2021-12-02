@@ -2,7 +2,7 @@
 
 so far..
 
-manager.py has a class categories, genres
+app.py has a class categories, genres
 
 -- Categories - movies, tv shows, music, etc (This may be split up further because of the processing differences between them, but at the core they will be
 categories (even if categories is a a base inheritance))

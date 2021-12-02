@@ -77,7 +77,7 @@ class Category():
 
     def load_content(self,list):
         instance = Content()
-        print("load_content_list: ",list)
+        # print("load_content_list: ",list)
         instance.pk = list[0]
         instance.fk = list[1]
         instance.name = list[2]
@@ -104,9 +104,9 @@ class Category():
         quering the db to load the Category object with contents
         '''
         load_contents = query(settings.PROJECT_FILEPATH + '/data/contents.csv',self.pk,"fk","find all")
-        print(load_contents)
+        # print(load_contents)
         for content in load_contents:
-            print("content: ",content)
+            # print("content: ",content)
             self.content_list.append(self.load_content(content))
         return self.content_list
 

@@ -1,5 +1,4 @@
 from core.models import Category, User, Genre, Tag, Content
-# import flaskapp
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
 

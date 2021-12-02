@@ -27,11 +27,35 @@ def show_user_categories(user_categories):
     return int(user_input)
 
 
+def main_page():
+    print("""
+        type a command in:
+    """)
+    user_input = input(": ")
+    if user_input.lower() is "help":
+        print("""
+        commands:
+            category - go to your categories list
+            add - add new category
+            reload - reload category
+            watched - show list of played content
+            passwd - change password
+        """)
+    if user_input.lower() is "category":
+        pass
+    return
+
 def run_app():
     user = home_page()
     user_categories = user.load_categories()
     picked_category = user_categories[show_user_categories(user_categories)]
-    print(picked_category.load_category_contents())
+    print("""Category contents:
+            type the number, then type ...
+            play - play contents
+            checkout - see content metadata
+    """)
+    [print(index, ": ", picked_category.load_category_contents()[index].name) for index in range(len(picked_category.load_category_contents()))]
+    user_input = input(": ")
 
 run_app()
 # category_contents[0].play_content()

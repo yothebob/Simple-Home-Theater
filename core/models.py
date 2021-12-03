@@ -20,6 +20,8 @@ class User():
         return
 
 
+
+
     def load_categories(self):
         '''
         return all user categories
@@ -119,6 +121,7 @@ class Content():
     '''a base class that will store any piece of media content, and hold relationships to its
     tags, categories, genre, type and etc'''
     # def __init__(name, category, type, genre, tags):
+    pk = 0
     name = ""
     category = ""
     type = ""
@@ -128,6 +131,7 @@ class Content():
     rating = 0
 
     def play_content(self):
+        self.category.user.watched.append(self.pk)
         return os.system(settings.MEDIA_PLAYER + " " + self.category.folder_location + "/" + self.name)
 
 

@@ -77,5 +77,5 @@ class App():
         user.username = load[1]
         user.password = load[2]
         user.categories = load[3]
-        user.watched = load[4]
+        user.watched = list(load[4])
         return user

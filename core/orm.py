@@ -23,8 +23,21 @@ def write_query(filename,arguments,new=True,pk=None):
         database.close()
     else:
         '''not supported yet'''
-        pass
+        database = open(filename, "a")
+        for line in database:
+            current_line = len([line for line in open(filename, 'r')])
+            print("current line", current_line)
 
+            if current_line == 0:
+                column_head = list(line)
+                print("header",column_head)
+
+            if current_line == pk:
+                line_array = list(line)
+                print(line array)
+                break
+        for argument in len(line_array):
+        return
 
 
 def query(filename, argument,column_name=None,search_method=None): # TODO: FIX so it returns a dicitonary with the key being column name and value is column value
@@ -77,6 +90,10 @@ def query(filename, argument,column_name=None,search_method=None): # TODO: FIX s
     else:
         f.close()
         return None
+
+
+
+# def update_query(filename, argument, ):
 
 
 

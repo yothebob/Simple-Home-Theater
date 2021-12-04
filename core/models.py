@@ -5,11 +5,9 @@ import core.core_settings as settings
 
 class User():
 
-    def __init__(self):
-
-        self.watched = []
-        self.categories = []
-        self.categories_list= []
+    watched = []
+    categories = []
+    categories_list= []
 
     def add_category(self):
         ''' a function for pointing to a file for a category '''
@@ -44,10 +42,11 @@ class User():
         return category
 
 
-    def get_watched(self):
+    def append_watched(self,content):
         ''' get list of watched movies per username'''
-        pass
-
+        print(type(self.watched))
+        self.watched.append(content.pk)
+        return
 
     def get_categories(self):
         '''get list of category objects the user has'''
@@ -131,7 +130,7 @@ class Content():
     rating = 0
 
     def play_content(self):
-        self.category.user.watched.append(self.pk)
+        # self.category.user.watched.append(self.pk)
         return os.system(settings.MEDIA_PLAYER + " " + self.category.folder_location + "/" + self.name)
 
 

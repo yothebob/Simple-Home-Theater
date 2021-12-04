@@ -66,6 +66,7 @@ def main_page(user):
         user_categories = user.load_categories()
         picked_category = show_user_categories(user_categories)
         picked_content = show_category_contents(picked_category)
+        user.append_watched(picked_content)
         picked_content.play_content()
         # return main_page(user)
     elif user_input.lower() == "add":
@@ -90,15 +91,7 @@ def main_page(user):
 def run_app():
     user = home_page()
     main_page(user)
-    # user_categories = user.load_categories()
-    # picked_category = user_categories[show_user_categories(user_categories)]
-    # print("""Category contents:
-    #         type the number, then type ...
-    #         play - play contents
-    #         checkout - see content metadata
-    # """)
-    # [print(index, ": ", picked_category.load_category_contents()[index].name) for index in range(len(picked_category.load_category_contents()))]
-    # user_input = input(": ")
+    print(user.watched)
+    
 
 run_app()
-# category_contents[0].play_content()

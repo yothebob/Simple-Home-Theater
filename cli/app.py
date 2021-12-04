@@ -59,6 +59,15 @@ class CliApp(App):
 
 
 
+    def logout(self,user):
+        '''
+        '''
+        print('''logging out...
+            hope to see you again soon! :)
+        ''')
+
+        
+
     def delete_user(self):
         print("deleting user...\n")
         username = input("Username:")

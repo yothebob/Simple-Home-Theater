@@ -1,5 +1,2 @@
 pk,fk,name,user,folder location,
-0,1,Movies,yothebob,~/Videos,
-1,0,music,yothebob,/home/brandon/Music,
-2,0,tv shows,yothebob,~/Videos,
-3,1,Movies,yeet,Videos,
+1,1,Music,brandon,/home/brandon/Music,

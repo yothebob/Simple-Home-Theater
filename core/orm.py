@@ -34,9 +34,10 @@ def write_query(filename,arguments,new=True,pk=None):
 
             if current_line == pk:
                 line_array = list(line)
-                print(line array)
+                print(line_array)
                 break
         for argument in len(line_array):
+            pass
         return
 
 

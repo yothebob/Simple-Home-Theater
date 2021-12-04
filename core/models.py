@@ -13,8 +13,9 @@ class User():
         ''' a function for pointing to a file for a category '''
         name = input("What is the name of the New Category?: ")
         folder_location = input("What is the path the the folder?: ")
-        user = self.username
-        write_query(settings.PROJECT_FILEPATH + "/data/categories.csv", [name,user,folder_location])
+        write_query(settings.PROJECT_FILEPATH + "/data/categories.csv", [self.pk,name,self.username,folder_location])
+        new_category = 
+
         return
 
 

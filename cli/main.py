@@ -51,37 +51,58 @@ def main_page(user):
         type a command in:
     """)
     user_input = input(": ")
-    if user_input.lower() == "help":
+    command_dictionary = {
+    "add"    : ["add","-a","-add","--add"],
+    "reload" : ["reload", "-r", "--reload", "-reload", "re", "-re", "load"],
+    "watched": ["watched", "--watched", "-watched" , "-w", "watch", "--watch"],
+    "passwd" : ["passwd", "--passwd", "password", "-p", "--password"],
+    "exit"   : ["exit", "end", "-e", "--end", "--exit"],
+    "help"   : ["help","-h","--help"],
+    "category" : ["cat", "category", "-cat", "--category"]
+    }
+    if user_input.lower() in command_dictionary["help"]:
         print("""
         commands:
-            category    - go to your categories list
-            add         - add new category
-            reload      - reload category
-            watched     - show list of played content
-            passwd      - change password
-            exit        - exit program
-        """)
+    category {}
+                - go to your categories list
+
+    add      {}
+                - add new category
+
+    reload   {}
+                - reload category
+
+    watched  {}
+                - show list of played content
+
+    passwd   {}
+                - change password
+
+    exit     {}
+                - exit program
+        """.format(command_dictionary["category"],command_dictionary["add"],command_dictionary["reload"],
+        command_dictionary["watched"],command_dictionary["passwd"],command_dictionary["exit"]))
         return main_page(user)
-    elif user_input.lower() == "category":
+    elif user_input.lower() in command_dictionary["category"]:
         user_categories = user.load_categories()
         picked_category = show_user_categories(user_categories)
         picked_content = show_category_contents(picked_category)
         user.append_watched(picked_content)
         picked_content.play_content()
-        # return main_page(user)
-    elif user_input.lower() == "add":
+        return main_page(user)
+    elif user_input.lower() in command_dictionary["add"]:
          user.add_category()
          return main_page(user)
-    elif user_input.lower() == "reload":
+    elif user_input.lower() in command_dictionary["reload"]:
         #return user. # this needs to reload the category contents and rename and items and etc, erase any that have been removed, add any new items
         return main_page(user)
-    elif user_input.lower() == "watched":
+    elif user_input.lower() in command_dictionary["watched"]:
         user.get_watched()
         return main_page(user)
-    elif user_input.lower() == "passwd":
+    elif user_input.lower() in command_dictionary["passwd"]:
         user.change_password()
         return main_page(user)
-    elif user_input.lower() == "exit":
+    elif user_input.lower() in command_dictionary["exit"]:
         exit()
 
     else:
@@ -92,6 +113,6 @@ def run_app():
     user = home_page()
     main_page(user)
     print(user.watched)
-    
+
 
 run_app()

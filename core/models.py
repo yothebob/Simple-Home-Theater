@@ -9,15 +9,16 @@ class User():
     categories = []
     categories_list= []
 
+
     def add_category(self):
         ''' a function for pointing to a file for a category '''
         name = input("What is the name of the New Category?: ")
         folder_location = input("What is the path the the folder?: ")
         write_query(settings.PROJECT_FILEPATH + "/data/categories.csv", [self.pk,name,self.username,folder_location])
-        new_category = 
-
+        list = query(settings.PROJECT_FILEPATH + "/data/categories.csv",name,"name")
+        category = self.load_category(list)
+        category.write_category_contents()
         return
-
 
 
 
@@ -132,7 +133,7 @@ class Content():
 
     def play_content(self):
         # self.category.user.watched.append(self.pk)
-        return os.system(settings.MEDIA_PLAYER + " " + self.category.folder_location + "/" + self.name)
+        return os.system(f'{settings.MEDIA_PLAYER} {self.category.folder_location}/"{self.name}"')
 
 
 

@@ -3,7 +3,7 @@ from core.models import Category, User, Genre, Tag, Content
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
 from flask import Flask, render_template, request, g, url_for
-from forms import LoginForm, CreateUserForm
+from webapp.forms import LoginForm, CreateUserForm
 
 class FlaskApp(App):
 

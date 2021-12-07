@@ -46,7 +46,30 @@ def show_category_contents(category):
     [print(index, ": ", category_contents[index].name) for index in range(len(category_contents))] ## TODO: for some reason this is printing too many, but the length is fine?
     user_input = input(": ")
     # return int(user_input)
-    return category_contents[int(user_input)]
+    return user_input
+
+
+def content_commands(user, category_contents, user_input):
+    command_dictionary = {
+        "play"      : ["play", "-p"],
+        "details"   : ["checkout", "details", "-v", "-c", '-d']
+    }
+    if command_dictionary["play"] in user_input:
+        split_command = user_input.split(" ")
+        print(split_command)
+        picked_content = category_contents[split_command[0]]
+        user.append_watched(picked_content)
+        picked_content.play_content()
+        re
+
+    elif command_dictionary["details"] in user_input:
+        split_command = user_input.split(" ")
+        print(split_command)
+        picked_content = category_contents[split_command[0]]
+        print(picked_content.name)
+        #show content details/metadata
+    else:
+        print("command not found, please try again")
 
 
 def main_page(user):
@@ -55,13 +78,13 @@ def main_page(user):
     """)
     user_input = input(": ")
     command_dictionary = {
-    "add"    : ["add","-a","-add","--add"],
-    "reload" : ["reload", "-r", "--reload", "-reload", "re", "-re", "load"],
-    "watched": ["watched", "--watched", "-watched" , "-w", "watch", "--watch"],
-    "passwd" : ["passwd", "--passwd", "password", "-p", "--password"],
-    "exit"   : ["exit", "end", "-e", "--end", "--exit"],
-    "help"   : ["help","-h","--help"],
-    "category" : ["cat", "category", "-cat", "--category"]
+        "add"    : ["add","-a","-add","--add"],
+        "reload" : ["reload", "-r", "--reload", "-reload", "re", "-re", "load"],
+        "watched": ["watched", "--watched", "-watched" , "-w", "watch", "--watch"],
+        "passwd" : ["passwd", "--passwd", "password", "-p", "--password"],
+        "exit"   : ["exit", "end", "-e", "--end", "--exit"],
+        "help"   : ["help","-h","--help"],
+        "category" : ["cat", "category", "-cat", "--category"]
     }
     if user_input.lower() in command_dictionary["help"]:
         print("""
@@ -89,9 +112,10 @@ def main_page(user):
     elif user_input.lower() in command_dictionary["category"]:
         user_categories = user.load_categories()
         picked_category = show_user_categories(user_categories)
-        picked_content = show_category_contents(picked_category)
-        user.append_watched(picked_content)
-        picked_content.play_content()
+        command = show_category_contents(picked_category)
+        run_command = content_commands(user,picked_category.load_category_contents(),command)
+        # user.append_watched(picked_content)
+        # picked_content.play_content()
         return main_page(user)
     elif user_input.lower() in command_dictionary["add"]:
          user.add_category()
@@ -111,6 +135,7 @@ def main_page(user):
     else:
         print("Sorry please try Again")
         return main_page(user)
+
 
 def run_app():
     user = home_page()

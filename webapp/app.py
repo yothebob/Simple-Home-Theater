@@ -6,27 +6,31 @@ from flask import Flask, render_template, request, g, url_for
 from webapp.forms import LoginForm, CreateUserForm
 
 class FlaskApp(App):
-
     app = Flask(__name__)
     app.config['SECRET KEY'] = '1233456789'
-    instance -= ""
-    app.static_folder = "static"
+    instance = ""
+    # app.static_folder = "static"
 
 
-    app.route("/",methods=["GET","POST"])
+    app.route("/")
+    def home_page(self):
+        app_name = settings.APP_NAME
+        render_template("home.html",app_name=app_name)
+
+
+    app.route("/login/",methods=["GET","POST"])
     def login(self):
 
         login_form = LoginForm(request.form)
         error = ""
         if request.method == "POST":
-            pass
             verify_credidentials = query(settings.PROJECT_FILEPATH + "/data/users.csv", login_form.username.data)
             if verify_credidentials is not None:
                 #user found, attempting to authenticate
                 if verify_credidentials[1] == login_form.username.data and verify_credidentials[2] == login_form.password.data:
                     self.instance = self.load_user(verify_credidentials[0]) #loading with pk
                     '''take to movie screen'''
-                    return render_template("home.html",self.instance=instance)
+                    return render_template("home.html",instance=self.instance)
                 else:
                     #not right credidentials
                     error = "Username of Password is not correct."
@@ -41,26 +45,30 @@ class FlaskApp(App):
     def create_user(self):
         '''create and save a new user to database '''
         create_form = CreateUserForm(request.form)
-        username_taken = query(settings.PROJECT_FILEPATH +"/data/users.csv",create_form.username.data)
+        if request.method == "POST":
+            username_taken = query(settings.PROJECT_FILEPATH +"/data/users.csv",create_form.username.data)
+            if username_taken is not None:
+                if username_taken[1] == create_form.username.data:
+                    error = "Username Taken."
+                    return render_template("login.html",error=error)# username taken
 
-        if username_taken is not None:
-            if username_taken[1] == create_form.username.data:
-                error = "Username Taken."
-                return render_template("login.html",error=error)# username taken
-        if create_form.password.data != create_form.password_again.data:
-            error = "Passwords don't match, please try again."
-            return render_template("login.html",error=error)# passwords dont match
-        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[create_form.username.data,create_form.password.data,[],[]])
-        return render_template("login.html") # user created. go to login
+            if create_form.password.data != create_form.password_again.data:
+                error = "Passwords don't match, please try again."
+                return render_template("login.html",error=error)# passwords dont match
 
+            write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[create_form.username.data,create_form.password.data,[],[]])
+            return render_template("login.html") # user created. go to login
 
+    app.run()
+
+    # run_webapp()
     #currently not working (havent even tried)
-    app.route("/delete/",methods=["GET","POST"])
-    def delete_user(self,username,password,password_again):
-        if password == password_again:
-            verify_credidentials = query(settings.PROJECT_FILEPATH + "/data/users.csv", username)
-        if verify_credidentials:
-            if verify_credidentials[1] == username and verify_credidentials[2] == password:
-                delete_query(settings.PROJECT_FILEPATH + "/data/users.csv",username)
-                return render_template("base.html")
-        return render_template("base.html")
+    # app.route("/delete/",methods=["GET","POST"])
+    # def delete_user(self,username,password,password_again):
+    #     if password == password_again:
+    #         verify_credidentials = query(settings.PROJECT_FILEPATH + "/data/users.csv", username)
+    #     if verify_credidentials:
+    #         if verify_credidentials[1] == username and verify_credidentials[2] == password:
+    #             delete_query(settings.PROJECT_FILEPATH + "/data/users.csv",username)
+    #             return render_template("base.html")
+    #     return render_template("base.html")

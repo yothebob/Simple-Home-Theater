@@ -1,4 +1,4 @@
-import core.settings as settings
+import core.core_settings as settings
 
 
 #run this file to run the program of your choice

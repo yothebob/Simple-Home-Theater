@@ -136,16 +136,17 @@ class Content():
         return os.system(f'{settings.MEDIA_PLAYER} {self.category.folder_location}/"{self.name}"')
 
 
+class ContentList():
+    '''
+    this class will be like genres, a list of contents put together based off a common tag or something
+    '''
+    pass
 
 class Genre():
 
     def __init__(self, category, name):
         self.category = category
         self.name = name
-
-
-
-
 
 
 class Tag():

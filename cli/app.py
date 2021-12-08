@@ -2,13 +2,13 @@ from core.app import App
 from core.models import Category, User, Genre, Tag, Content
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
-
+from time import sleep
 
 class CliApp(App):
     '''
     a class for managing the cli app, doing admin thing and etc
     '''
-
+    
 
     def create_user(self):
         '''create and save a new user to database '''
@@ -66,7 +66,7 @@ class CliApp(App):
             hope to see you again soon! :)
         ''')
 
-        
+
 
     def delete_user(self):
         print("deleting user...\n")

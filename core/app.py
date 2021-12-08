@@ -31,6 +31,13 @@ class App():
     a class for managing the core app, doing admin thing and etc
     '''
 
+    def autoreplay(self):
+        '''
+        This is the auto countdown timer for playing the next content
+        '''
+        sleep(settings.AUTOPLAY_COUNTDOWN)
+        return True
+
 
     def create_user(self,username,password,password_again):
         '''create and save a new user to database '''

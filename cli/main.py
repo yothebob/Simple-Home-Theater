@@ -42,27 +42,37 @@ def show_category_contents(category):
             play - play contents
             checkout - see content metadata
     """)
-    category_contents = category.load_category_contents()
-    [print(index, ": ", category_contents[index].name) for index in range(len(category_contents))] ## TODO: for some reason this is printing too many, but the length is fine?
-    user_input = input(": ")
+    if len(category.content_list) < 1:
+        category_contents = category.load_category_contents()
+        [print(index, ": ", category_contents[index].name) for index in range(len(category_contents))] ## TODO: for some reason this is printing too many, but the length is fine?
+        user_input = input(": ")
+    else:
+        category_contents = category.content_list
+        [print(index, ": ", category_contents[index].name) for index in range(len(category_contents))] ## TODO: for some reason this is printing too many, but the length is fine?
+        user_input = input(": ")
     # return int(user_input)
     return user_input
 
 
 def content_commands(user, category_contents, user_input):
+
+    content_number = ''.join(map(str,[user_input[index] for index in range(len(user_input)) if user_input[index].isnumeric()]))
+    # for index in range(len(user_input)):
+    #     if user_input[index].isnumeric():
+    #         content_number += user_input[index]
+    print(content_number)
     command_dictionary = {
         "play"      : ["play", "-p"],
         "details"   : ["checkout", "details", "-v", "-c", '-d']
     }
-    if command_dictionary["play"] in user_input:
-        split_command = user_input.split(" ")
-        print(split_command)
+    if user_input in command_dictionary["play"]:
+        print("playing")
         picked_content = category_contents[split_command[0]]
         user.append_watched(picked_content)
         picked_content.play_content()
         re
 
-    elif command_dictionary["details"] in user_input:
+    elif user_input in command_dictionary["details"]:
         split_command = user_input.split(" ")
         print(split_command)
         picked_content = category_contents[split_command[0]]
@@ -110,10 +120,17 @@ def main_page(user):
         command_dictionary["watched"],command_dictionary["passwd"],command_dictionary["exit"]))
         return main_page(user)
     elif user_input.lower() in command_dictionary["category"]:
-        user_categories = user.load_categories()
-        picked_category = show_user_categories(user_categories)
-        command = show_category_contents(picked_category)
-        run_command = content_commands(user,picked_category.load_category_contents(),command)
+        if len(user.categories_list) < 1:
+            user_categories = user.load_categories()
+            picked_category = show_user_categories(user_categories)
+            command = show_category_contents(picked_category)
+            run_command = content_commands(user,picked_category.load_category_contents(),command)
+        else:
+            user_categories = user.categories_list
+            picked_category = show_user_categories(user_categories)
+            command = show_category_contents(picked_category)
+            run_command = content_commands(user,picked_category.load_category_contents(),command)
+
         # user.append_watched(picked_content)
         # picked_content.play_content()
         return main_page(user)

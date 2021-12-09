@@ -8,7 +8,7 @@ class CliApp(App):
     '''
     a class for managing the cli app, doing admin thing and etc
     '''
-    
+
 
     def create_user(self):
         '''create and save a new user to database '''

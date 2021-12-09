@@ -30,9 +30,11 @@ def show_user_categories(user_categories):
     return user_categories[int(user_input)]
 
 
+
 def show_category_bins(category):
     "This function will be for creating new categories on the fly based off tags and other metadata, i hope to dynamically make these"
     pass
+
 
 
 def show_category_contents(category):
@@ -52,6 +54,7 @@ def show_category_contents(category):
         user_input = input(": ")
     # return int(user_input)
     return user_input
+
 
 
 def content_commands(user, category_contents, user_input):
@@ -80,6 +83,7 @@ def content_commands(user, category_contents, user_input):
         #show content details/metadata
     else:
         print("command not found, please try again")
+
 
 
 def main_page(user):
@@ -120,13 +124,13 @@ def main_page(user):
         command_dictionary["watched"],command_dictionary["passwd"],command_dictionary["exit"]))
         return main_page(user)
     elif user_input.lower() in command_dictionary["category"]:
-        if len(user.categories_list) < 1:
+        if len(user.categories) < 1:
             user_categories = user.load_categories()
             picked_category = show_user_categories(user_categories)
             command = show_category_contents(picked_category)
             run_command = content_commands(user,picked_category.load_category_contents(),command)
         else:
-            user_categories = user.categories_list
+            user_categories = user.categories
             picked_category = show_user_categories(user_categories)
             command = show_category_contents(picked_category)
             run_command = content_commands(user,picked_category.load_category_contents(),command)

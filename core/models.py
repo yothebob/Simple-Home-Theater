@@ -7,7 +7,18 @@ class User():
 
     watched = []
     categories = []
-    categories_list= []
+    # categories_list= []
+
+
+    def save(self):
+        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[user.pk,user.username,user.password,user.categories,user.watched],new=False,pk=self.pk)
+        load = query(settings.PROJECT_FILEPATH + "/data/users.csv", pk, "pk")
+        user = User()
+        user.pk = load[0]
+        user.username = load[1]
+        user.password = load[2]
+        user.categories = load[3]
+        user.watched = list(load[4])
 
 
     def add_category(self):
@@ -29,9 +40,9 @@ class User():
         categories_query_list = query(settings.PROJECT_FILEPATH + "/data/categories.csv",self.pk,"fk","find all")
         # print(categories_query_list)
         for category in categories_query_list:
-            self.categories_list.append(self.load_category(category))
+            self.categories.append(self.load_category(category))
         # print(self.categories_list)
-        return self.categories_list
+        return self.categories
 
 
     def load_category(self, list):

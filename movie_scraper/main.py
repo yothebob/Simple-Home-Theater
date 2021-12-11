@@ -5,7 +5,7 @@ from imdb import IMDb
 # create an instance of the IMDb class
 ia = IMDb()
 
-noir_movie = ia.search_movie("_D.O.A (1949)_")
+noir_movie = ia.search_movie("D.O.A (1949)")
 
 print(noir_movie[0]["title"])
 print(noir_movie[0].movieID)

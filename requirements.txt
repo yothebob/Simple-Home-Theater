@@ -1,0 +1,11 @@
+click==8.0.3
+Flask==2.0.2
+greenlet==1.1.2
+IMDbPY==2021.10.24
+itsdangerous==2.0.1
+Jinja2==3.0.3
+lxml==4.6.4
+MarkupSafe==2.0.1
+SQLAlchemy==1.4.28
+Werkzeug==2.0.2
+WTForms==3.0.0

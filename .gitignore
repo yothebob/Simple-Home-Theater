@@ -6,4 +6,4 @@ __pycache__/
 cli/__pycache__/
 core/__pycache__/
 movie_scraper/__pycache__/
-webapp/__pycache__/*
+webapp/__pycache__/

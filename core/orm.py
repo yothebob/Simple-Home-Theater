@@ -22,7 +22,25 @@ def write_query(filename,arguments,new=True,pk=None):
         database.write("\n")
         database.close()
     else:
-        '''not supported yet'''
+        '''rewrite row'''
+        database_rows = [row for row in open("/home/brandon/Documents/python-projects/simple-home-theater/data/categories.csv", "r")]
+        # print(database_rows)
+
+        database = open("/home/brandon/Documents/python-projects/simple-home-theater/data/categories.csv", "w")
+        column_titles = database_rows[0].split(",") #get names of columns
+        # print(column_titles)
+        for index in range(len(database_rows)):
+            if database_rows[index][0] == str(pk):
+                print("found pk")
+                database.write(str(index) + ",")
+                [database.write(str(item) + ",") for item in arguments]
+                database.write("\n")
+            else:
+                database.write(database_rows[index])
+        database.close()
+
+
+
         database = open(filename, "a")
         for line in database:
             current_line = len([line for line in open(filename, 'r')])
@@ -44,7 +62,7 @@ def query(filename, argument,column_name=None,search_method=None): # TODO: FIX s
     '''a very simple function for returning a line from a csv (place holder for real db query)
         filename : (str) the name of the csv file
         argument : (str) a string you are trying to match
-        column_name: (str) an optional arg to confirm you are searching for the right item and do not git mismatched (use for pk an foreign keys)
+        column_name: (str) an optional arg to confirm you are searching for the right item and do not get mismatched (use for pk an foreign keys)
         search_method: (str or None) if you write "find all" it will append each match to a list
     '''
     f = open(filename, 'r')

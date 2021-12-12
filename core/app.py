@@ -83,6 +83,6 @@ class App():
         user.pk = load[0]
         user.username = load[1]
         user.password = load[2]
-        user.categories = load[3]
+        user.categories = list(load[3])
         user.watched = list(load[4])
         return user

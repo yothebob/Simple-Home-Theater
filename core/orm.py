@@ -23,10 +23,10 @@ def write_query(filename,arguments,new=True,pk=None):
         database.close()
     else:
         '''rewrite row'''
-        database_rows = [row for row in open("/home/brandon/Documents/python-projects/simple-home-theater/data/categories.csv", "r")]
+        database_rows = [row for row in open(filename, "r")]
         print(database_rows)
 
-        database = open("/home/brandon/Documents/python-projects/simple-home-theater/data/categories.csv", "w")
+        database = open(filename, "w")
         column_titles = database_rows[0].split(",") #get names of columns
         print(column_titles)
         for index in range(len(database_rows)):

@@ -24,11 +24,11 @@ def write_query(filename,arguments,new=True,pk=None):
     else:
         '''rewrite row'''
         database_rows = [row for row in open("/home/brandon/Documents/python-projects/simple-home-theater/data/categories.csv", "r")]
-        # print(database_rows)
+        print(database_rows)
 
         database = open("/home/brandon/Documents/python-projects/simple-home-theater/data/categories.csv", "w")
         column_titles = database_rows[0].split(",") #get names of columns
-        # print(column_titles)
+        print(column_titles)
         for index in range(len(database_rows)):
             if database_rows[index][0] == str(pk):
                 print("found pk")
@@ -39,23 +39,6 @@ def write_query(filename,arguments,new=True,pk=None):
                 database.write(database_rows[index])
         database.close()
 
-
-
-        database = open(filename, "a")
-        for line in database:
-            current_line = len([line for line in open(filename, 'r')])
-            print("current line", current_line)
-
-            if current_line == 0:
-                column_head = list(line)
-                print("header",column_head)
-
-            if current_line == pk:
-                line_array = list(line)
-                print(line_array)
-                for argument in len(line_array):
-                    pass
-        return
 
 
 def query(filename, argument,column_name=None,search_method=None): # TODO: FIX so it returns a dicitonary with the key being column name and value is column value

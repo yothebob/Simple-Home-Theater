@@ -32,7 +32,7 @@ def write_query(filename,arguments,new=True,pk=None):
         for index in range(len(database_rows)):
             if database_rows[index][0] == str(pk):
                 print("found pk")
-                database.write(str(index) + ",")
+                # database.write(str(index) + ",") # dont need to write pk index if it is plugged into the arguments
                 [database.write(str(item) + ",") for item in arguments]
                 database.write("\n")
             else:

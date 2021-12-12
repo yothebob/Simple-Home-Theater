@@ -73,7 +73,6 @@ def content_commands(user, category_contents, user_input):
         picked_content = category_contents[split_command[0]]
         user.append_watched(picked_content)
         picked_content.play_content()
-        re
 
     elif user_input in command_dictionary["details"]:
         split_command = user_input.split(" ")
@@ -131,12 +130,12 @@ def main_page(user):
             picked_category = show_user_categories(user_categories)
             command = show_category_contents(picked_category)
             run_command = content_commands(user,picked_category.load_category_contents(),command)
-        # else:
-        #     user.
-        #     user_categories = user.categories
-        #     picked_category = show_user_categories(user_categories)
-        #     command = show_category_contents(picked_category)
-        #     run_command = content_commands(user,picked_category.load_category_contents(),command)
+        else:
+            print(user.categories)
+            user.save_user() # temp
+            picked_category = show_user_categories(user.categories)
+            command = show_category_contents(picked_category)
+            run_command = content_commands(user,picked_category.load_category_contents(),command)
 
         # user.append_watched(picked_content)
         # picked_content.play_content()

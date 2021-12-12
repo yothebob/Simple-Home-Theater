@@ -48,7 +48,7 @@ class App():
                 return # username taken
         if password != password_again:
             return # passwords dont match
-        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[username,password,[],[]])
+        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[username,password,"",""])
 
 
     def login(self,username,password):
@@ -79,10 +79,16 @@ class App():
 
     def load_user(self,pk):
         load = query(settings.PROJECT_FILEPATH + "/data/users.csv", pk, "pk")
+        [print(index,load[index]) for index in range(len(load))]
         user = User()
         user.pk = load[0]
         user.username = load[1]
         user.password = load[2]
-        user.categories = list(load[3])
+        relist = load[3]#.strip('][')#.split(", ")
+        # print(relist)
+        # user_categories = [print(query(settings.PROJECT_FILEPATH + "/data/categories.csv",pk,"pk")) for pk in relist]
+        # user_categories = [print(pk) for pk in relist]
+        # print(user_categories)
+        user.categories = user_categories
         user.watched = list(load[4])
         return user

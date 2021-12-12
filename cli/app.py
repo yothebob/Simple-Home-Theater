@@ -32,7 +32,7 @@ class CliApp(App):
             password = input("Password: ")
             password_again = input("Password: ")
 
-        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[username,password,[],[]])
+        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[username,password,"",""])
 
 
 

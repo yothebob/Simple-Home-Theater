@@ -6,15 +6,14 @@ import core.core_settings as settings
 class User():
 
     def __init__(self):
-        watched = []
-        categories = []
         self.categories = []
         self.watched = []
     # categories_list= []
 
 
     def save_user(self):
-        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[self.pk,self.username,self.password,self.categories,self.watched],new=False,pk=self.pk)
+        category_pks = [category.pk for category in self.categories]
+        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[self.pk,self.username,self.password,category_pks,self.watched],new=False,pk=self.pk)
         # load = query(settings.PROJECT_FILEPATH + "/data/users.csv", pk, "pk")
         # user = User()
         # user.pk = load[0]
@@ -113,7 +112,7 @@ class Category():
         arg : content - instance of Category()
         '''
         for file in os.listdir(self.folder_location):
-            write_query(settings.PROJECT_FILEPATH + "/data/contents.csv",[str(self.pk),str(file),[],[],[],[]])
+            write_query(settings.PROJECT_FILEPATH + "/data/contents.csv",[str(self.pk),str(file),"","","",""])
         return
 
     def load_category_contents(self):

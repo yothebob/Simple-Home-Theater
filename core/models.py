@@ -5,20 +5,23 @@ import core.core_settings as settings
 
 class User():
 
-    watched = []
-    categories = []
+    def __init__(self):
+        watched = []
+        categories = []
+        self.categories = []
+        self.watched = []
     # categories_list= []
 
 
-    def save(self):
-        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[user.pk,user.username,user.password,user.categories,user.watched],new=False,pk=self.pk)
-        load = query(settings.PROJECT_FILEPATH + "/data/users.csv", pk, "pk")
-        user = User()
-        user.pk = load[0]
-        user.username = load[1]
-        user.password = load[2]
-        user.categories = load[3]
-        user.watched = list(load[4])
+    def save_user(self):
+        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[self.pk,self.username,self.password,self.categories,self.watched],new=False,pk=self.pk)
+        # load = query(settings.PROJECT_FILEPATH + "/data/users.csv", pk, "pk")
+        # user = User()
+        # user.pk = load[0]
+        # user.username = load[1]
+        # user.password = load[2]
+        # user.categories = load[3]
+        # user.watched = list(load[4])
 
 
     def add_category(self):
@@ -26,8 +29,9 @@ class User():
         name = input("What is the name of the New Category?: ")
         folder_location = input("What is the path the the folder?: ")
         write_query(settings.PROJECT_FILEPATH + "/data/categories.csv", [self.pk,name,self.username,folder_location])
-        list = query(settings.PROJECT_FILEPATH + "/data/categories.csv",name,"name")
-        category = self.load_category(list)
+        load_category_list = query(settings.PROJECT_FILEPATH + "/data/categories.csv",name,"name")
+        category = self.load_category(load_category_list)
+        self.save_user()
         category.write_category_contents()
         return
 

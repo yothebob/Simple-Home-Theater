@@ -123,21 +123,25 @@ def main_page(user):
         """.format(command_dictionary["category"],command_dictionary["add"],command_dictionary["reload"],
         command_dictionary["watched"],command_dictionary["passwd"],command_dictionary["exit"]))
         return main_page(user)
+
     elif user_input.lower() in command_dictionary["category"]:
         if len(user.categories) < 1:
             user_categories = user.load_categories()
+            print(type(user_categories), user_categories)
             picked_category = show_user_categories(user_categories)
             command = show_category_contents(picked_category)
             run_command = content_commands(user,picked_category.load_category_contents(),command)
-        else:
-            user_categories = user.categories
-            picked_category = show_user_categories(user_categories)
-            command = show_category_contents(picked_category)
-            run_command = content_commands(user,picked_category.load_category_contents(),command)
+        # else:
+        #     user.
+        #     user_categories = user.categories
+        #     picked_category = show_user_categories(user_categories)
+        #     command = show_category_contents(picked_category)
+        #     run_command = content_commands(user,picked_category.load_category_contents(),command)
 
         # user.append_watched(picked_content)
         # picked_content.play_content()
         return main_page(user)
+
     elif user_input.lower() in command_dictionary["add"]:
          user.add_category()
          return main_page(user)

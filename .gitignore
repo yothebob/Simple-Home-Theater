@@ -2,3 +2,8 @@ data/categories.csv
 data/contents.csv
 data/users.csv
 simple-home-theater-env/
+__pycache__/
+cli/__pycache__/
+core/__pycache__/
+movie_scraper/__pycache__/
+webapp/__pycache__/

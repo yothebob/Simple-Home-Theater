@@ -48,14 +48,10 @@ def show_category_contents(category):
 def search_category_contents(category):
     user_input = input(": ")
     print("searching...")
-    results_list = [ content for content in category.content_list if user_input.lower() in content.name.lower()]
-    if len(results_list) > 0:
-        [print(index, ": ",results_list[index].name) for index in range(len(results_list))]
-        user_input = input(": ")
-        return results_list[int(user_input)]
-    else:
-        print("no matches found")
-        return show_category_contents(category)
+    # results_list = [ content for content in category.content_list if user_input.lower() in content.name.lower()]
+    [print(index,": ", category.content_list[index].name) for index in range(len(category.content_list)) if user_input.lower() in category.content_list[index].name.lower()]
+    user_input = input(": ")
+    return user_input
 
 def content_commands(user, category_contents, user_input):
 

@@ -1,34 +1,43 @@
 
+HOW TO RUN: 
+
+1- git clone https://github.com/yothebob/Simple-Home-Theater.git
+2- change core/core-settings.py to use your file location  ex: PROJECT_FILEPATH = "/path/to/simple-home-theater"
+3- open venv (source simple-home-theater/bin/activate)
+4- download dependencies (pip install -r requirements.txt)
+5- run python main.py 
+
+CLI VS WEB
+ If you want to switch app type just chane it in your core/core_settings.py
+ 
+ DEPLOYMENT_TYPE = "CLI"
+ # DEPLOYMENT_TYPE = "WEB"
+
+
+HOW IT WORKS: 
+
+  object Models: 
+    - user
+      login in with a username/password to have instances of categories, content, metadata and content lists based off watched/ favorites
+    
+    - category
+      created and accessable to the user that created it, stores media content (a file/ file location)  
+    
+    -content
+      A peice of media content to play, stored in a category. will store metadata from a movie scraper 
+    
+    \/in progress \/
+    - Genre
+    -content list
+    -tag
+
+
+The base app is in core. and the deployable apps are inheriting from core. core.models stores all the models/ model functions. all model things should be put in core.models! core.core_settings will have all the adjustable settings for your deployable app (in the main.py). each app.py has the core functions of login, create and etc. pre application tools. cli.main.py/web.main.py will be the app after login functions.
+
+ORM
+for now the master uses csv as DB files and my own custom ORM (is under core.orm.py). I will make a branch for using sql, branch off master-sql if you want to use sql.
+
+
 
 so far..
 
-app.py has a class categories, genres
-
--- Categories - movies, tv shows, music, etc (This may be split up further because of the processing differences between them, but at the core they will be
-categories (even if categories is a a base inheritance))
-
--- Genres - Genres are for seperating base categories (rock, jazz, dubstep | horro, comedy, romcom etc)
-
--- Tags - Tags are for further clustering genres and other things
-
-
-i REALLY need to make the orm query able to search based off mutiple args, I am trying to make this all from scratch for now (just for 'fun' and suffering)
-but I want it to be easily suited to changing over to something like django and sql. That is probably the direction this will need to go into.
-
-but for now I enjoy coding things that I could easily just import :)
-
-
-
-update:
-  most of the user stuff works (something is wrong with deleting but I have not looked into it), category
-  and content loading and saving works.
-
-  I am thinking I may want to make a new db file for each category, because at the moment all the categories
-  will be loading and saving to/from one file and that is a huge bottleneck.
-
-  I will need to use data scrapers for getting content genres, tags, and metadata.
-
-
-  Just because the functionaltity is too great, I will create a cli tool and a web app. At the moment
-  everything is just kind of made for cli but I will make the functions take arguments instead of inputs, and
-  that will just be taken care of in the different deployments of the base app.

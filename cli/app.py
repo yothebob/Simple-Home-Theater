@@ -51,11 +51,11 @@ class CliApp(App):
                 return instance
             else:
                 print("User name or password not correct! please try again!\n")
-                return
+                return self.login()
         else:
             #query could not find user
             print("Cound not find username, please try again...\n")
-            return
+            return self.login()
 
 
 

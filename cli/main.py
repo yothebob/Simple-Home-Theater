@@ -31,12 +31,6 @@ def show_user_categories(user_categories):
 
 
 
-def show_category_bins(category):
-    "This function will be for creating new categories on the fly based off tags and other metadata, i hope to dynamically make these"
-    pass
-
-
-
 def show_category_contents(category):
     "This will just show all contents for now"
     print("""Category contents:
@@ -44,15 +38,9 @@ def show_category_contents(category):
             play - play contents
             checkout - see content metadata
     """)
-    if len(category.content_list) < 1:
-        category_contents = category.load_category_contents()
-        [print(index, ": ", category_contents[index].name) for index in range(len(category_contents))] ## TODO: for some reason this is printing too many, but the length is fine?
-        user_input = input(": ")
-    else:
-        category_contents = category.content_list
-        [print(index, ": ", category_contents[index].name) for index in range(len(category_contents))] ## TODO: for some reason this is printing too many, but the length is fine?
-        user_input = input(": ")
-    # return int(user_input)
+    category_contents = category.content_list
+    [print(index, ": ", category_contents[index].name) for index in range(len(category_contents))] ## TODO: for some reason this is printing too many, but the length is fine?
+    user_input = input(": ")
     return user_input
 
 
@@ -64,24 +52,42 @@ def content_commands(user, category_contents, user_input):
     #     if user_input[index].isnumeric():
     #         content_number += user_input[index]
     print(content_number)
-    command_dictionary = {
-        "play"      : ["play", "-p"],
-        "details"   : ["checkout", "details", "-v", "-c", '-d']
-    }
-    if user_input in command_dictionary["play"]:
-        print("playing")
-        picked_content = category_contents[split_command[0]]
-        user.append_watched(picked_content)
-        picked_content.play_content()
+    print('''
+        type {content number} {comand} {etc}
+        ex: 63 -p   this runs play content #63
 
+        commands:
+
+            play - "play", "-p"
+
+    ''')
+    split_command = user_input.split(" ")
+
+    command_dictionary = {
+    "play"      : ["play", "-p"],
+    "details"   : ["checkout", "details", "-v", "-c", '-d']
+    }
+    run_command = ""
+    for command in split_command:
+        if command in command_dictionary["play"]:
+            run_command += "play."
+        elif command in command_dictionary["details"]:
+            run_command += "details."
+
+    if "play" in run_command:
+        print("playing")
+        print(category_contents)
+        picked_content = category_contents.content_list[int(split_command[0])]
+        print(picked_content, picked_content.name)
+        # picked_content = category_contents[split_command[0]]
+        # user.append_watched(picked_content)
+        picked_content.play_content()
     elif user_input in command_dictionary["details"]:
         split_command = user_input.split(" ")
         print(split_command)
-        picked_content = category_contents[split_command[0]]
+        picked_content = category_contents[int(split_command[0])]
         print(picked_content.name)
-        #show content details/metadata
-    else:
-        print("command not found, please try again")
+            #show content details/metadata
 
 
 
@@ -126,16 +132,15 @@ def main_page(user):
     elif user_input.lower() in command_dictionary["category"]:
         if len(user.categories) < 1:
             user_categories = user.load_categories()
-            print(type(user_categories), user_categories)
             picked_category = show_user_categories(user_categories)
-            command = show_category_contents(picked_category)
-            run_command = content_commands(user,picked_category.load_category_contents(),command)
+            get_command = show_category_contents(picked_category)
+            run_command = content_commands(user,picked_category,get_command)
         else:
-            print(user.categories)
-            user.save_user() # temp
+            #print(user.categories)
+            #user.save_user() # temp
             picked_category = show_user_categories(user.categories)
             command = show_category_contents(picked_category)
-            run_command = content_commands(user,picked_category.load_category_contents(),command)
+            run_command = content_commands(user,picked_category,command)
 
         # user.append_watched(picked_content)
         # picked_content.play_content()

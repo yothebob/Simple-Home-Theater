@@ -12,8 +12,10 @@ class User():
 
 
     def save_user(self):
-        category_pks = [category.pk for category in self.categories]
-        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[self.pk,self.username,self.password,category_pks,self.watched],new=False,pk=self.pk)
+        #in progress
+        pass
+        # category_pks = [category.pk for category in self.categories]
+        # write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[self.pk,self.username,self.password,category_pks,self.watched],new=False,pk=self.pk)
         # load = query(settings.PROJECT_FILEPATH + "/data/users.csv", pk, "pk")
         # user = User()
         # user.pk = load[0]
@@ -25,12 +27,13 @@ class User():
 
     def add_category(self):
         ''' a function for pointing to a file for a category '''
+
         name = input("What is the name of the New Category?: ")
         folder_location = input("What is the path the the folder?: ")
         write_query(settings.PROJECT_FILEPATH + "/data/categories.csv", [self.pk,name,self.username,folder_location])
         load_category_list = query(settings.PROJECT_FILEPATH + "/data/categories.csv",name,"name")
         category = self.load_category(load_category_list)
-        self.save_user()
+        # self.save_user()
         category.write_category_contents()
         return
 
@@ -55,6 +58,7 @@ class User():
         category.name = list[2]
         category.user = list[3]
         category.folder_location = list[4]
+        category.load_category_contents()
         return category
 
 
@@ -84,12 +88,13 @@ class Category():
 
     # def __init__(self, user, folder_location, name):
 
-    pk = 0
-    fk = 0
-    user = ""
-    folder_location = ""
-    name = ""
-    content_list = []
+    def __init__(self):
+        self.pk = 0
+        self.fk = 0
+        self.user = ""
+        self.folder_location = ""
+        self.name = ""
+        self.content_list = []
 
 
     def load_content(self,list):

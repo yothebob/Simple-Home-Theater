@@ -1,4 +1,3 @@
 pk,fk,name,user,file_location
-1,1,muiisc,brandon,/home/brandon/music,
-2,1,Music,brandon,/home/brandon/Music,
-3,1,exit,brandon,eixt,
+1,1,Music,brandon,/home/brandon/Music,
+2,1,pi movies,brandon,/run/user/1000/kio-fuse-gOBfNV/smb/pi@raspberrypi.local/public/Movies,

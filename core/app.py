@@ -84,11 +84,6 @@ class App():
         user.pk = load[0]
         user.username = load[1]
         user.password = load[2]
-        relist = load[3]#.strip('][')#.split(", ")
-        # print(relist)
-        # user_categories = [print(query(settings.PROJECT_FILEPATH + "/data/categories.csv",pk,"pk")) for pk in relist]
-        # user_categories = [print(pk) for pk in relist]
-        # print(user_categories)
-        user.categories = user_categories
+        user.load_categories()
         user.watched = list(load[4])
         return user

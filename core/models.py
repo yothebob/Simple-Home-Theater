@@ -8,6 +8,7 @@ class User():
     def __init__(self):
         self.categories = []
         self.watched = []
+        self.current_category = ""
     # categories_list= []
 
 

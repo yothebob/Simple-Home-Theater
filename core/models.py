@@ -156,7 +156,7 @@ class Content():
         return os.system(f'{settings.MEDIA_PLAYER} {self.category.folder_location}/"{self.name}"')
 
 
-class ContentList():
+class PlayList():
     '''
     this class will be like genres, a list of contents put together based off a common tag or something
     '''

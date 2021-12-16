@@ -1,7 +1,8 @@
 from cli.app import CliApp
-from flask import Flask, render_template, request, g, url_for
-from webapp.forms import LoginForm, CreateUserForm
+# from flask import Flask, render_template, request, g, url_for
+# from webapp.forms import LoginForm, CreateUserForm
 import core.core_settings as settings
+from cli.command_functions import *
 
 app = CliApp()
 
@@ -50,58 +51,22 @@ def search_category_contents(category):
     print("searching...")
     # results_list = [ content for content in category.content_list if user_input.lower() in content.name.lower()]
     [print(index,": ", category.content_list[index].name) for index in range(len(category.content_list)) if user_input.lower() in category.content_list[index].name.lower()]
+    print('''
+    type {content number} {comand} {etc}
+    ex: 63 -p   this runs play content #63
+
+    commands:
+
+    play - ["play", "-p"]
+
+    search - ["search", "-s"]
+
+    autoplay - ["-a", "auto" ,"autoplay"]
+    autoplay after content is over
+    ''')
     user_input = input(": ")
     return user_input
 
-def content_commands(user, category_contents, user_input):
-
-    content_number = ''.join(map(str,[user_input[index] for index in range(len(user_input)) if user_input[index].isnumeric()]))
-    # for index in range(len(user_input)):
-    #     if user_input[index].isnumeric():
-    #         content_number += user_input[index]
-    print(content_number)
-    print('''
-        type {content number} {comand} {etc}
-        ex: 63 -p   this runs play content #63
-
-        commands:
-
-            play - "play", "-p"
-
-            search - ["search", "-s"]
-
-    ''')
-    split_command = user_input.split(" ")
-
-    command_dictionary = {
-    "play"      : ["play", "-p"],
-    "details"   : ["checkout", "details", "-v", "-c", '-d'],
-    "search"    : ["search", "-s"]
-    }
-    run_command = ""
-    for command in split_command:
-        if command in command_dictionary["play"]:
-            run_command += "play."
-        elif command in command_dictionary["details"]:
-            run_command += "details."
-        elif command in command_dictionary["search"]:
-            run_command += "search."
-
-    if "play" in run_command:
-        print("playing")
-        picked_content = category_contents.content_list[int(split_command[0])]
-        picked_content.play_content()
-
-    elif "search" in run_command:
-        picked_category = user.current_category
-        command = search_category_contents(picked_category)
-        run_command = content_commands(user,picked_category,command)
-
-    elif user_input in command_dictionary["details"]:
-        split_command = user_input.split(" ")
-        print(split_command)
-        picked_content = category_contents[int(split_command[0])]
-        print(picked_content.name)
             #show content details/metadata
 
 

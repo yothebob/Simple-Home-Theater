@@ -3,25 +3,6 @@ from core.orm import query, write_query, delete_query
 import core.core_settings as settings
 
 
-# def load_object(db_name,query_argument,object,object_variables):
-#     '''
-#     a generic function for loading any object, to be made more unique by specializing functions.
-#     querys a list based off query_argument and db_name, then writes to object_variables , then returns loaded instance
-#     db_name: (str) name of filename ex: data/users.csv
-#     query_argument: (str) an arguement to search for
-#     object: (class) pass the class to make an instance of
-#     object_variables: (list of variables) a list of the object_variables that will get loaded with query data. THIS NEEDS TO BE IN THE SAME ORDER AS THE DB COLUMNS
-#     '''
-#     data = query(db_name,query_argument)
-#     instance = object()
-#     for index in range(len(data)):
-#         if len(object_variables) >= index and len(data) >= index:
-#             instance.object_variables[index] = data[index]
-#     return instance
-
-
-
-
 #
 # User managment
 #

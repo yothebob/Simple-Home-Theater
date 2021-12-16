@@ -51,19 +51,6 @@ def search_category_contents(category):
     print("searching...")
     # results_list = [ content for content in category.content_list if user_input.lower() in content.name.lower()]
     [print(index,": ", category.content_list[index].name) for index in range(len(category.content_list)) if user_input.lower() in category.content_list[index].name.lower()]
-    print('''
-    type {content number} {comand} {etc}
-    ex: 63 -p   this runs play content #63
-
-    commands:
-
-    play - ["play", "-p"]
-
-    search - ["search", "-s"]
-
-    autoplay - ["-a", "auto" ,"autoplay"]
-    autoplay after content is over
-    ''')
     user_input = input(": ")
     return user_input
 
@@ -110,22 +97,14 @@ def main_page(user):
         return main_page(user)
 
     elif user_input.lower() in command_dictionary["category"]:
-        if len(user.categories) < 1:
-            user_categories = user.load_categories()
-            picked_category = show_user_categories(user_categories)
-            user.current_category = picked_category
+        user_categories = user.load_categories()
+        picked_category = show_user_categories(user_categories)
+        user.current_category = picked_category
+        get_command = show_category_contents(picked_category)
+        run_command = content_commands(user,picked_category,get_command)
+        while get_command.lower() != "exit":
             get_command = show_category_contents(picked_category)
             run_command = content_commands(user,picked_category,get_command)
-        else:
-            #print(user.categories)
-            #user.save_user() # temp
-            picked_category = show_user_categories(user.categories)
-            user.current_category = picked_category
-            command = show_category_contents(picked_category)
-            run_command = content_commands(user,picked_category,command)
-
-        # user.append_watched(picked_content)
-        # picked_content.play_content()
         return main_page(user)
 
     elif user_input.lower() in command_dictionary["add"]:

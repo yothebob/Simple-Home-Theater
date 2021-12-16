@@ -45,7 +45,7 @@ class User():
         return all user categories
         '''
         categories_query_list = query(settings.PROJECT_FILEPATH + "/data/categories.csv",self.pk,"fk","find all")
-        # print(categories_query_list)
+        self.categories = []
         for category in categories_query_list:
             self.categories.append(self.load_category(category))
         # print(self.categories_list)

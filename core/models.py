@@ -31,8 +31,8 @@ class User():
 
         name = input("What is the name of the New Category?: ")
         folder_location = input("What is the path the the folder?: ")
-        write_query(settings.PROJECT_FILEPATH + "/data/categories.csv", [self.pk,name,self.username,folder_location])
-        load_category_list = query(settings.PROJECT_FILEPATH + "/data/categories.csv",name,"name")
+        write_query(settings.PROJECT_FILEPATH + settings.CATEGORY_TABLE, [self.pk,name,self.username,folder_location])
+        load_category_list = query(settings.PROJECT_FILEPATH + settings.CATEGORY_TABLE,name,"name")
         category = self.load_category(load_category_list)
         # self.save_user()
         category.write_category_contents()
@@ -44,7 +44,7 @@ class User():
         '''
         return all user categories
         '''
-        categories_query_list = query(settings.PROJECT_FILEPATH + "/data/categories.csv",self.pk,"fk","find all")
+        categories_query_list = query(settings.PROJECT_FILEPATH + settings.CATEGORY_TABLE,self.pk,"fk","find all")
         self.categories = []
         for category in categories_query_list:
             self.categories.append(self.load_category(category))
@@ -118,7 +118,7 @@ class Category():
         arg : content - instance of Category()
         '''
         for file in os.listdir(self.folder_location):
-            write_query(settings.PROJECT_FILEPATH + "/data/contents.csv",[str(self.pk),str(file),"","","",""])
+            write_query(settings.PROJECT_FILEPATH + settings.CONTENT_TABLE,[str(self.pk),str(file),"","","",""])
         return
 
     def load_category_contents(self):
@@ -126,7 +126,7 @@ class Category():
         for loading exsisting category
         quering the db to load the Category object with contents
         '''
-        load_contents = query(settings.PROJECT_FILEPATH + '/data/contents.csv',self.pk,"fk","find all")
+        load_contents = query(settings.PROJECT_FILEPATH + settings.CONTENT_TABLE,self.pk,"fk","find all")
         # print(load_contents)
         for content in load_contents:
             # print("content: ",content)

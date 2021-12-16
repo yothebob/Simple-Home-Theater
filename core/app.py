@@ -23,17 +23,17 @@ class App():
     def create_user(self,username,password,password_again):
         '''create and save a new user to database '''
         #maybe i should store them as .lower() and as regular (so I know if there is just a caps problem)?
-        username_taken = query(settings.PROJECT_FILEPATH +"/data/users.csv",username)
+        username_taken = query(settings.PROJECT_FILEPATH +settings.USER_TABLE,username)
         if username_taken is not None:
             if username_taken[1] == username:
                 return # username taken
         if password != password_again:
             return # passwords dont match
-        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[username,password,"",""])
+        write_query(settings.PROJECT_FILEPATH + settings.USER_TABLE,[username,password,"",""])
 
 
     def login(self,username,password):
-        verify_credidentials = query(settings.PROJECT_FILEPATH + "/data/users.csv", username)
+        verify_credidentials = query(settings.PROJECT_FILEPATH + settings.USER_TABLE, username)
         if verify_credidentials is not None:
             #user found, attempting to authenticate
             if verify_credidentials[1] == username and verify_credidentials[2] == password:
@@ -50,16 +50,16 @@ class App():
 
     def delete_user(self,username,password,password_again):
         if password == password_again:
-            verify_credidentials = query(settings.PROJECT_FILEPATH + "/data/users.csv", username)
+            verify_credidentials = query(settings.PROJECT_FILEPATH + settings.USER_TABLE, username)
         if verify_credidentials:
             if verify_credidentials[1] == username and verify_credidentials[2] == password:
-                delete_query(settings.PROJECT_FILEPATH + "/data/users.csv",username)
+                delete_query(settings.PROJECT_FILEPATH + settings.USER_TABLE,username)
                 return
         return
 
 
     def load_user(self,pk):
-        load = query(settings.PROJECT_FILEPATH + "/data/users.csv", pk, "pk")
+        load = query(settings.PROJECT_FILEPATH + settings.USER_TABLE, pk, "pk")
         [print(index,load[index]) for index in range(len(load))]
         user = User()
         user.pk = load[0]

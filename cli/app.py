@@ -18,21 +18,21 @@ class CliApp(App):
         username = input("Username: ")
         password = input("Password: ")
         password_again = input("Password: ")
-        username_taken = query(settings.PROJECT_FILEPATH +"/data/users.csv",username)
+        username_taken = query(settings.PROJECT_FILEPATH + settings.USER_TABLE,username)
         if username_taken is not None:
             while username_taken[1] == username:
                 print("username taken")
                 username = input("Username: ")
                 password = input("Password: ")
                 password_again = input("Password: ")
-                username_taken = query(settings.PROJECT_FILEPATH + "/data/users.csv",username)
+                username_taken = query(settings.PROJECT_FILEPATH + settings.USER_TABLE,username)
 
         while password != password_again:
             print("not matching passwords, please try again")
             password = input("Password: ")
             password_again = input("Password: ")
 
-        write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[username,password,"",""])
+        write_query(settings.PROJECT_FILEPATH + settings.USER_TABLE,[username,password,"",""])
 
 
 
@@ -41,7 +41,7 @@ class CliApp(App):
         username = input("Username: ")
         password = input("Password: ")
 
-        verify_credidentials = query(settings.PROJECT_FILEPATH + "/data/users.csv", username)
+        verify_credidentials = query(settings.PROJECT_FILEPATH + settings.USER_TABLE, username)
         if verify_credidentials is not None:
             #user found, attempting to authenticate
             if verify_credidentials[1] == username and verify_credidentials[2] == password:
@@ -75,8 +75,8 @@ class CliApp(App):
         password_again = input("Password:")
 
         if password == password_again:
-            verify_password = query(settings.PROJECT_FILEPATH + "/data/users.csv", password)
-            verify_username = query(settings.PROJECT_FILEPATH + "/data/users.csv",username)
+            verify_password = query(settings.PROJECT_FILEPATH + settings.USER_TABLE, password)
+            verify_username = query(settings.PROJECT_FILEPATH + settings.USER_TABLE,username)
 
         if verify_username is not None and verify_password is not None:
-            delete_query(settings.PROJECT_FILEPATH + "/data/users.csv",username)
+            delete_query(settings.PROJECT_FILEPATH + settings.USER_TABLE,username)

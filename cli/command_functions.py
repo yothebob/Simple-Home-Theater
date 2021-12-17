@@ -44,9 +44,10 @@ def content_commands(user, category_contents, user_input):
     content_number = ''.join(map(str,[user_input[index] for index in range(len(user_input)) if user_input[index].isnumeric()]))
     print(content_number)
     split_command = user_input.split(" ")
-
+    print(f"In {category_contents.name} category...")
     command_dictionary = {
     "play"      : ["play", "-p"],
+    "list"      : ["ls"],
     "details"   : ["checkout", "details", "-v", "-c", '-d'],
     "search"    : ["search", "-s"],
     "autoplay"  : ["-a", "auto" ,"autoplay","-auto"],
@@ -69,6 +70,8 @@ def content_commands(user, category_contents, user_input):
             run_command += "replay."
         elif command in command_dictionary["help"]:
             run_command += "help."
+        elif command in command_dictionary["list"]:
+            run_command += "list."
 
     autoplay = False
     replay = False
@@ -122,6 +125,9 @@ def content_commands(user, category_contents, user_input):
             picked_category = user.current_category
             command = search_category_contents(picked_category)
             run_command = content_commands(user,picked_category,command)
+
+        if "list" in run_command:
+            [print(content.name) for content in user.current_category.content_list]
     else:
         print("please try again")
         return

@@ -7,22 +7,6 @@ from cli.command_functions import *
 app = CliApp()
 
 
-def home_page():
-    '''welcome screen function and login/create user functionality'''
-    print("""
-        {}
-
-        type 'login' to login as existing user.
-        type 'create' to create new user.
-        """.format(settings.APP_NAME))
-    user_input = input(": ")
-    if user_input.lower() == "login":
-        return app.login()
-    elif user_input.lower() == "create":
-        app.create_user()
-        return app.login()
-
-
 def show_user_categories(user_categories):
     print("user categories:")
     [print(index,": ",user_categories[index].name) for index in range(len(user_categories))]
@@ -31,13 +15,13 @@ def show_user_categories(user_categories):
     return user_categories[int(user_input)]
 
 
-
-def show_category_contents(category):
-    "This will just show all contents for now"
-    category_contents = category.content_list
-    [print(index, ": ", category_contents[index].name) for index in range(len(category_contents))] ## TODO: for some reason this is printing too many, but the length is fine?
-    user_input = input(": ")
-    return user_input
+# currently obsolete
+# def show_category_contents(category):
+#     "This will just show all contents for now"
+#     category_contents = category.content_list
+#     [print(index, ": ", category_contents[index].name) for index in range(len(category_contents))] ## TODO: for some reason this is printing too many, but the length is fine?
+#     user_input = input(": ")
+#     return user_input
 
 
 
@@ -83,28 +67,31 @@ def main_page(user):
         user_categories = user.load_categories()
         picked_category = show_user_categories(user_categories)
         user.current_category = picked_category
-        get_command = show_category_contents(picked_category)
+        print(f"in {picked_category.name} category...")
+        get_command = input(": ")
         # user.create_playlist()
         run_command = content_commands(user,picked_category,get_command)
         while get_command.lower() != "exit":
-            get_command = show_category_contents(picked_category)
+            get_command = input(": ")
             # user.create_playlist()
-            print(get_command)
             run_command = content_commands(user,picked_category,get_command)
         return main_page(user)
 
     elif user_input.lower() in command_dictionary["add"]:
          user.add_category()
          return main_page(user)
+
     elif user_input.lower() in command_dictionary["reload"]:
-        #return user. # this needs to reload the category contents and rename and items and etc, erase any that have been removed, add any new items
         return main_page(user)
+
     elif user_input.lower() in command_dictionary["watched"]:
         user.get_watched()
         return main_page(user)
+
     elif user_input.lower() in command_dictionary["passwd"]:
         user.change_password()
         return main_page(user)
+
     elif user_input.lower() in command_dictionary["exit"]:
         exit()
 
@@ -114,7 +101,7 @@ def main_page(user):
 
 
 def run_app():
-    user = home_page()
+    user = app.home_page()
     main_page(user)
     print(user.watched)
 

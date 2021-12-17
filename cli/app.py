@@ -9,6 +9,24 @@ class CliApp(App):
     a class for managing the cli app, doing admin thing and etc
     '''
 
+    def home_page(self):
+        '''welcome screen function and login/create user functionality'''
+        print("""
+            {}
+
+            type 'login' to login as existing user.
+            type 'create' to create new user.
+            """.format(settings.APP_NAME))
+        user_input = input(": ")
+        if user_input.lower() == "login":
+            return self.login()
+        elif user_input.lower() == "create":
+            self.create_user()
+            return self.login()
+        else:
+            print("Please try again...")
+            return self.home_page()
+
 
     def create_user(self):
         '''create and save a new user to database '''
@@ -80,6 +98,3 @@ class CliApp(App):
 
         if verify_username is not None and verify_password is not None:
             delete_query(settings.PROJECT_FILEPATH + settings.USER_TABLE,username)
-
-
-    

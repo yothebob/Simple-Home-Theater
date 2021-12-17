@@ -2,28 +2,16 @@ import os
 import sys
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
+from datetime import datetime
 
 class User():
 
     def __init__(self):
         self.categories = []
         self.watched = []
+        self.watched_content = []
         self.current_category = ""
-    # categories_list= []
-
-
-    def save_user(self):
-        #in progress
-        pass
-        # category_pks = [category.pk for category in self.categories]
-        # write_query(settings.PROJECT_FILEPATH + "/data/users.csv",[self.pk,self.username,self.password,category_pks,self.watched],new=False,pk=self.pk)
-        # load = query(settings.PROJECT_FILEPATH + "/data/users.csv", pk, "pk")
-        # user = User()
-        # user.pk = load[0]
-        # user.username = load[1]
-        # user.password = load[2]
-        # user.categories = load[3]
-        # user.watched = list(load[4])
+        self.playlist_stack = []
 
 
     def add_category(self):
@@ -37,7 +25,6 @@ class User():
         # self.save_user()
         category.write_category_contents()
         return
-
 
 
     def load_categories(self):
@@ -63,15 +50,41 @@ class User():
         return category
 
 
+    def load_watched(self):
+        ''' loads watched from DB, created watched objects and content objects. saves both in user lists'''
+        watched = query(settings.PROJECT_FILEPATH + settings.WATCH_TABLE,self.pk,"user_pk","find all")
+        print(watched)
+        if watched is not None:
+            for item in watched:
+                watched_instance = Watch(item[0],item[1],item[2],item[3])
+                self.watched_content.append(watched_instance.content)
+                self.watched.append(watched_instance)
+        [print(watch.name) for watch in self.watched_content]
+        return
+
+
     def append_watched(self,content):
         ''' get list of watched movies per username'''
         print(type(self.watched))
         self.watched.append(content.pk)
+        write_query(settings.PROJECT_FILEPATH + settings.WATCH_TABLE, [self.pk,content.pk,datetime.now()])
         return
 
-    def get_categories(self):
-        '''get list of category objects the user has'''
-        pass
+
+    def create_playlist(self,type="recent",size=10):
+        '''a function for creating any playlist (maybe another function for customized ones)'''
+        if type == "recent":
+            playlist = PlayList()
+            playlist.name = "Recently Played"
+            # playlist.user = self.username
+            for index in range(len(self.watched_content)):
+                playlist.content_list.append(self.watched_content[index])
+            print(playlist.name)
+            [print(playlist_content.name) for playlist_content in playlist.content_list]
+        self.playlist_stack.append(playlist)
+
+
+
 
     def change_password(self):
         old_password = input("Old Password:")
@@ -159,8 +172,13 @@ class Content():
 class PlayList():
     '''
     this class will be like genres, a list of contents put together based off a common tag or something
+    (play lists will not be saved in the DB... as of right now)
     '''
-    pass
+    def __init__(self):
+        self.user = ""
+        self.name = ""
+        self.content_list = []
+
 
 class Genre():
 
@@ -173,3 +191,25 @@ class Tag():
 
     def __init__():
         self.name = name
+
+
+class Watch():
+
+    def __init__(self,pk,user_pk,content_pk,date):
+        self.pk = pk
+        self.user_pk = user_pk
+        self.content_pk = content_pk
+        self.date = date
+
+    @property
+    def content(self):
+        list = query(settings.PROJECT_FILEPATH + settings.CONTENT_TABLE, self.content_pk, "content_pk")
+        instance = Content()
+        instance.pk = list[0]
+        instance.fk = list[1]
+        instance.name = list[2]
+        instance.type = list[4]
+        instance.category= "" #
+        instance.genre = list[5]
+        instance.tags = list[6]
+        return instance

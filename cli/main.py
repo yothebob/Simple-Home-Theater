@@ -34,27 +34,10 @@ def show_user_categories(user_categories):
 
 def show_category_contents(category):
     "This will just show all contents for now"
-    print("""Category contents:
-            type the number, then type ...
-            play - play contents
-            checkout - see content metadata
-    """)
     category_contents = category.content_list
     [print(index, ": ", category_contents[index].name) for index in range(len(category_contents))] ## TODO: for some reason this is printing too many, but the length is fine?
     user_input = input(": ")
     return user_input
-
-
-
-def search_category_contents(category):
-    user_input = input(": ")
-    print("searching...")
-    # results_list = [ content for content in category.content_list if user_input.lower() in content.name.lower()]
-    [print(index,": ", category.content_list[index].name) for index in range(len(category.content_list)) if user_input.lower() in category.content_list[index].name.lower()]
-    user_input = input(": ")
-    return user_input
-
-            #show content details/metadata
 
 
 
@@ -101,9 +84,12 @@ def main_page(user):
         picked_category = show_user_categories(user_categories)
         user.current_category = picked_category
         get_command = show_category_contents(picked_category)
+        # user.create_playlist()
         run_command = content_commands(user,picked_category,get_command)
         while get_command.lower() != "exit":
             get_command = show_category_contents(picked_category)
+            # user.create_playlist()
+            print(get_command)
             run_command = content_commands(user,picked_category,get_command)
         return main_page(user)
 

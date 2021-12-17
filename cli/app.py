@@ -80,3 +80,6 @@ class CliApp(App):
 
         if verify_username is not None and verify_password is not None:
             delete_query(settings.PROJECT_FILEPATH + settings.USER_TABLE,username)
+
+
+    

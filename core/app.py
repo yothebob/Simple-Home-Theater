@@ -66,5 +66,5 @@ class App():
         user.username = load[1]
         user.password = load[2]
         user.load_categories()
-        user.watched = list(load[4])
+        user.load_watched()
         return user

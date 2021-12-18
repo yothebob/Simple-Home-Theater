@@ -1,5 +1,6 @@
 #core
 from time import sleep
+from random import choice
 
 #local
 from core.models import Category, User, Genre, Tag, Content
@@ -28,14 +29,15 @@ def play_next(picked_content,playlist=None):
     if playlist is None:
         return picked_content + 1
 
+def play_random(content_list,playlist=None):
+    if playlist is None:
+        return choice(content_list)
 
 
 def search_category_contents(category):
     user_input = input(": ")
     print("searching...")
     [print(index,": ", category.content_list[index].name) for index in range(len(category.content_list)) if user_input.lower() in category.content_list[index].name.lower()]
-    user_input = input(": ")
-    return user_input
 
 
 
@@ -52,6 +54,7 @@ def content_commands(user, category_contents, user_input):
     "search"    : ["search", "-s"],
     "autoplay"  : ["-a", "auto" ,"autoplay","-auto"],
     "replay"    : ["-r", "replay", "-re"],
+    "shuffle": ["-sp","shuffle", "-shuffle", "-randomize"],
     "help"      : ["-h", "help", "--help"],
     "exit"      : ["exit"]
     }
@@ -72,9 +75,13 @@ def content_commands(user, category_contents, user_input):
             run_command += "help."
         elif command in command_dictionary["list"]:
             run_command += "list."
+        elif command in command_dictionary["shuffle"]:
+            run_command += "shuffle."
 
     autoplay = False
     replay = False
+    shuffle = False
+
     if run_command:
         if "autoplay" in run_command:
             print("auto play enabled")
@@ -84,12 +91,19 @@ def content_commands(user, category_contents, user_input):
             print("replay enabled")
             replay = True
 
+        if "shuffle" in run_command:
+            print("shuffle enabled")
+            shuffle = True
+
         if "play" in run_command:
             print("playing")
-            picked_content = category_contents.content_list[int(split_command[0])]
-            picked_content.play_content()
-            user.append_watched(picked_content)
-            play_count = -1
+            if split_command[0].isnumeric():
+                picked_content = category_contents.content_list[int(split_command[0])]
+                picked_content.play_content()
+                user.append_watched(picked_content)
+                play_count = -1
+            else:
+                print("no index given... please try again")
             while replay:
                 try:
                     autoplaying(settings.AUTOPLAY_COUNTDOWN)
@@ -113,6 +127,17 @@ def content_commands(user, category_contents, user_input):
                     print("auto play disabled")
                     autoplay = False
 
+            while shuffle:
+                try:
+                    picked_content = play_random(category_contents.content_list)
+                    print(f"{picked_content.name} Next up...")
+                    autoplaying(settings.AUTOPLAY_COUNTDOWN)
+                    picked_content.play_content()
+                    user.append_watched(picked_content)
+                except KeyboardInterrupt:
+                    print("shuffle disabled")
+                    shuffle = False
+
 
         if "details" in run_command:
             split_command = user_input.split(" ")
@@ -123,11 +148,15 @@ def content_commands(user, category_contents, user_input):
         if "search" in run_command:
             print("searching...")
             picked_category = user.current_category
-            command = search_category_contents(picked_category)
-            run_command = content_commands(user,picked_category,command)
+            search_category_contents(picked_category)
+            # command = input(": ")
+            # run_command = content_commands(user,picked_category,command)
 
         if "list" in run_command:
-            [print(content.name) for content in user.current_category.content_list]
+            [print(index," : ",user.current_category.content_list[index].name) for index in range(len(user.current_category.content_list))]
+        if "help" in run_command:
+            print("Commands:\n")
+            [print(key, item) for key, item in command_dictionary.items()]
     else:
         print("please try again")
         return

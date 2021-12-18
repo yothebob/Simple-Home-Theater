@@ -15,15 +15,6 @@ def show_user_categories(user_categories):
     return user_categories[int(user_input)]
 
 
-# currently obsolete
-# def show_category_contents(category):
-#     "This will just show all contents for now"
-#     category_contents = category.content_list
-#     [print(index, ": ", category_contents[index].name) for index in range(len(category_contents))] ## TODO: for some reason this is printing too many, but the length is fine?
-#     user_input = input(": ")
-#     return user_input
-
-
 
 def main_page(user):
     print("""
@@ -32,7 +23,7 @@ def main_page(user):
     user_input = input(": ")
     command_dictionary = {
         "add"    : ["add","-a","-add","--add"],
-        "reload" : ["reload", "-r", "--reload", "-reload", "re", "-re", "load"],
+        "sync" : ["sync", "-s", "--sync", "reload", "load"],
         "watched": ["watched", "--watched", "-watched" , "-w", "watch", "--watch"],
         "passwd" : ["passwd", "--passwd", "password", "-p", "--password"],
         "exit"   : ["exit", "end", "-e", "--end", "--exit"],
@@ -40,27 +31,8 @@ def main_page(user):
         "category" : ["cat", "category", "-cat", "--category"]
     }
     if user_input.lower() in command_dictionary["help"]:
-        print("""
-        commands:
-    category {}
-                - go to your categories list
-
-    add      {}
-                - add new category
-
-    reload   {}
-                - reload category
-
-    watched  {}
-                - show list of played content
-
-    passwd   {}
-                - change password
-
-    exit     {}
-                - exit program
-        """.format(command_dictionary["category"],command_dictionary["add"],command_dictionary["reload"],
-        command_dictionary["watched"],command_dictionary["passwd"],command_dictionary["exit"]))
+        print("Commands: ")
+        print([print(key,val) for key, val in command_dictionary.items()])
         return main_page(user)
 
     elif user_input.lower() in command_dictionary["category"]:
@@ -81,7 +53,8 @@ def main_page(user):
          user.add_category()
          return main_page(user)
 
-    elif user_input.lower() in command_dictionary["reload"]:
+    elif user_input.lower() in command_dictionary["sync"]:
+        user.sync_categories()
         return main_page(user)
 
     elif user_input.lower() in command_dictionary["watched"]:

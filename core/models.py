@@ -35,7 +35,6 @@ class User():
         self.categories = []
         for category in categories_query_list:
             self.categories.append(self.load_category(category))
-        # print(self.categories_list)
         return self.categories
 
 
@@ -53,19 +52,19 @@ class User():
     def load_watched(self):
         ''' loads watched from DB, created watched objects and content objects. saves both in user lists'''
         watched = query(settings.PROJECT_FILEPATH + settings.WATCH_TABLE,self.pk,"user_pk","find all")
-        print(watched)
+        # print(watched)
         if watched is not None:
             for item in watched:
                 watched_instance = Watch(item[0],item[1],item[2],item[3])
                 self.watched_content.append(watched_instance.content)
                 self.watched.append(watched_instance)
-        [print(watch.name) for watch in self.watched_content]
+        # [print(watch.name) for watch in self.watched_content]
         return
 
 
     def append_watched(self,content):
         ''' get list of watched movies per username'''
-        print(type(self.watched))
+        # print(type(self.watched))
         self.watched.append(content.pk)
         write_query(settings.PROJECT_FILEPATH + settings.WATCH_TABLE, [self.pk,content.pk,datetime.now()])
         return
@@ -79,10 +78,14 @@ class User():
             # playlist.user = self.username
             for index in range(len(self.watched_content)):
                 playlist.content_list.append(self.watched_content[index])
-            print(playlist.name)
-            [print(playlist_content.name) for playlist_content in playlist.content_list]
+            # print(playlist.name)
+            # [print(playlist_content.name) for playlist_content in playlist.content_list]
         self.playlist_stack.append(playlist)
 
+
+    def sync_categories(self):
+        for category in self.categories:
+            category.sync()
 
 
 
@@ -122,6 +125,16 @@ class Category():
         instance.genre = list[5]
         instance.tags = list[6]
         return instance
+
+
+    def sync(self):
+        for file in os.listdir(self.folder_location):
+            try:
+                find_file = query(settings.PROJECT_FILEPATH + settings.CONTENT_TABLE,file,"name")
+                if find_file is not None:
+                    write_query(file,[item for item in find_file],False,find_file[0])
+            except:
+                write_query(settings.PROJECT_FILEPATH + settings.CONTENT_TABLE,[str(self.pk),str(file),"","","",""])
 
 
     def write_category_contents(self):

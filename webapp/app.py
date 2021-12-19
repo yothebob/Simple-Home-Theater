@@ -24,7 +24,7 @@ class FlaskApp(App):
         login_form = LoginForm(request.form)
         error = ""
         if request.method == "POST":
-            verify_credidentials = query(settings.PROJECT_FILEPATH + settings.USER_TABLE, login_form.username.data)
+            verify_credidentials = query(settings.USER_TABLE, login_form.username.data)
             if verify_credidentials is not None:
                 #user found, attempting to authenticate
                 if verify_credidentials[1] == login_form.username.data and verify_credidentials[2] == login_form.password.data:
@@ -46,7 +46,7 @@ class FlaskApp(App):
         '''create and save a new user to database '''
         create_form = CreateUserForm(request.form)
         if request.method == "POST":
-            username_taken = query(settings.PROJECT_FILEPATH +settings.USER_TABLE,create_form.username.data)
+            username_taken = query(settings.USER_TABLE,create_form.username.data)
             if username_taken is not None:
                 if username_taken[1] == create_form.username.data:
                     error = "Username Taken."
@@ -56,7 +56,7 @@ class FlaskApp(App):
                 error = "Passwords don't match, please try again."
                 return render_template("login.html",error=error)# passwords dont match
 
-            write_query(settings.PROJECT_FILEPATH + settings.USER_TABLE,[create_form.username.data,create_form.password.data,[],[]])
+            write_query(settings.USER_TABLE,[create_form.username.data,create_form.password.data,[],[]])
             return render_template("login.html") # user created. go to login
 
     app.run()

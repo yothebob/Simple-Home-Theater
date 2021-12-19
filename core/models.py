@@ -19,8 +19,8 @@ class User():
 
         name = input("What is the name of the New Category?: ")
         folder_location = input("What is the path the the folder?: ")
-        write_query(settings.PROJECT_FILEPATH + settings.CATEGORY_TABLE, [self.pk,name,self.username,folder_location])
-        load_category_list = query(settings.PROJECT_FILEPATH + settings.CATEGORY_TABLE,name,"name")
+        write_query(settings.CATEGORY_TABLE, [self.pk,name,self.username,folder_location])
+        load_category_list = query(settings.CATEGORY_TABLE,name,"name")
         category = self.load_category(load_category_list)
         # self.save_user()
         category.write_category_contents()
@@ -31,7 +31,7 @@ class User():
         '''
         return all user categories
         '''
-        categories_query_list = query(settings.PROJECT_FILEPATH + settings.CATEGORY_TABLE,self.pk,"fk","find all")
+        categories_query_list = query(settings.CATEGORY_TABLE,self.pk,"fk","find all")
         self.categories = []
         for category in categories_query_list:
             self.categories.append(self.load_category(category))
@@ -51,7 +51,7 @@ class User():
 
     def load_watched(self):
         ''' loads watched from DB, created watched objects and content objects. saves both in user lists'''
-        watched = query(settings.PROJECT_FILEPATH + settings.WATCH_TABLE,self.pk,"user_pk","find all")
+        watched = query(settings.WATCH_TABLE,self.pk,"user_pk","find all")
         # print(watched)
         if watched is not None:
             for item in watched:
@@ -66,7 +66,7 @@ class User():
         ''' get list of watched movies per username'''
         # print(type(self.watched))
         self.watched.append(content.pk)
-        write_query(settings.PROJECT_FILEPATH + settings.WATCH_TABLE, [self.pk,content.pk,datetime.now()])
+        write_query(settings.WATCH_TABLE, [self.pk,content.pk,datetime.now()])
         return
 
 
@@ -128,13 +128,18 @@ class Category():
 
 
     def sync(self):
+        find_files = query(settings.CONTENT_TABLE,self.pk,"fk","find all")
+        found = 0
+        not_found = 0
         for file in os.listdir(self.folder_location):
-            try:
-                find_file = query(settings.PROJECT_FILEPATH + settings.CONTENT_TABLE,file,"name")
-                if find_file is not None:
-                    write_query(file,[item for item in find_file],False,find_file[0])
-            except:
-                write_query(settings.PROJECT_FILEPATH + settings.CONTENT_TABLE,[str(self.pk),str(file),"","","",""])
+            find_file = query(settings.CONTENT_TABLE,file,"name")
+            if find_file is not None:
+                found += 1
+            else:
+                write_query(settings.CONTENT_TABLE,[self.fk,str(file),"","","",""])
+                print(f"wrote {file}")
+                not_found += 1
+        print("found: ",found,"\nnot found: ",not_found)
 
 
     def write_category_contents(self):
@@ -144,7 +149,7 @@ class Category():
         arg : content - instance of Category()
         '''
         for file in os.listdir(self.folder_location):
-            write_query(settings.PROJECT_FILEPATH + settings.CONTENT_TABLE,[str(self.pk),str(file),"","","",""])
+            write_query(settings.CONTENT_TABLE,[str(self.pk),str(file),"","","",""])
         return
 
     def load_category_contents(self):
@@ -152,7 +157,7 @@ class Category():
         for loading exsisting category
         quering the db to load the Category object with contents
         '''
-        load_contents = query(settings.PROJECT_FILEPATH + settings.CONTENT_TABLE,self.pk,"fk","find all")
+        load_contents = query(settings.CONTENT_TABLE,self.pk,"fk","find all")
         # print(load_contents)
         for content in load_contents:
             # print("content: ",content)
@@ -216,7 +221,7 @@ class Watch():
 
     @property
     def content(self):
-        list = query(settings.PROJECT_FILEPATH + settings.CONTENT_TABLE, self.content_pk, "content_pk")
+        list = query(settings.CONTENT_TABLE, self.content_pk, "content_pk")
         instance = Content()
         instance.pk = list[0]
         instance.fk = list[1]

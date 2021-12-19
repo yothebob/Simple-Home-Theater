@@ -5,7 +5,7 @@ DEPLOYMENT_TYPE = "CLI"
 APP_NAME = "Simple Home Theater"
 AUTOPLAY_COUNTDOWN = 3#30
 
-USER_TABLE = "/data/users.csv"
-CATEGORY_TABLE = "/data/categories.csv"
-CONTENT_TABLE = "/data/contents.csv"
-WATCH_TABLE = "/data/watches.csv"
+USER_TABLE =  PROJECT_FILEPATH + "/data/users.csv"
+CATEGORY_TABLE = PROJECT_FILEPATH + "/data/categories.csv"
+CONTENT_TABLE = PROJECT_FILEPATH + "/data/contents.csv"
+WATCH_TABLE = PROJECT_FILEPATH + "/data/watches.csv"

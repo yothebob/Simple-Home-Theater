@@ -11,8 +11,8 @@ def show_user_categories(user_categories):
     print("user categories:")
     [print(index,": ",user_categories[index].name) for index in range(len(user_categories))]
     print("type a number to pick a category:\n")
-    user_input = input(": ")
-    return user_categories[int(user_input)]
+    # user_input = input(": ")
+    # return user_input
 
 
 
@@ -37,12 +37,18 @@ def main_page(user):
 
     elif user_input.lower() in command_dictionary["category"]:
         user_categories = user.load_categories()
-        picked_category = show_user_categories(user_categories)
-        user.current_category = picked_category
-        print(f"in {picked_category.name} category...")
-        get_command = input(": ")
-        # user.create_playlist()
-        run_command = content_commands(user,picked_category,get_command)
+        show_user_categories(user_categories)
+        user_input = input(": ")
+        if user_input.isnumeric():
+            picked_category = user_categories[int(user_input)]
+            user.current_category = picked_category
+            print(f"in {user.current_category.name} category...")
+            get_command = input(": ")
+            # user.create_playlist()
+            run_command = content_commands(user,picked_category,get_command)
+        else:
+            print("not valid")
+            return main_page(user)
         while get_command.lower() != "exit":
             get_command = input(": ")
             # user.create_playlist()

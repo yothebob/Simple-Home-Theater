@@ -2,6 +2,8 @@ import os
 import sys
 
 
+# TODO:  make all these functions only take args/kwargs
+
 def write_query(filename,arguments,new=True,pk=None):
     '''a function for writing to a "DB" file
         filename : str
@@ -13,6 +15,7 @@ def write_query(filename,arguments,new=True,pk=None):
         pk : int or None
             a number for primary key, only use with new = False
     '''
+
     if new == True:
         database = open(filename, "a")
         PK = len([line for line in open(filename, 'r')])

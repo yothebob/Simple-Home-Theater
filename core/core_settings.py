@@ -4,6 +4,7 @@ DEPLOYMENT_TYPE = "CLI"
 # DEPLOYMENT_TYPE = "WEB"
 APP_NAME = "Simple Home Theater"
 AUTOPLAY_COUNTDOWN = 3#30
+CONTENT_FILETYPES = ["mp4","mp3","opus"]
 
 USER_TABLE =  PROJECT_FILEPATH + "/data/users.csv"
 CATEGORY_TABLE = PROJECT_FILEPATH + "/data/categories.csv"

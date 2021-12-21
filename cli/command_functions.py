@@ -1,6 +1,6 @@
 #core
 from time import sleep
-from random import choice
+from random import choice, randrange
 
 #local
 from core.models import Category, User, Genre, Tag, Content
@@ -32,7 +32,8 @@ def play_next(picked_content,playlist=None):
 def play_random(content_list,playlist=None):
     if playlist is None:
         return choice(content_list)
-
+    # else:
+    #     return randrange(len(content_list))
 
 def search_category_contents(category):
     user_input = input(": ")
@@ -98,18 +99,23 @@ def content_commands(user, category_contents, user_input):
         if "play" in run_command:
             print("playing")
             if split_command[0].isnumeric():
-                picked_content = category_contents.content_list[int(split_command[0])]
-                picked_content.play_content()
-                user.append_watched(picked_content)
+                content_indexes = [index for index in split_command if index.isnumeric()]
+                print(content_indexes)
                 play_count = -1
+                for content_index in content_indexes:
+                    picked_content = category_contents.content_list[int(content_index)]
+                    picked_content.play_content()
+                    user.append_watched(picked_content)
             else:
                 print("no index given... please try again")
             while replay:
                 try:
-                    autoplaying(settings.AUTOPLAY_COUNTDOWN)
-                    picked_content = category_contents.content_list[int(split_command[0])]
-                    picked_content.play_content()
-                    user.append_watched(picked_content)
+                    content_indexes = [index for index in split_command if index.isnumeric()]
+                    for content_index in content_indexes:
+                        autoplaying(settings.AUTOPLAY_COUNTDOWN)
+                        picked_content = category_contents.content_list[int(content_index)]
+                        picked_content.play_content()
+                        user.append_watched(picked_content)
                 except KeyboardInterrupt:
                     print("replay disabled")
                     replay = False
@@ -129,7 +135,12 @@ def content_commands(user, category_contents, user_input):
 
             while shuffle:
                 try:
-                    picked_content = play_random(category_contents.content_list)
+                    content_indexes = [index for index in split_command if index.isnumeric()]
+                    if len(content_indexes) > 1:
+                        picked_index = play_random(content_indexes)
+                        picked_content = category_contents.content_list[picked_index]
+                    else:
+                        picked_content = play_random(category_contents.content_list)
                     print(f"{picked_content.name} Next up...")
                     autoplaying(settings.AUTOPLAY_COUNTDOWN)
                     picked_content.play_content()
@@ -153,6 +164,7 @@ def content_commands(user, category_contents, user_input):
             # run_command = content_commands(user,picked_category,command)
 
         if "list" in run_command:
+            #not wrking yet# [print(index," : ",user.current_category.content_list[index].name,user.current_category.content_list[index].play_length) for index in range(len(user.current_category.content_list))]
             [print(index," : ",user.current_category.content_list[index].name) for index in range(len(user.current_category.content_list))]
         if "help" in run_command:
             print("Commands:\n")

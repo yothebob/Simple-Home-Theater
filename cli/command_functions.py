@@ -138,7 +138,7 @@ def content_commands(user, category_contents, user_input):
                     content_indexes = [index for index in split_command if index.isnumeric()]
                     if len(content_indexes) > 1:
                         picked_index = play_random(content_indexes)
-                        picked_content = category_contents.content_list[picked_index]
+                        picked_content = category_contents.content_list[int(picked_index)]
                     else:
                         picked_content = play_random(category_contents.content_list)
                     print(f"{picked_content.name} Next up...")

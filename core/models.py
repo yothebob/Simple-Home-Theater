@@ -123,6 +123,7 @@ class Category():
         instance.fk = list[1]
         instance.name = list[2]
         instance.category = self
+        instance.subfolder = list[3]
         instance.type = list[4]
         instance.genre = list[5]
         instance.tags = list[6]
@@ -151,7 +152,12 @@ class Category():
         arg : content - instance of Category()
         '''
         for file in os.listdir(self.folder_location):
-            write_query(settings.CONTENT_TABLE,[str(self.pk),str(file),"","","",""])
+            if os.path.isdir(self.folder_location + '/' + file):
+                print("found folder")
+                for subfile in os.listdir(str(self.folder_location + "/"+ file)):
+                    write_query(settings.CONTENT_TABLE,[str(self.pk),str(subfile),str(file),"","",""])
+            else:
+                write_query(settings.CONTENT_TABLE,[str(self.pk),str(file),"","","",""])
         return
 
     def load_category_contents(self):
@@ -183,10 +189,14 @@ class Content():
     tags = []
     description = ""
     rating = 0
+    subfolder = ""
 
     def play_content(self):
         # self.category.user.watched.append(self.pk)
-        return os.system(f'{settings.MEDIA_PLAYER} {self.category.folder_location}/"{self.name}"')
+        if self.subfolder is None:
+            return os.system(f'{settings.MEDIA_PLAYER} {self.category.folder_location}/"{self.name}"')
+        else:
+            return os.system(f'{settings.MEDIA_PLAYER} {self.category.folder_location}/{self.subfolder}/"{self.name}"')
 
     #not working yet
     # def sec_to_hours(self,time):

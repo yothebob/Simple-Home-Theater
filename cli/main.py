@@ -28,7 +28,7 @@ def main_page(user):
         "passwd" : ["passwd", "--passwd", "password", "-p", "--password"],
         "exit"   : ["exit", "end", "-e", "--end", "--exit"],
         "help"   : ["help","-h","--help"],
-        "category" : ["cat", "category", "-cat", "--category"]
+        "category" : ["cat", "category", "-cat", "--category","ls"]
     }
     if user_input.lower() in command_dictionary["help"]:
         print("Commands: ")

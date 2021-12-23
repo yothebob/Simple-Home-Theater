@@ -109,7 +109,7 @@ class Category():
 
     def __init__(self):
         self.pk = 0
-        self.fk = 0
+        self.fk = 0 #user pk
         self.user = ""
         self.folder_location = ""
         self.name = ""
@@ -139,7 +139,7 @@ class Category():
             if find_file is not None:
                 found += 1
             else:
-                write_query(settings.CONTENT_TABLE,[self.fk,str(file),"","","",""])
+                write_query(settings.CONTENT_TABLE,[self.pk,str(file),"","","",""])
                 print(f"wrote {file}")
                 not_found += 1
         print("found: ",found,"\nnot found: ",not_found)
@@ -192,10 +192,10 @@ class Content():
     subfolder = ""
 
     def play_content(self):
-        # self.category.user.watched.append(self.pk)
         if self.subfolder is None:
             return os.system(f'{settings.MEDIA_PLAYER} {self.category.folder_location}/"{self.name}"')
         else:
+            #content found recursively (subfolder)
             return os.system(f'{settings.MEDIA_PLAYER} {self.category.folder_location}/{self.subfolder}/"{self.name}"')
 
     #not working yet

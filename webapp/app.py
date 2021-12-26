@@ -11,7 +11,7 @@ from webapp.forms import LoginForm, CreateUserForm
     # self.app.config['SECRET KEY'] = '1233456789'
     # instance = ""
     # self.app.static_folder = "static"
-# 
+#
 
 app = Flask(__name__)
 
@@ -31,9 +31,9 @@ def login():
         if verify_credidentials is not None:
             #user found, attempting to authenticate
             if verify_credidentials[1] == login_form.username.data and verify_credidentials[2] == login_form.password.data:
-                self.instance = self.load_user(verify_credidentials[0]) #loading with pk
+                instance = load_user(verify_credidentials[0]) #loading with pk
                 '''take to movie screen'''
-                return render_template("home.html",instance=self.instance)
+                return render_template("home.html",instance=instance)
             else:
                 #not right credidentials
                 error = "Username of Password is not correct."
@@ -42,6 +42,8 @@ def login():
             #query could not find user
             error = "Could not find user"
             return render_template("login.html",error=error)
+    else:
+        return render_template("login.html")
 
 
 @app.route("/create/",methods=["GET","POST"])
@@ -61,6 +63,8 @@ def create_user():
 
         write_query(settings.USER_TABLE,[create_form.username.data,create_form.password.data,[],[]])
         return render_template("login.html") # user created. go to login
+    else:
+        return render_template("login.html")
 
 
 

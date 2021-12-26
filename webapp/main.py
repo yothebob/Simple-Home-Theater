@@ -1,6 +1,7 @@
-from webapp.app import FlaskApp
+# from webapp.app import FlaskApp
+import webapp.app
 
-app = FlaskApp()
+# app = FlaskApp()
 
 #
 # def show_user_categories(user_categories):

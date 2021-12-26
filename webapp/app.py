@@ -20,7 +20,7 @@ app = Flask(__name__)
 @app.route("/")
 def home_page():
     app_name = settings.APP_NAME
-    return render_template("home.html",app_name=app_name)
+    return render_template("index.html",app_name=app_name)
 
 sht_app = App()
 
@@ -39,11 +39,12 @@ def login():
             #user found, attempting to authenticate
             if verify_credidentials[1] == login_form.username.data and verify_credidentials[2] == login_form.password.data:
                 instance = sht_app.load_user(verify_credidentials[0]) #loading with pk
+                print(instance.username)
                 '''take to movie screen'''
                 return render_template("home.html",instance=instance)
             else:
                 #not right credidentials
-                error = "Username of Password is not correct."
+                error = "Username of Password<h3>{{category}}</h3> is not correct."
                 return render_template("login.html",error=error,login_form=login_form)
         else:
             #query could not find user
@@ -57,27 +58,42 @@ def login():
 def create_user():
     '''create and save a new user to database '''
     create_form = CreateUserForm(request.form)
+    login_form = LoginForm(request.form)
     if request.method == "POST":
+        print("posted")
         username_taken = query(settings.USER_TABLE,create_form.username.data)
         if username_taken is not None:
             if username_taken[1] == create_form.username.data:
                 error = "Username Taken."
-                return render_template("login.html",error=error)# username taken
+                print('Username Taken')
+                return render_template("create_user.html",error=error,create_form=create_form)# username taken
 
         if create_form.password.data != create_form.password_again.data:
             error = "Passwords don't match, please try again."
-            return render_template("login.html",error=error)# passwords dont match
+            print("passwords dont match")
+            return render_template("create_user.html",error=error,create_form=create_form)# passwords dont match
 
-        write_query(settings.USER_TABLE,[create_form.username.data,create_form.password.data,[],[]])
-        return render_template("login.html") # user created. go to login
+        else:
+            print("success! routing to login")
+            write_query(settings.USER_TABLE,[create_form.username.data,create_form.password.data,[],[]])
+            return login() # user created. go to login
     else:
-        return render_template("login.html")
+        return render_template("create_user.html",create_form=create_form)
 
 
 
-# flaskapp = FlaskApp(site)
-# if __name__ == "__main__":
+@app.route("/home/",methods=["GET","POST"])
+def application():
+    # create playlists here and stuff
+    display_amount = 10
+    return render_template("home.html",instance=instance)
+
+
+
 app.run()
+
+
+
 
 
 # run_webapp()

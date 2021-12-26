@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if instance %}
+      <h1>Welcome to {{app_name}}, {{instance.username}}!</h1>
+  {% else %}
+  <h1> Welcome to {{app_name}}!</h1>
+  {% endif %}
+  <a href="{{url_for('login')}}"><h3>Login</h3></a>
+  <a href="{{url_for('create_user')}}"><h3>Create User</h3></a>
+{% endblock %}

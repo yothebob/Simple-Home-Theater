@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-  {% if app_name %}
-  <h1>Welcome to {{app_name}}!</h1>
-  {% else %}
-  <h1> Welcome to Simple Home Theater!</h1>
-  {% endif %}
-  <a href="{{url_for('login')}}"><h3>Login</h3></a>
-  <a href="{{url_for('create_user')}}"><h3>Create User</h3></a>
+  <form method="post">
+    <h3>{{create_form.username.label}}</h3>
+    <h3>{{create_form.username()}}</h3>
+    <h3>{{create_form.password.label}}</h3>
+    <h3>{{create_form.password()}}</h3>
+    <h3>{{create_form.password_again.label}}</h3>
+    <h3>{{create_form.password_again()}}</h3>
+    <br>
+    <h3>{{create_form.submit.label}}</h3>
+    <h3>{{create_form.submit()}}</h3>
+  </form>
 {% endblock %}

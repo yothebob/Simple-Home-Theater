@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>showoing categories</h1>
+  br
+  <ol>
+    {% for category in instance.categories %}
+    <li><a href="#"><h3>{{category.name}}</h3></a></li>
+    {% endfor %}
+  </ol>
+{% endblock %}

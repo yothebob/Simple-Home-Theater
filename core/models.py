@@ -15,7 +15,7 @@ class User():
         self.current_category = ""
         self.playlist_stack = []
 
-
+    # this is a cli user function, needs to be generic on base! # TODO:
     def add_category(self):
         ''' a function for pointing to a file for a category '''
 

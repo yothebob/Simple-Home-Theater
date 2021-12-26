@@ -3,7 +3,7 @@ from core.models import Category, User, Genre, Tag, Content
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
 from flask import Flask, render_template, request, g, url_for
-from webapp.forms import LoginForm, CreateUserForm
+from webapp.forms import LoginForm, CreateUserForm, AddCategoryForm
 
 #class FlaskApp():
 # def __init__(app):
@@ -89,21 +89,81 @@ def application():
     return render_template("home.html",instance=instance)
 
 
+@app.route("/category/",methods=["GET","POST"])
+def show_categories():
+    return render_template()
+
+
+@app.route("/category/add/",methods=["GET","POST"])
+def add_category():
+    add_category_form = AddCategoryForm(request.form)
+
+    if request.method == "POST":
+        print("adding category")
+        instance.add_category()
+    return render_template("add_category.html",add_category_form=add_category_form)
+
+
+@app.route("/category/<category>",methods=["GET","POST"])
+def show_category(category):
+    return render_template()
 
 app.run()
 
-
-
-
-
-# run_webapp()
-#currently not working (havent even tried)
-# app.route("/delete/",methods=["GET","POST"])
-# def delete_user(self,username,password,password_again):
-#     if password == password_again:
-#         verify_credidentials = query(settings.PROJECT_FILEPATH + "/data/users.csv", username)
-#     if verify_credidentials:
-#         if verify_credidentials[1] == username and verify_credidentials[2] == password:
-#             delete_query(settings.PROJECT_FILEPATH + "/data/users.csv",username)
-#             return render_template("base.html")
-#     return render_template("base.html")
+# command_dictionary = {
+#     "add"    : ["add","-a","-add","--add"],
+#     "sync" : ["sync", "-s", "--sync", "reload", "load"],
+#     "watched": ["watched", "--watched", "-watched" , "-w", "watch", "--watch"],
+#     "passwd" : ["passwd", "--passwd", "password", "-p", "--password"],
+#     "exit"   : ["exit", "end", "-e", "--end", "--exit"],
+#     "help"   : ["help","-h","--help"],
+#     "category" : ["cat", "category", "-cat", "--category","ls"]
+# }
+# if user_input.lower() in command_dictionary["help"]:
+#     print("Commands: ")
+#     print([print(key,val) for key, val in command_dictionary.items()])
+#     return main_page(user)
+#
+# elif user_input.lower() in command_dictionary["category"]:
+#     user_categories = user.load_categories()
+#     show_user_categories(user_categories)
+#     user_input = input(": ")
+#     if user_input.isnumeric():
+#         picked_category = user_categories[int(user_input)]
+#         user.current_category = picked_category
+#         print(f"in {user.current_category.name} category...")
+#         get_command = input(": ")
+#         # user.create_playlist()
+#         run_command = content_commands(user,picked_category,get_command)
+#     else:
+#         print("not valid")
+#         return main_page(user)
+#     while get_command.lower() != "exit":
+#         get_command = input(": ")
+#         # user.create_playlist()
+#         run_command = content_commands(user,picked_category,get_command)
+#     return main_page(user)
+#
+# elif user_input.lower() in command_dictionary["add"]:
+#      user.add_category()
+#      return main_page(user)
+#
+# elif user_input.lower() in command_dictionary["sync"]:
+#     user.sync_categories()
+#     return main_page(user)
+#
+# elif user_input.lower() in command_dictionary["watched"]:
+#     user.get_watched()
+#     return main_page(user)
+#
+# elif user_input.lower() in command_dictionary["passwd"]:
+#     user.change_password()
+#     return main_page(user)
+#
+# elif user_input.lower() in command_dictionary["exit"]:
+#     exit()
+#
+# else:
+#     print("Sorry please try Again")
+#     return main_page(user)
+#

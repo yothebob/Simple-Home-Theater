@@ -12,3 +12,8 @@ class CreateUserForm(Form):
     password = StringField("Password:")
     password_again = StringField("Password again:")
     submit = SubmitField("Create User")
+
+class AddCategoryForm(Form):
+    name = StringField("Category Name:")
+    filepath = StringField("filepath:")
+    submit = SubmitField("Add Category")

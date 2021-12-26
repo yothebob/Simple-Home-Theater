@@ -13,6 +13,8 @@ from webapp.forms import LoginForm, CreateUserForm
     # self.app.static_folder = "static"
 #
 
+
+
 app = Flask(__name__)
 
 @app.route("/")
@@ -20,30 +22,35 @@ def home_page():
     app_name = settings.APP_NAME
     return render_template("home.html",app_name=app_name)
 
+sht_app = App()
+
 
 @app.route("/login/",methods=["GET","POST"])
 def login():
 
     login_form = LoginForm(request.form)
+    print(login_form)
     error = ""
     if request.method == "POST":
         verify_credidentials = query(settings.USER_TABLE, login_form.username.data)
+        print("posted")
+        print("credidentials: ",verify_credidentials)
         if verify_credidentials is not None:
             #user found, attempting to authenticate
             if verify_credidentials[1] == login_form.username.data and verify_credidentials[2] == login_form.password.data:
-                instance = load_user(verify_credidentials[0]) #loading with pk
+                instance = sht_app.load_user(verify_credidentials[0]) #loading with pk
                 '''take to movie screen'''
                 return render_template("home.html",instance=instance)
             else:
                 #not right credidentials
                 error = "Username of Password is not correct."
-                return render_template("login.html",error=error)
+                return render_template("login.html",error=error,login_form=login_form)
         else:
             #query could not find user
             error = "Could not find user"
-            return render_template("login.html",error=error)
+            return render_template("login.html",error=error,login_form=login_form)
     else:
-        return render_template("login.html")
+        return render_template("login.html",login_form=login_form)
 
 
 @app.route("/create/",methods=["GET","POST"])

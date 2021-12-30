@@ -134,14 +134,22 @@ class Category():
         find_files = query(settings.CONTENT_TABLE,self.pk,"fk","find all")
         found = 0
         not_found = 0
+        not_found_list = []
         for file in os.listdir(self.folder_location):
+            not_found_list.append(file)
             find_file = query(settings.CONTENT_TABLE,file,"name")
             if find_file is not None:
+                not_found_list.remove(file)
                 found += 1
             else:
                 write_query(settings.CONTENT_TABLE,[self.pk,str(file),"","","",""])
                 print(f"wrote {file}")
                 not_found += 1
+        ''' remove the unfound files from DB'''
+        if len(not_found_list) > 0:
+            for unfound_file in not_found_list:
+                file_pk = query(settings.CONTENT_TABLE,file,"name")
+                write_query(settings.CONTENT_TABLE,["",""],False,file_pk[0])
         print("found: ",found,"\nnot found: ",not_found)
 
 

@@ -17,6 +17,10 @@ import core.core_settings as settings
 # for genre in doa['genres']:
 #     print(genre)
 
+
+
+
+
 # https://github.com/alberanid/imdbpy/blob/master/imdb/Movie.py
  # keys_alias = {
  #        'tv schedule': 'airing',
@@ -65,6 +69,7 @@ def get_content_id(content,obj_imdb):
     imdb_content_list = []
     content_id = obj_imdb.search_movie(content)
     if len(content_id)  >= 1:
+        print(content_id)
         imdb_content_list.append(content_id[0].movieID)
     else:
         imdb_content_list.append(f"could not find {content}")
@@ -79,6 +84,7 @@ def get_contents_id(content_list,obj_imdb):
         content_id = obj_imdb.search_movie(content)
         if len(content_id)  >= 1:
             imdb_content_list.append(content_id[0].movieID)
+            print(content_id)
         else:
             imdb_content_list.append(f"could not find {content}")
     return imdb_content_list
@@ -98,10 +104,10 @@ def get_content_id_from_folder(filepath,obj_imdb):
 
 
 
-def get_content_variable(content,variable,obj_imdb):
+def get_content_variable(content_id,variable,obj_imdb):
     title_list = []
     try:
-        get_content = obj_imdb.get_movie(content)
+        get_content = obj_imdb.get_movie(content_id)
         title_list.append(get_content[variable])
     except:
         title_list.append(f"could not find {variable}")

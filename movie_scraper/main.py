@@ -1,7 +1,7 @@
 from imdb import IMDb
 import os
 import core.core_settings as settings
-
+from core.orm import *
 ###SAMPLE SCRIPT###
 # create an instance of the IMDb class
 
@@ -118,3 +118,30 @@ def get_contents_variable(content_list,variable,obj_imdb):
         except:
             title_list.append(f"could not find {variable}")
     return title_list
+
+def find_metadata(filename,metadata_list=settings.METADATA_LIST):
+    '''a function for using IMDB for content metadata, save to metadata DB'''
+    Imdb = IMDb()
+    print(f"finding metadata for {filename}...")
+
+    content_data = query(settings.CONTENT_TABLE,filename,"name")
+    cleaned_name = clean_filename(filename)
+    res_list = []
+    res_list.append(content_data[0])#pk
+
+    content_id = get_content_id(cleaned_name,Imdb)
+    if content_id is not None:
+        res_list.append(content_id[0])
+    else:
+        res_list.append("")
+
+    for data in metadata_list:
+        try:
+            res_list.append(get_content_variable(content_id[0],data,Imdb))
+        except:
+            res_list.append("")
+
+    # print(f"finished with {filename}")
+    return res_list
+    # use later
+    # write_query(settings.METADATA_TABLE,res_list)

@@ -10,3 +10,6 @@ USER_TABLE =  PROJECT_FILEPATH + "/data/users.csv"
 CATEGORY_TABLE = PROJECT_FILEPATH + "/data/categories.csv"
 CONTENT_TABLE = PROJECT_FILEPATH + "/data/contents.csv"
 WATCH_TABLE = PROJECT_FILEPATH + "/data/watches.csv"
+
+
+METADATA_LIST = ["name ","plot",'director','cast',"genre","runtimes"]

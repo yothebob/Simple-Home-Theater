@@ -1,5 +1,6 @@
 data/categories.csv
 data/contents.csv
+data/metadatas.csv
 data/users.csv
 simple-home-theater-env/
 __pycache__/

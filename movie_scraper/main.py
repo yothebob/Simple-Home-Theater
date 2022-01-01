@@ -1,25 +1,7 @@
 from imdb import IMDb
 import os
 import core.core_settings as settings
-
-###SAMPLE SCRIPT###
-# create an instance of the IMDb class
-
-# ia = IMDb()
-#
-# noir_movie = ia.search_movie("D.O.A (1949)")
-#
-# print(noir_movie[0]["title"])
-# print(noir_movie[0].movieID)
-#
-# doa = ia.get_movie(noir_movie[0].movieID)
-#
-# for genre in doa['genres']:
-#     print(genre)
-
-
-
-
+from core.orm import query, write_query, delete_query
 
 # https://github.com/alberanid/imdbpy/blob/master/imdb/Movie.py
  # keys_alias = {
@@ -124,3 +106,27 @@ def get_contents_variable(content_list,variable,obj_imdb):
         except:
             title_list.append(f"could not find {variable}")
     return title_list
+
+def find_metadata(filename,metadata_list=settings.METADATA_LIST):
+    '''a function for using IMDB for content metadata, save to metadata DB'''
+    Imdb = IMDb()
+    print(f"finding metadata for {filename}...")
+
+    content_data = query(settings.CONTENT_TABLE,filename,"name")
+    cleaned_name = clean_filename(filename)
+    res_list = []
+    res_list.append(content_data[0])#pk
+
+    content_id = get_content_id(cleaned_name,Imdb)
+    if content_id is not None:
+        res_list.append(content_id[0])
+    else:
+        res_list.append("")
+
+    for data in metadata_list:
+        try:
+            res_list.append(get_content_variable(content_id[0],data,Imdb))
+        except:
+            res_list.append("")
+    write_query(settings.METADATA_TABLE,res_list)
+    print(f"finished with {filename}")

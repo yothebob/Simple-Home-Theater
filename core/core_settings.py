@@ -6,6 +6,8 @@ APP_NAME = "Simple Home Theater"
 AUTOPLAY_COUNTDOWN = 3#30
 CONTENT_FILETYPES = ["mp4","mp3","opus"]
 
+METADATA_LIST = ["plot"]
+
 USER_TABLE =  PROJECT_FILEPATH + "/data/users.csv"
 CATEGORY_TABLE = PROJECT_FILEPATH + "/data/categories.csv"
 CONTENT_TABLE = PROJECT_FILEPATH + "/data/contents.csv"

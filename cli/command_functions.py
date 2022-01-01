@@ -7,7 +7,7 @@ from core.models import Category, User, Genre, Tag, Content
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
 from cli.app import CliApp
-
+from movie_scraper.main import find_metadata
 
 def autoplaying(time_left,start_time=settings.AUTOPLAY_COUNTDOWN):
         if time_left == 0:
@@ -52,8 +52,8 @@ def content_commands(user, category_contents, user_input):
     command_dictionary = {
     "play"      : ["play", "-p"],
     "list"      : ["ls"],
-    "double"    : [ "-d"],
-    "details"   : ["checkout", "details", "-v", "-c", 'man'],
+    "double"    : [ "-lsd","-d"],
+    "details"   : ["checkout", "details", 'det'],
     "search"    : ["search", "-s"],
     "autoplay"  : ["-a", "auto" ,"autoplay","-auto"],
     "replay"    : ["-r", "replay", "-re"],
@@ -157,8 +157,11 @@ def content_commands(user, category_contents, user_input):
         if "details" in run_command:
             split_command = user_input.split(" ")
             print(split_command)
-            picked_content = category_contents[int(split_command[0])]
-            print(picked_content.name)
+            if len(split_command) > 2: # default command needs 2 args. $ {number} details
+                [print(category_contents.content_list[int(split_command[index])].name,"\n",find_metadata(category_contents.content_list[int(split_command[index])].name)) for index in range(len(split_command)) if index != (len(split_command)-1)]
+            else:
+                picked_content = category_contents.content_list[int(split_command[0])]
+                print(picked_content.name,"\n",find_metadata(picked_content.name))
 
         if "search" in run_command:
             print(split_command)

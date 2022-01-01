@@ -35,9 +35,10 @@ def play_random(content_list,playlist=None):
     # else:
     #     return randrange(len(content_list))
 
-def search_category_contents(category):
-    user_input = input(": ")
-    print("searching...")
+def search_category_contents(category,user_input=""):
+    if user_input == "":
+        user_input = input(": ")
+    print(f"searching {user_input}...")
     [print(index,": ", category.content_list[index].name) for index in range(len(category.content_list)) if user_input.lower() in category.content_list[index].name.lower()]
 
 
@@ -160,11 +161,13 @@ def content_commands(user, category_contents, user_input):
             print(picked_content.name)
 
         if "search" in run_command:
-            print("searching...")
-            picked_category = user.current_category
-            search_category_contents(picked_category)
-            # command = input(": ")
-            # run_command = content_commands(user,picked_category,command)
+            print(split_command)
+            if len(split_command) > 1:
+                picked_category = user.current_category
+                [search_category_contents(picked_category,index) for index in split_command if index != "-s"]
+            else:
+                picked_category = user.current_category
+                search_category_contents(picked_category)
 
         if "list" in run_command:
             if "double" in run_command:

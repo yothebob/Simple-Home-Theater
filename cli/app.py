@@ -26,8 +26,9 @@ class CliApp(App):
             return self.login()
         else:
             find_username = query(settings.USER_TABLE,user_input)
-            if user_input == find_username[1]:
-                return self.login(user_input)
+            if find_username is not None:
+                if user_input == find_username[1]:
+                    return self.login(user_input)
             else:
                 print("Please try again...")
                 return self.home_page()

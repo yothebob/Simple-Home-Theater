@@ -51,7 +51,8 @@ def content_commands(user, category_contents, user_input):
     command_dictionary = {
     "play"      : ["play", "-p"],
     "list"      : ["ls"],
-    "details"   : ["checkout", "details", "-v", "-c", '-d'],
+    "double"    : [ "-d"],
+    "details"   : ["checkout", "details", "-v", "-c", 'man'],
     "search"    : ["search", "-s"],
     "autoplay"  : ["-a", "auto" ,"autoplay","-auto"],
     "replay"    : ["-r", "replay", "-re"],
@@ -78,6 +79,8 @@ def content_commands(user, category_contents, user_input):
             run_command += "list."
         elif command in command_dictionary["shuffle"]:
             run_command += "shuffle."
+        elif command in command_dictionary["double"]:
+            run_command += "double."
 
     autoplay = False
     replay = False
@@ -164,8 +167,11 @@ def content_commands(user, category_contents, user_input):
             # run_command = content_commands(user,picked_category,command)
 
         if "list" in run_command:
-            #not wrking yet# [print(index," : ",user.current_category.content_list[index].name,user.current_category.content_list[index].play_length) for index in range(len(user.current_category.content_list))]
-            [print(index," : ",user.current_category.content_list[index].name) for index in range(len(user.current_category.content_list))]
+            if "double" in run_command:
+                #print 2 contents per line
+                [print(index-1," : ",user.current_category.content_list[index-1].name, "\t\t",index," : ",user.current_category.content_list[index].name) for index in range(len(user.current_category.content_list)) if index%2 == 0]
+            else:
+                [print(index," : ",user.current_category.content_list[index].name) for index in range(len(user.current_category.content_list))]
         if "help" in run_command:
             print("Commands:\n")
             [print(key, item) for key, item in command_dictionary.items()]

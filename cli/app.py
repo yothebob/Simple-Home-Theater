@@ -14,8 +14,9 @@ class CliApp(App):
         print("""
             {}
 
-            type 'login' to login as existing user.
+            type in a username to login as existing user, or type 'login'.
             type 'create' to create new user.
+
             """.format(settings.APP_NAME))
         user_input = input(": ")
         if user_input.lower() == "login":
@@ -24,15 +25,19 @@ class CliApp(App):
             self.create_user()
             return self.login()
         else:
-            print("Please try again...")
-            return self.home_page()
+            find_username = query(settings.USER_TABLE,user_input)
+            if find_username is not None:
+                if user_input == find_username[1]:
+                    return self.login(user_input)
+            else:
+                print("Please try again...")
+                return self.home_page()
 
 
     def create_user(self):
         '''create and save a new user to database '''
         #maybe i should store them as .lower() and as regular (so I know if there is just a caps problem)?
         print("creating user")
-
         username = input("Username: ")
         password = input("Password: ")
         password_again = input("Password: ")
@@ -54,9 +59,12 @@ class CliApp(App):
 
 
 
-    def login(self):
+    def login(self,username=""):
         print("login:\n")
-        username = input("Username: ")
+        if username == "":
+            username = input("Username: ")
+        else:
+            username = username
         password = input("Password: ")
 
         verify_credidentials = query(settings.USER_TABLE, username)

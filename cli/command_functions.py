@@ -158,10 +158,16 @@ def content_commands(user, category_contents, user_input):
             split_command = user_input.split(" ")
             print(split_command)
             if len(split_command) > 2: # default command needs 2 args. $ {number} details
-                [print(category_contents.content_list[int(split_command[index])].name,"\n",find_metadata(category_contents.content_list[int(split_command[index])].name)) for index in range(len(split_command)) if index != (len(split_command)-1)]
+                for content_index in range(len(split_command)):
+                    if content_index != len(split_command)-1:
+                        content_data = find_metadata(category_contents.content_list[int(split_command[int(content_index)])].name)
+                        [print(settings.METADATA_LIST[index],": ",content_data[index][0],"\n") for index in range(len(settings.METADATA_LIST))]
+            # old [print(category_contents.content_list[int(split_command[index])].name,"\n",find_metadata(category_contents.content_list[int(split_command[index])].name)) for index in range(len(split_command)) if index != (len(split_command)-1)]
             else:
                 picked_content = category_contents.content_list[int(split_command[0])]
-                print(picked_content.name,"\n",find_metadata(picked_content.name))
+                print(picked_content.name)
+                content_data = find_metadata(picked_content.name)
+                [print(settings.METADATA_LIST[index], ": ", content_data[index][0]) for index in range(len(content_data))]
 
         if "search" in run_command:
             print(split_command)

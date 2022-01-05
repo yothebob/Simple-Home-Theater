@@ -127,13 +127,15 @@ def find_metadata(filename,metadata_list=settings.METADATA_LIST):
     content_data = query(settings.CONTENT_TABLE,filename,"name")
     cleaned_name = clean_filename(filename)
     res_list = []
-    res_list.append(content_data[0])#pk
+    # res_list.append(content_data[0])#pk
 
     content_id = get_content_id(cleaned_name,Imdb)
     if content_id is not None:
-        res_list.append(content_id[0])
+        pass
+        # res_list.append(content_id[0]) save content id
     else:
-        res_list.append("")
+        pass
+        # res_list.append("") or nothing
 
     for data in metadata_list:
         try:

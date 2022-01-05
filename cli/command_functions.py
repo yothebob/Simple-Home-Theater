@@ -17,6 +17,7 @@ def autoplaying(time_left,start_time=settings.AUTOPLAY_COUNTDOWN):
             sleep(1)
             return autoplaying(time_left -1)
         else:
+            print(time_left)
             sleep(1)
             return autoplaying(time_left -1)
 
@@ -46,13 +47,11 @@ def search_category_contents(category,user_input=""):
 def content_commands(user, category_contents, user_input):
 
     content_number = ''.join(map(str,[user_input[index] for index in range(len(user_input)) if user_input[index].isnumeric()]))
-    print(content_number)
     split_command = user_input.split(" ")
     print(f"In {category_contents.name} category...")
     command_dictionary = {
-    "play"      : ["play", "-p"],
-    "list"      : ["ls"],
-    "double"    : [ "-lsd","-d"],
+    "play"      : ["play", "-p", "countdown=?"],
+    "list"      : ["ls", "(-d for double list)"],
     "details"   : ["checkout", "details", 'det'],
     "search"    : ["search", "-s"],
     "autoplay"  : ["-a", "auto" ,"autoplay","-auto"],
@@ -80,8 +79,6 @@ def content_commands(user, category_contents, user_input):
             run_command += "list."
         elif command in command_dictionary["shuffle"]:
             run_command += "shuffle."
-        elif command in command_dictionary["double"]:
-            run_command += "double."
 
     autoplay = False
     replay = False
@@ -102,6 +99,15 @@ def content_commands(user, category_contents, user_input):
 
         if "play" in run_command:
             print("playing")
+            play_countdown = settings.AUTOPLAY_COUNTDOWN # we set this here do it can be temp changed from a command
+
+            for command in split_command:
+                if "countdown" in command:
+                    arg = [command for command in split_command if "countdown" in command][0]
+                    countdown = [char for char in arg if char.isnumeric()]
+                    print('new countdown',"".join(countdown))
+                    play_countdown = int("".join(countdown))
+
             if split_command[0].isnumeric():
                 content_indexes = [index for index in split_command if index.isnumeric()]
                 print(content_indexes)
@@ -110,13 +116,15 @@ def content_commands(user, category_contents, user_input):
                     picked_content = category_contents.content_list[int(content_index)]
                     picked_content.play_content()
                     user.append_watched(picked_content)
+                    if content_index != content_indexes[len(content_indexes)-1]:
+                        autoplaying(play_countdown)
             else:
                 print("no index given... please try again")
             while replay:
                 try:
                     content_indexes = [index for index in split_command if index.isnumeric()]
                     for content_index in content_indexes:
-                        autoplaying(settings.AUTOPLAY_COUNTDOWN)
+                        autoplaying(play_countdown)
                         picked_content = category_contents.content_list[int(content_index)]
                         picked_content.play_content()
                         user.append_watched(picked_content)
@@ -129,7 +137,7 @@ def content_commands(user, category_contents, user_input):
                     play_count += 1 # a crappy ghetto way to do this :(
                     next_index = play_next(int(split_command[0]) + play_count)
                     print(f"{category_contents.content_list[next_index].name} Next up...")
-                    autoplaying(settings.AUTOPLAY_COUNTDOWN)
+                    autoplaying(play_countdown)
                     picked_content = category_contents.content_list[next_index]
                     picked_content.play_content()
                     user.append_watched(picked_content)
@@ -146,7 +154,7 @@ def content_commands(user, category_contents, user_input):
                     else:
                         picked_content = play_random(category_contents.content_list)
                     print(f"{picked_content.name} Next up...")
-                    autoplaying(settings.AUTOPLAY_COUNTDOWN)
+                    autoplaying(play_countdown)
                     picked_content.play_content()
                     user.append_watched(picked_content)
                 except KeyboardInterrupt:
@@ -179,7 +187,7 @@ def content_commands(user, category_contents, user_input):
                 search_category_contents(picked_category)
 
         if "list" in run_command:
-            if "double" in run_command:
+            if "-d" in split_command:
                 #print 2 contents per line
                 [print(index-1," : ",user.current_category.content_list[index-1].name, "\t\t",index," : ",user.current_category.content_list[index].name) for index in range(len(user.current_category.content_list)) if index%2 == 0]
             else:

@@ -1,25 +1,8 @@
 from imdb import IMDb
 import os
 import core.core_settings as settings
-<<<<<<< HEAD
-from core.orm import query, write_query, delete_query
-=======
 from core.orm import *
-###SAMPLE SCRIPT###
-# create an instance of the IMDb class
 
-# ia = IMDb()
-#
-# noir_movie = ia.search_movie("D.O.A (1949)")
-#
-# print(noir_movie[0]["title"])
-# print(noir_movie[0].movieID)
-#
-# doa = ia.get_movie(noir_movie[0].movieID)
-#
-# for genre in doa['genres']:
-#     print(genre)
->>>>>>> 69669f37028ff5083ed3da765b6df097408d0320
 
 # https://github.com/alberanid/imdbpy/blob/master/imdb/Movie.py
  # keys_alias = {

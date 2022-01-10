@@ -51,7 +51,7 @@ def content_commands(user, category_contents, user_input):
     print(f"In {category_contents.name} category...")
     command_dictionary = {
     "play"      : ["play", "-p", "countdown=?"],
-    "list"      : ["ls", "(-d for double list)"],
+    "list"      : ["ls", "(-d for double list)", "ls {start} {stop} "],
     "details"   : ["checkout", "details", 'det'],
     "search"    : ["search", "-s"],
     "autoplay"  : ["-a", "auto" ,"autoplay","-auto"],
@@ -187,7 +187,12 @@ def content_commands(user, category_contents, user_input):
                 search_category_contents(picked_category)
 
         if "list" in run_command:
-            if "-d" in split_command:
+            if len(split_command) > 2:
+                list_range = [int(num) for num in split_command if num.isnumeric()]
+                print(list_range)
+                if len(list_range) == 2:
+                    [print(index," : ",user.current_category.content_list[index].name) for index in range(len(user.current_category.content_list)) if index >= list_range[0] and index <= list_range[-1]]
+            elif "-d" in split_command:
                 #print 2 contents per line
                 [print(index-1," : ",user.current_category.content_list[index-1].name, "\t\t",index," : ",user.current_category.content_list[index].name) for index in range(len(user.current_category.content_list)) if index%2 == 0]
             else:

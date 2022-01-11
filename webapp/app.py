@@ -15,100 +15,107 @@ from webapp.forms import LoginForm, CreateUserForm, AddCategoryForm
 
 
 
-app = Flask(__name__)
 
-@app.route("/")
-def home_page():
-    app_name = settings.APP_NAME
-    return render_template("index.html",app_name=app_name)
+class FlaskApp():
+    app = Flask(__name__)
 
-sht_app = App()
+    def __init__(self):
+        self.user = ""
+        self.sht_app = App()
+        sht_app = self.sht_app
+        user = self.user
+
+    @app.route("/")
+    def home_page():
+        app_name = settings.APP_NAME
+        return render_template("index.html",app_name=app_name)
 
 
-@app.route("/login/",methods=["GET","POST"])
-def login():
+    @app.route("/login/",methods=["GET","POST"])
+    def login():
 
-    login_form = LoginForm(request.form)
-    print(login_form)
-    error = ""
-    if request.method == "POST":
-        verify_credidentials = query(settings.USER_TABLE, login_form.username.data)
-        print("posted")
-        print("credidentials: ",verify_credidentials)
-        if verify_credidentials is not None:
-            #user found, attempting to authenticate
-            if verify_credidentials[1] == login_form.username.data and verify_credidentials[2] == login_form.password.data:
-                instance = sht_app.load_user(verify_credidentials[0]) #loading with pk
-                print(instance.username)
-                '''take to movie screen'''
-                return render_template("home.html",instance=instance)
+        login_form = LoginForm(request.form)
+        print(login_form)
+        error = ""
+        if request.method == "POST":
+            verify_credidentials = query(settings.USER_TABLE, login_form.username.data)
+            print("posted")
+            print("credidentials: ",verify_credidentials)
+            if verify_credidentials is not None:
+                #user found, attempting to authenticate
+                if verify_credidentials[1] == login_form.username.data and verify_credidentials[2] == login_form.password.data:
+                    user = sht_app.load_user(verify_credidentials[0]) #loading with pk
+                    print(user.username)
+                    '''take to movie screen'''
+                    return render_template("home.html",instance=user)
+                else:
+                    #not right credidentials
+                    error = "Username of Password<h3>{{category}}</h3> is not correct."
+                    return render_template("login.html",error=error,login_form=login_form)
             else:
-                #not right credidentials
-                error = "Username of Password<h3>{{category}}</h3> is not correct."
+                #query could not find user
+                error = "Could not find user"
                 return render_template("login.html",error=error,login_form=login_form)
         else:
-            #query could not find user
-            error = "Could not find user"
-            return render_template("login.html",error=error,login_form=login_form)
-    else:
-        return render_template("login.html",login_form=login_form)
+            return render_template("login.html",login_form=login_form)
 
 
-@app.route("/create/",methods=["GET","POST"])
-def create_user():
-    '''create and save a new user to database '''
-    create_form = CreateUserForm(request.form)
-    login_form = LoginForm(request.form)
-    if request.method == "POST":
-        print("posted")
-        username_taken = query(settings.USER_TABLE,create_form.username.data)
-        if username_taken is not None:
-            if username_taken[1] == create_form.username.data:
-                error = "Username Taken."
-                print('Username Taken')
-                return render_template("create_user.html",error=error,create_form=create_form)# username taken
+    @app.route("/create/",methods=["GET","POST"])
+    def create_user():
+        '''create and save a new user to database '''
+        create_form = CreateUserForm(request.form)
+        login_form = LoginForm(request.form)
+        if request.method == "POST":
+            print("posted")
+            username_taken = query(settings.USER_TABLE,create_form.username.data)
+            if username_taken is not None:
+                if username_taken[1] == create_form.username.data:
+                    error = "Username Taken."
+                    print('Username Taken')
+                    return render_template("create_user.html",error=error,create_form=create_form)# username taken
 
-        if create_form.password.data != create_form.password_again.data:
-            error = "Passwords don't match, please try again."
-            print("passwords dont match")
-            return render_template("create_user.html",error=error,create_form=create_form)# passwords dont match
+            if create_form.password.data != create_form.password_again.data:
+                error = "Passwords don't match, please try again."
+                print("passwords dont match")
+                return render_template("create_user.html",error=error,create_form=create_form)# passwords dont match
 
+            else:
+                print("success! routing to login")
+                write_query(settings.USER_TABLE,[create_form.username.data,create_form.password.data,[],[]])
+                return login() # user created. go to login
         else:
-            print("success! routing to login")
-            write_query(settings.USER_TABLE,[create_form.username.data,create_form.password.data,[],[]])
-            return login() # user created. go to login
-    else:
-        return render_template("create_user.html",create_form=create_form)
+            return render_template("create_user.html",create_form=create_form)
 
 
 
-@app.route("/home/",methods=["GET","POST"])
-def application():
-    # create playlists here and stuff
-    display_amount = 10
-    return render_template("home.html",instance=instance)
+    @app.route("/home/",methods=["GET","POST"])
+    def application():
+        # create playlists here and stuff
+        display_amount = 10
+        return render_template("home.html",instance=self.user)
 
 
-@app.route("/category/",methods=["GET","POST"])
-def show_categories():
-    return render_template()
+    @app.route("/category/",methods=["GET","POST"])
+    def show_categories():
+        user_categories = self.user.load_categories()
+        return render_template("show_categories.html",user_categories=user_categories)
 
 
-@app.route("/category/add/",methods=["GET","POST"])
-def add_category():
-    add_category_form = AddCategoryForm(request.form)
+    @app.route("/category/add/",methods=["GET","POST"])
+    def add_category():
+        add_category_form = AddCategoryForm(request.form)
 
-    if request.method == "POST":
-        print("adding category")
-        instance.add_category()
-    return render_template("add_category.html",add_category_form=add_category_form)
+        if request.method == "POST":
+            print("adding category")
+            self.user.add_category()
+        return render_template("add_category.html",add_category_form=add_category_form)
 
 
-@app.route("/category/<category>",methods=["GET","POST"])
-def show_category(category):
-    return render_template()
+    @app.route("/category/<category>",methods=["GET","POST"])
+    def show_category(category):
+        return render_template()
 
-app.run()
+    app.run()
 
 # command_dictionary = {
 #     "add"    : ["add","-a","-add","--add"],

@@ -15,12 +15,9 @@ class User():
         self.current_category = ""
         self.playlist_stack = []
 
-    # this is a cli user function, needs to be generic on base! # TODO:
-    def add_category(self):
-        ''' a function for pointing to a file for a category '''
 
-        name = input("What is the name of the New Category?: ")
-        folder_location = input("What is the path the the folder?: ")
+    def add_category(self,name,folder_location):
+        ''' a function for pointing to a file for a category '''
         write_query(settings.CATEGORY_TABLE, [self.pk,name,self.username,folder_location])
         load_category_list = query(settings.CATEGORY_TABLE,name,"name")
         category = self.load_category(load_category_list)
@@ -90,14 +87,10 @@ class User():
             category.sync()
 
 
-
-    def change_password(self):
-        old_password = input("Old Password:")
-        new_password = input("New Password: ")
-        new_password_again = input("Password Again: ")
-
+    def change_password(self,old_password,new_password,new_password_again):
         if new_password == new_password_again:
             self.password = new_password
+            write_query(settings.USER_TABLE,[new_password],False,self.pk)
         else:
             print("passwords did not match please try again")
         return
@@ -131,11 +124,39 @@ class Category():
 
 
     def sync(self):
+        # this is NOT RECURSIVE , It should be made to have an option to be recursive
         find_files = query(settings.CONTENT_TABLE,self.pk,"fk","find all")
         found = 0
         not_found = 0
         for file in os.listdir(self.folder_location):
             find_file = query(settings.CONTENT_TABLE,file,"name")
+            if find_file is not None:
+                found += 1
+            else:
+                write_query(settings.CONTENT_TABLE,[self.pk,str(file),"","","",""])
+                print(f"wrote {file}")
+                not_found += 1
+        print("found: ",found,"\nnot found: ",not_found)
+
+
+    def recursive_sync(self):
+        find_files = query(settings.CONTENT_TABLE,self.pk,"fk","find all")
+        found = 0
+        not_found = 0
+        for file in os.listdir(self.folder_location):
+            if os.path.isdir(self.folder_location + '/' + file):
+                print("found folder")
+                for subfile in os.listdir(str(self.folder_location + "/"+ file)):
+                    # write_query(settings.CONTENT_TABLE,[str(self.pk),str("'" + subfile + "'"),str(file),"","",""])
+                    find_file = query(settings.CONTENT_TABLE,subfile,"name")
+                    if find_file is not None:
+                        found += 1
+                    else:
+                        write_query(settings.CONTENT_TABLE,[self.pk,str(file),"","","",""])
+                        print(f"wrote {file}")
+                        not_found += 1
+            else:
+                find_file = query(settings.CONTENT_TABLE,file,"name")
             if find_file is not None:
                 found += 1
             else:
@@ -152,10 +173,21 @@ class Category():
         arg : content - instance of Category()
         '''
         for file in os.listdir(self.folder_location):
+            write_query(settings.CONTENT_TABLE,[str(self.pk),str(file),"","","",""])
+        return
+
+
+    def recursive_write_category_contents(self):
+        '''
+        for initial writing to db
+        Create content objects for (many to many relationship) a Category Object
+        arg : content - instance of Category()
+        '''
+        for file in os.listdir(self.folder_location):
             if os.path.isdir(self.folder_location + '/' + file):
                 print("found folder")
                 for subfile in os.listdir(str(self.folder_location + "/"+ file)):
-                    write_query(settings.CONTENT_TABLE,[str(self.pk),str(subfile),str(file),"","",""])
+                    write_query(settings.CONTENT_TABLE,[str(self.pk),str("'" + subfile + "'"),str(file),"","",""])
             else:
                 write_query(settings.CONTENT_TABLE,[str(self.pk),str(file),"","","",""])
         return

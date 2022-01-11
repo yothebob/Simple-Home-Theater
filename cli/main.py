@@ -56,8 +56,10 @@ def main_page(user):
         return main_page(user)
 
     elif user_input.lower() in command_dictionary["add"]:
-         user.add_category()
-         return main_page(user)
+        name = input("What is the name of the New Category?: ")
+        folder_location = input("What is the path the the folder?: ")
+        user.add_category(name,folder_location)
+        return main_page(user)
 
     elif user_input.lower() in command_dictionary["sync"]:
         user.sync_categories()

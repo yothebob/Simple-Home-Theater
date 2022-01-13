@@ -19,6 +19,16 @@ def write_query(filename,arguments,new=True,pk=None):
     if new == True:
         database = open(filename, "a")
         PK = len([line for line in open(filename, 'r')])
+
+        #get the last line in the file
+        with open(filename,"r") as f:
+            for line in f:
+                pass
+            last_line = line
+        last_pk = last_line.split(",")[0]
+
+        if int(PK) <= int(last_pk):
+            PK = int(last_pk) + 1
         print(PK)
         database.write(str(PK) + ",")
         [database.write(str(item) + ",") for item in arguments]

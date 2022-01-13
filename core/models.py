@@ -25,6 +25,14 @@ class User():
         category.write_category_contents()
         return
 
+    def recursive_add_category(self,name,folder_location):
+        ''' a function for pointing to a file for a category '''
+        write_query(settings.CATEGORY_TABLE, [self.pk,name,self.username,folder_location])
+        load_category_list = query(settings.CATEGORY_TABLE,name,"name")
+        category = self.load_category(load_category_list)
+        # self.save_user()
+        category.recursive_write_category_contents()
+        return
 
     def load_categories(self):
         '''
@@ -85,6 +93,10 @@ class User():
     def sync_categories(self):
         for category in self.categories:
             category.sync()
+
+    def recursive_sync_categories(self):
+        for category in self.categories:
+            category.recursive_sync()
 
 
     def change_password(self,old_password,new_password,new_password_again):
@@ -152,7 +164,7 @@ class Category():
                     if find_file is not None:
                         found += 1
                     else:
-                        write_query(settings.CONTENT_TABLE,[self.pk,str(file),"","","",""])
+                        write_query(settings.CONTENT_TABLE,[str(self.pk),str("'" + subfile + "'"),str(file),"","",""])
                         print(f"wrote {file}")
                         not_found += 1
             else:

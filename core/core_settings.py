@@ -8,6 +8,8 @@ CONTENT_FILETYPES = ["mp4","mp3","opus"]
 
 METADATA_LIST = ["plot","rating","runtimes"] #get these from imdbpy, there is a list in movie_scraper/main.py
 
+PASSWORD_HASH = False 
+
 USER_TABLE =  PROJECT_FILEPATH + "/data/users.csv"
 CATEGORY_TABLE = PROJECT_FILEPATH + "/data/categories.csv"
 CONTENT_TABLE = PROJECT_FILEPATH + "/data/contents.csv"

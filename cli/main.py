@@ -23,13 +23,15 @@ def main_page(user):
     user_input = input(": ")
     command_dictionary = {
         "add"    : ["add","-a","-add","--add"],
-        "sync" : ["sync", "-s", "--sync", "reload", "load"],
+        "sync" : ["sync", "-s", "--sync", "reload", "load", "-r for recursive"],
         "watched": ["watched", "--watched", "-watched" , "-w", "watch", "--watch"],
         "passwd" : ["passwd", "--passwd", "password", "-p", "--password"],
         "exit"   : ["exit", "end", "-e", "--end", "--exit"],
         "help"   : ["help","-h","--help"],
         "category" : ["cat", "category", "-cat", "--category","ls"]
     }
+    split_command = user_input.split(" ")
+
     if user_input.lower() in command_dictionary["help"]:
         print("Commands: ")
         print([print(key,val) for key, val in command_dictionary.items()])
@@ -55,12 +57,22 @@ def main_page(user):
             run_command = content_commands(user,picked_category,get_command)
         return main_page(user)
 
-    elif user_input.lower() in command_dictionary["add"]:
-         user.add_category()
-         return main_page(user)
+    elif split_command[0] in command_dictionary["add"]:
+        if "-r" in split_command:
+            name = input("What is the name of the New Category?: ")
+            folder_location = input("What is the path the the folder?: ")
+            user.recursive_add_category(name,folder_location)
+        else:
+            name = input("What is the name of the New Category?: ")
+            folder_location = input("What is the path the the folder?: ")
+            user.add_category(name,folder_location)
+        return main_page(user)
 
-    elif user_input.lower() in command_dictionary["sync"]:
-        user.sync_categories()
+    elif split_command[0] in command_dictionary["sync"]:
+        if "-r" in split_command:
+            user.recursive_sync_categories()
+        else:
+            user.sync_categories()
         return main_page(user)
 
     elif user_input.lower() in command_dictionary["watched"]:

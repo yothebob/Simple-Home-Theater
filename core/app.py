@@ -12,6 +12,9 @@ class App():
     a class for managing the core app, doing admin thing and etc
     '''
 
+    def __init__(self):
+         self.user = User
+
     def autoreplay(self):
         '''
         This is the auto countdown timer for playing the next content
@@ -23,16 +26,24 @@ class App():
     def create_user(self,username,password,password_again):
         '''create and save a new user to database '''
         #maybe i should store them as .lower() and as regular (so I know if there is just a caps problem)?
+        error = ""
         username_taken = query(settings.USER_TABLE,username)
         if username_taken is not None:
             if username_taken[1] == username:
-                return # username taken
+                # username taken
+                error = ("user_taken","Username Taken.")
+                return error
         if password != password_again:
-            return # passwords dont match
-        write_query(settings.USER_TABLE,[username,password,"",""])
+            # passwords dont match
+            error = ("wrong_password","Passwords don't match, please try again.")
+            return error
+        else:
+            write_query(settings.USER_TABLE,[username,password,"",""])
+            return self.login()
 
 
     def login(self,username,password):
+        error = ""
         verify_credidentials = query(settings.USER_TABLE, username)
         if verify_credidentials is not None:
             #user found, attempting to authenticate
@@ -42,10 +53,12 @@ class App():
                 return instance
             else:
                 #not right credidentials
-                return
+                error = "Username of Password<h3>{{category}}</h3> is not correct."
+                return error
         else:
             #query could not find user
-            return
+            error = "Could not find user"
+            return error
 
 
     def delete_user(self,username,password,password_again):

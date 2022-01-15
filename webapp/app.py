@@ -5,79 +5,54 @@ import core.core_settings as settings
 from flask import Flask, render_template, request, g, url_for
 from webapp.forms import LoginForm, CreateUserForm, AddCategoryForm
 
-#class FlaskApp():
-# def __init__(app):
-    # app = app
-    # self.app.config['SECRET KEY'] = '1233456789'
-    # instance = ""
-    # self.app.static_folder = "static"
-#
+FlaskApp = App()
 
 
+app = Flask(__name__)
+
+@app.route("/")
+def home_page():
+    app_name = settings.APP_NAME
+    return render_template("index.html",app_name=app_name)
 
 
-class FlaskApp():
-    app = Flask(__name__)
+@app.route("/login/",methods=["GET","POST"])
+def login_page():
 
-    def __init__(self):
-        self.user = ""
-        self.sht_app = App()
-        sht_app = self.sht_app
-        user = self.user
-
-    @app.route("/")
-    def home_page():
-        app_name = settings.APP_NAME
-        return render_template("index.html",app_name=app_name)
-
-
-    @app.route("/login/",methods=["GET","POST"])
-    def login():
-
-        login_form = LoginForm(request.form)
-        print(login_form)
-        error = ""
-        if request.method == "POST":
-            verify_credidentials = query(settings.USER_TABLE, login_form.username.data)
-            print("posted")
-            print("credidentials: ",verify_credidentials)
-            if verify_credidentials is not None:
-                #user found, attempting to authenticate
-                if verify_credidentials[1] == login_form.username.data and verify_credidentials[2] == login_form.password.data:
-                    user = sht_app.load_user(verify_credidentials[0]) #loading with pk
-                    print(user.username)
-                    '''take to movie screen'''
-                    return render_template("home.html",instance=user)
-                else:
-                    #not right credidentials
-                    error = "Username of Password<h3>{{category}}</h3> is not correct."
-                    return render_template("login.html",error=error,login_form=login_form)
-            else:
-                #query could not find user
-                error = "Could not find user"
-                return render_template("login.html",error=error,login_form=login_form)
+    login_form = LoginForm(request.form)
+    print(login_form)
+    if request.method == "POST":
+        instance = FlaskApp.login(login_form.username.data,login_form.password.data)
+        if isinstance(instance,User):
+            FlaskApp.user = instance 
+            return render_template("home.html",instance=instance)
         else:
-            return render_template("login.html",login_form=login_form)
+            if instance[0] == "user_taken":
+                return render_template("login.html",error=instance,login_form=login_form)
+            if instance[0] == "wrong_password":
+                return render_template("login.html",error=instance,login_form=login_form)
+    else:
+        return render_template("login.html",login_form=login_form)
 
 
-    @app.route("/create/",methods=["GET","POST"])
-    def create_user():
-        '''create and save a new user to database '''
-        create_form = CreateUserForm(request.form)
-        login_form = LoginForm(request.form)
-        if request.method == "POST":
-            print("posted")
-            username_taken = query(settings.USER_TABLE,create_form.username.data)
-            if username_taken is not None:
-                if username_taken[1] == create_form.username.data:
-                    error = "Username Taken."
-                    print('Username Taken')
-                    return render_template("create_user.html",error=error,create_form=create_form)# username taken
+@app.route("/create/",methods=["GET","POST"])
+def create_user_page():
+    '''create and save a new user to database '''
+    create_form = CreateUserForm(request.form)
+    login_form = LoginForm(request.form)
+    if request.method == "POST":
+        print("posted")
+        username_taken = query(settings.USER_TABLE,create_form.username.data)
+        if username_taken is not None:
+            if username_taken[1] == create_form.username.data:
+                error = "Username Taken."
+                print('Username Taken')
+                return render_template("create_user.html",error=error,create_form=create_form)# username taken
 
-            if create_form.password.data != create_form.password_again.data:
-                error = "Passwords don't match, please try again."
-                print("passwords dont match")
-                return render_template("create_user.html",error=error,create_form=create_form)# passwords dont match
+        if create_form.password.data != create_form.password_again.data:
+            error = "Passwords don't match, please try again."
+            print("passwords dont match")
+            return render_template("create_user.html",error=error,create_form=create_form)# passwords dont match
 
             else:
                 print("success! routing to login")

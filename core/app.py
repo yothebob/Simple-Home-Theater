@@ -35,11 +35,11 @@ class App():
                 return error
         if password != password_again:
             # passwords dont match
-            error = ("wrong_password","Passwords don't match, please try again.")
+            error = ("unmatched_password","Passwords don't match, please try again.")
             return error
         else:
             write_query(settings.USER_TABLE,[username,password,"",""])
-            return self.login()
+            # return self.login()
 
 
     def login(self,username,password):
@@ -53,11 +53,11 @@ class App():
                 return instance
             else:
                 #not right credidentials
-                error = "Username of Password<h3>{{category}}</h3> is not correct."
+                error = ("wrong_password","Username of Password<h3>{{category}}</h3> is not correct.")
                 return error
         else:
             #query could not find user
-            error = "Could not find user"
+            error = ("no_user","Could not find user")
             return error
 
 

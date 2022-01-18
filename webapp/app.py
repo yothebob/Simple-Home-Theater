@@ -24,13 +24,12 @@ def login_page():
     if request.method == "POST":
         instance = FlaskApp.login(login_form.username.data,login_form.password.data)
         if isinstance(instance,User):
-            FlaskApp.user = instance 
+            FlaskApp.user = instance
+            #successful login
             return render_template("home.html",instance=instance)
         else:
-            if instance[0] == "user_taken":
-                return render_template("login.html",error=instance,login_form=login_form)
-            if instance[0] == "wrong_password":
-                return render_template("login.html",error=instance,login_form=login_form)
+            #error
+            return render_template("login.html",error=instance[1],login_form=login_form)
     else:
         return render_template("login.html",login_form=login_form)
 
@@ -42,55 +41,58 @@ def create_user_page():
     login_form = LoginForm(request.form)
     if request.method == "POST":
         print("posted")
-        username_taken = query(settings.USER_TABLE,create_form.username.data)
-        if username_taken is not None:
-            if username_taken[1] == create_form.username.data:
-                error = "Username Taken."
-                print('Username Taken')
-                return render_template("create_user.html",error=error,create_form=create_form)# username taken
-
-        if create_form.password.data != create_form.password_again.data:
-            error = "Passwords don't match, please try again."
-            print("passwords dont match")
-            return render_template("create_user.html",error=error,create_form=create_form)# passwords dont match
-
-            else:
-                print("success! routing to login")
-                write_query(settings.USER_TABLE,[create_form.username.data,create_form.password.data,[],[]])
-                return login() # user created. go to login
+        new_user = FlaskApp.create_user(create_form.username.data,create_form.password.data,create_form.password_again.data)
+        if isinstance(new_user,str):
+            print(f"error: {new_user}")
+            return render_template("create_user.html",error=new_user[1],create_form=create_form)
         else:
-            return render_template("create_user.html",create_form=create_form)
+            print("success! routing to login")
+            return render_template("login.html",login_form=login_form)
 
 
-
-    @app.route("/home/",methods=["GET","POST"])
-    def application():
-        # create playlists here and stuff
-        display_amount = 10
-        return render_template("home.html",instance=self.user)
-
-
-    @app.route("/category/",methods=["GET","POST"])
-    def show_categories():
-        user_categories = self.user.load_categories()
-        return render_template("show_categories.html",user_categories=user_categories)
+@app.route("/home/",methods=["GET","POST"])
+def application():
+    # create playlists here and stuff
+    display_amount = 10
+    return render_template("home.html",instance=FlaskApp.user)
 
 
-    @app.route("/category/add/",methods=["GET","POST"])
-    def add_category():
-        add_category_form = AddCategoryForm(request.form)
-
-        if request.method == "POST":
-            print("adding category")
-            self.user.add_category()
-        return render_template("add_category.html",add_category_form=add_category_form)
+@app.route("/category/",methods=["GET","POST"])
+def show_categories():
+    user_categories = FlaskApp.user.categories
+    return render_template("show_categories.html",instance=FlaskApp.user, user_categories=user_categories)
 
 
-    @app.route("/category/<category>",methods=["GET","POST"])
-    def show_category(category):
-        return render_template()
+@app.route("/category/add/",methods=["GET","POST"])
+def add_category():
+    add_category_form = AddCategoryForm(request.form)
 
-    app.run()
+    if request.method == "POST":
+        print("adding category")
+        self.user.add_category()
+    return render_template("add_category.html",add_category_form=add_category_form)
+
+
+@app.route("/category/<category_name>",methods=["GET","POST"])
+def show_category(category_name):
+    for cat in FlaskApp.user.categories:
+        if cat.name == category_name:
+            FlaskApp.user.current_category = cat
+            category = FlaskApp.user.current_category
+            break
+    return render_template("show_category.html",instance=FlaskApp.user,category=category)
+
+
+@app.route("/category/<category_name>/<content_name>",methods=["GET","POST"])
+def content_page(content_name):
+    for cont in FlaskApp.user.current_category:
+        if cont.name == content_name:
+            content = cont
+            break
+    return render_template("content_page.html",instance=FlaskApp.user,content=content)
+
+
+app.run()
 
 # command_dictionary = {
 #     "add"    : ["add","-a","-add","--add"],

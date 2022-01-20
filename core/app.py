@@ -1,3 +1,8 @@
+import hashlib
+import base64
+import uuid
+
+
 from core.models import Category, User, Genre, Tag, Content
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
@@ -11,6 +16,20 @@ class App():
     '''
     a class for managing the core app, doing admin thing and etc
     '''
+
+    def hashed_password(password):
+        salt = base64.urlsafe_b64encode(uuid.uuid4().bytes)
+        t_sha = hashlib.sha512()
+        t_sha.update(password+salt)
+        hashed_password =  base64.urlsafe_b64encode(t_sha.digest())
+        return hashed_password
+
+    def dehash_password(hashed_password):
+        salt = base64.urlsafe_b64encode(uuid.uuid4().bytes)
+        t_sha = hashlib.sha512()
+        t_sha.update(password+salt)
+        return password
+        pass
 
     def __init__(self):
          self.user = User

@@ -1,3 +1,4 @@
+from getpass import getpass
 from core.app import App
 from core.models import Category, User, Genre, Tag, Content
 from core.orm import query, write_query, delete_query
@@ -39,21 +40,23 @@ class CliApp(App):
         #maybe i should store them as .lower() and as regular (so I know if there is just a caps problem)?
         print("creating user")
         username = input("Username: ")
-        password = input("Password: ")
-        password_again = input("Password: ")
+        # password = input("Password: ")
+        # password_again = input("Password: ")
+        password = getpass("Password: ")
+        password_again = getpass("Password: ")
         username_taken = query(settings.USER_TABLE,username)
         if username_taken is not None:
             while username_taken[1] == username:
                 print("username taken")
                 username = input("Username: ")
-                password = input("Password: ")
-                password_again = input("Password: ")
+                password = getpass("Password: ")
+                password_again = getpass("Password: ")
                 username_taken = query(settings.USER_TABLE,username)
 
         while password != password_again:
             print("not matching passwords, please try again")
-            password = input("Password: ")
-            password_again = input("Password: ")
+            password = getpass("Password: ")
+            password_again = getpass("Password: ")
 
         write_query(settings.USER_TABLE,[username,password,"",""])
 
@@ -65,7 +68,8 @@ class CliApp(App):
             username = input("Username: ")
         else:
             username = username
-        password = input("Password: ")
+        # password = input("Password: ")
+        password = getpass("Password: ")
 
         verify_credidentials = query(settings.USER_TABLE, username)
         if verify_credidentials is not None:
@@ -97,8 +101,10 @@ class CliApp(App):
     def delete_user(self):
         print("deleting user...\n")
         username = input("Username:")
-        password = input("Password:")
-        password_again = input("Password:")
+        # password = input("Password:")
+        # password_again = input("Password:")
+        password = getpass("Password: ")
+        password_again = getpass("Password: ")
 
         if password == password_again:
             verify_password = query(settings.USER_TABLE, password)

@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<ul>
-  <li><a href="{{url_for("add_categories")}}">Add Catrgory</a></li>
+<!-- <ul>
+  <li><a href="{{url_for("add_category")}}">Add Catrgory</a></li>
   <li><a href="{{url_for("show_categories")}}">Show Categories</a></li>
   <li><a href="{{url_for("home_page")}}">Log Out</a></li>
 </ul>
  {% for category in instance.categories %}
   <a href="#"><h3>{{category.name}}</h3></a>
+  {% endfor %} -->
+  {% for content in category.content_list %}
+    <a href="#">{{content.name}}</a>
+    <br>
   {% endfor %}
 {% endblock %}

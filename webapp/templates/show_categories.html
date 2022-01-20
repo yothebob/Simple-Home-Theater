@@ -4,7 +4,7 @@
   br
   <ol>
     {% for category in instance.categories %}
-    <li><a href="#"><h3>{{category.name}}</h3></a></li>
+    <li><a href="{{url_for('show_category',category_name=category.name)}}"><h3>{{category.name}}</h3></a></li>
     {% endfor %}
   </ol>
 {% endblock %}

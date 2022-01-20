@@ -4,7 +4,7 @@ import core.core_settings as settings
 if settings.DEPLOYMENT_TYPE == "CLI":
     import cli.main
 elif settings.DEPLOYMENT_TYPE == "WEB":
-    import webapp.main
+    from webapp.main import *
 
 
 

@@ -1,6 +1,6 @@
 import os
 import sys
-
+import core_settings as settings
 
 # TODO:  make all these functions only take args/kwargs
 
@@ -133,3 +133,16 @@ def delete_query(filename, argument ,amount="full"):
                 line = [f.write(str(item) + ",") for item in line_array]
                 # print(line_array[0])
                 return
+
+
+def add_table(table_name,columns):
+    '''a function for creating a new table csv, writing it to core_settings
+    arg: table_name - (str) what to name the file/core_settings variable
+    arg: columns - what to name the columns'''
+    #create csv
+    new_table = open(f"{table_name}s.csv","w")
+    cleaned_columns = [col.replace(",",";") if "," in col else col for col in columns] # remove , to not mess up csv
+    [new_table.write(str(item) + ",") for item in cleaned_columns]
+    #add to core_settings
+    settings_file = open(settings.PROJECT_FILEPATH,'a')
+    settings_file.write(f"{table_name.upper()}_TABLE = PROJECT_FILEPATH + '/data/{table_name}s.csv'")

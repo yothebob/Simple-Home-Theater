@@ -77,17 +77,23 @@ class User():
         return
 
 
-    def create_playlist(self,type="recent",size=10):
+    def create_playlist(self,name="recent",playlist_list=[],size=10):
         '''a function for creating any playlist (maybe another function for customized ones)'''
-        if type == "recent":
+        if name == "recent":
             playlist = PlayList()
             playlist.name = "Recently Played"
-            # playlist.user = self.username
+            playlist.user = self.pk
             for index in range(len(self.watched_content)):
                 playlist.content_list.append(self.watched_content[index])
             # print(playlist.name)
             # [print(playlist_content.name) for playlist_content in playlist.content_list]
+        else:
+            playlist = PlayList()
+            playlist.name = name
+            playlist.user = self.pk
+            [playlist.content_list.append(item) for item in playlist_list]
         self.playlist_stack.append(playlist)
+
 
 
     def sync_categories(self):

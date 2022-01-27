@@ -91,7 +91,11 @@ class User():
             playlist = PlayList()
             playlist.name = name
             playlist.user = self.pk
+            print(self.current_category)
+            write_query(settings.PLAYLIST_TABLE,[self.pk,name,self.current_category])
+            new_playlist = query(settings.PLAYLIST_TABLE,self.pk,"user_fk")
             [playlist.content_list.append(item) for item in playlist_list]
+            [write_query(settings.PLAYLIST_CONTENT_TABLE,[new_playlist[0],item]) for item in playlist_list]
         self.playlist_stack.append(playlist)
 
 
@@ -139,6 +143,15 @@ class Category():
         instance.genre = list[5]
         instance.tags = list[6]
         return instance
+
+
+    def load_playlist(self,list):
+        playlist = Playlist()
+        playlist.pk = list[0]
+        playlist.user_fk = list[1]
+        playlist.name = list[2]
+        playlist.category_fk = list[3]
+
 
 
     def sync(self):

@@ -53,6 +53,10 @@ class User():
         category.user = list[3]
         category.folder_location = list[4]
         category.load_category_contents()
+        category_playlists = query(settings.PLAYLIST_TABLE,category.pk,"category_fk","find all")
+        print(category_playlists)
+        [category.load_playlist(playlist_list) for playlist_list in category_playlists]
+        # [category.load_playlist(playlist_list]) for playlist_list in category_playlists]
         return category
 
 
@@ -92,7 +96,7 @@ class User():
             playlist.name = name
             playlist.user = self.pk
             print(self.current_category)
-            write_query(settings.PLAYLIST_TABLE,[self.pk,name,self.current_category])
+            write_query(settings.PLAYLIST_TABLE,[self.pk,name,self.current_category.pk])
             new_playlist = query(settings.PLAYLIST_TABLE,self.pk,"user_fk")
             [playlist.content_list.append(item) for item in playlist_list]
             [write_query(settings.PLAYLIST_CONTENT_TABLE,[new_playlist[0],item]) for item in playlist_list]
@@ -139,19 +143,20 @@ class Category():
         instance.name = list[2]
         instance.category = self
         instance.subfolder = list[3]
-        instance.type = list[4]
-        instance.genre = list[5]
-        instance.tags = list[6]
+        # instance.type = list[4]
+        # instance.genre = list[5]
+        # instance.tags = list[6]
         return instance
 
 
     def load_playlist(self,list):
-        playlist = Playlist()
+        playlist = PlayList()
         playlist.pk = list[0]
         playlist.user_fk = list[1]
         playlist.name = list[2]
+        new_playlist_content = query(settings.PLAYLIST_CONTENT_TABLE,playlist.pk,"playlist_fk","find all")
         playlist.category_fk = list[3]
-
+        [playlist.content_list.append(self.load_content(content_data)) for content_data in new_playlist_content]
 
 
     def sync(self):
@@ -285,6 +290,8 @@ class PlayList():
     '''
     def __init__(self):
         self.user = ""
+        self.user_fk = ""
+        self.category_fk = ""
         self.name = ""
         self.content_list = []
 

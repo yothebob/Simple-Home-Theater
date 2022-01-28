@@ -210,7 +210,7 @@ def content_commands(user, category_contents, user_input):
 
         if "addplaylist." in run_command:
             # list_range = [int(num) for num in split_command if num.isnumeric()]
-            list_range = [user.current_category.content_list[int(num)].name for num in split_command if num.isnumeric()]
+            list_range = [user.current_category.content_list[int(num)].pk for num in split_command if num.isnumeric()]
             print(list_range)
             playlist_name = str(split_command[-1].replace("name=",""))
             user.create_playlist(playlist_name,list_range)

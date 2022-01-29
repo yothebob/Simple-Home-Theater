@@ -90,7 +90,6 @@ def content_commands(user, category_contents, user_input):
     replay = False
     shuffle = False
 
-    print(run_command)
     if run_command:
         if "autoplay." in run_command:
             print("auto play enabled")
@@ -109,12 +108,14 @@ def content_commands(user, category_contents, user_input):
             play_countdown = settings.AUTOPLAY_COUNTDOWN # we set this here do it can be temp changed from a command
 
             for command in split_command:
+                #change countdown number
                 if "countdown" in command:
                     arg = [command for command in split_command if "countdown" in command][0]
                     countdown = [char for char in arg if char.isnumeric()]
                     print('new countdown',"".join(countdown))
                     play_countdown = int("".join(countdown))
 
+            # manual index input
             if split_command[0].isnumeric():
                 content_indexes = [index for index in split_command if index.isnumeric()]
                 print(content_indexes)
@@ -125,6 +126,15 @@ def content_commands(user, category_contents, user_input):
                     user.append_watched(picked_content)
                     if content_index != content_indexes[len(content_indexes)-1]:
                         autoplaying(play_countdown)
+
+            #play playlist
+            if split_command[0] in [pl.name for pl in user.current_category.playlist_lists]:
+                selected_playlist = [pl for pl in user.current_category.playlist_lists if pl.name==split_command[0]][0]
+                print(f"playing playlist{selected_playlist.name}")
+                for picked_content in selected_playlist.content_list:
+                    picked_content.play_content()
+                    autoplaying(play_countdown)
+                    user.append_watched(picked_content)
             else:
                 print("no index given... please try again")
             while replay:
@@ -209,7 +219,6 @@ def content_commands(user, category_contents, user_input):
             [print(key, item) for key, item in command_dictionary.items()]
 
         if "addplaylist." in run_command:
-            # list_range = [int(num) for num in split_command if num.isnumeric()]
             list_range = [user.current_category.content_list[int(num)].pk for num in split_command if num.isnumeric()]
             print(list_range)
             playlist_name = str(split_command[-1].replace("name=",""))

@@ -216,9 +216,7 @@ def content_commands(user, category_contents, user_input):
             user.create_playlist(playlist_name,list_range)
 
         if "listplaylist." in run_command:
-            print(user.playlist_stack)
-            [print(pl_index.name) for pl_index in user.playlist_stack]
-            [print(pl_index.content_list) for pl_index in user.playlist_stack]
+            [print(index.name,"\n",[con.name for con in index.content_list]) for index in user.current_category.playlist_lists]
     else:
         print("please try again")
         return

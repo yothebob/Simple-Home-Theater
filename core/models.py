@@ -56,6 +56,7 @@ class User():
         category_playlists = query(settings.PLAYLIST_TABLE,category.pk,"category_fk","find all")
         print(category_playlists)
         [category.load_playlist(playlist_list) for playlist_list in category_playlists]
+
         # [category.load_playlist(playlist_list]) for playlist_list in category_playlists]
         return category
 
@@ -89,15 +90,12 @@ class User():
             playlist.user = self.pk
             for index in range(len(self.watched_content)):
                 playlist.content_list.append(self.watched_content[index])
-            # print(playlist.name)
-            # [print(playlist_content.name) for playlist_content in playlist.content_list]
         else:
             playlist = PlayList()
             playlist.name = name
             playlist.user = self.pk
-            print(self.current_category)
             write_query(settings.PLAYLIST_TABLE,[self.pk,name,self.current_category.pk])
-            new_playlist = query(settings.PLAYLIST_TABLE,self.pk,"user_fk")
+            new_playlist = query(settings.PLAYLIST_TABLE,playlist.name,"name")
             [playlist.content_list.append(item) for item in playlist_list]
             [write_query(settings.PLAYLIST_CONTENT_TABLE,[new_playlist[0],item]) for item in playlist_list]
         self.playlist_stack.append(playlist)
@@ -133,6 +131,7 @@ class Category():
         self.folder_location = ""
         self.name = ""
         self.content_list = []
+        self.playlist_lists = []
 
 
     def load_content(self,list):
@@ -155,9 +154,10 @@ class Category():
         playlist.user_fk = list[1]
         playlist.name = list[2]
         new_playlist_content = query(settings.PLAYLIST_CONTENT_TABLE,playlist.pk,"playlist_fk","find all")
+        content_data_list = [query(settings.CONTENT_TABLE,content_fk[2],"pk") for content_fk in new_playlist_content]
         playlist.category_fk = list[3]
-        [playlist.content_list.append(self.load_content(content_data)) for content_data in new_playlist_content]
-
+        [playlist.content_list.append(self.load_content(content_data)) for content_data in content_data_list]
+        self.playlist_lists.append(playlist)
 
     def sync(self):
         # this is NOT RECURSIVE , It should be made to have an option to be recursive

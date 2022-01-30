@@ -1,1 +1,3 @@
-pk,user_fk,playlist_contents_fk,name,
+pk,name,category_pk,
+1,haroldandkumar,4,
+2,memphis,1,

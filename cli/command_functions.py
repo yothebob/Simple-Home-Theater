@@ -52,7 +52,9 @@ def content_commands(user, category_contents, user_input):
     command_dictionary = {
     "play"      : ["play", "-p", "countdown=?"],
     "list"      : ["ls", "(-d for double list)", "ls {start} {stop} "],
-    "details"   : ["checkout", "details", 'det'],
+    "detail"   : ["checkout", "details", 'det'],
+    "list playlist" : ["-lpl","listpl"],
+    "add playlist" : ["{indexes} -apl name=?","-apl","addl"],
     "search"    : ["search", "-s"],
     "autoplay"  : ["-a", "auto" ,"autoplay","-auto"],
     "replay"    : ["-r", "replay", "-re"],
@@ -65,8 +67,8 @@ def content_commands(user, category_contents, user_input):
     for command in split_command:
         if command in command_dictionary["play"]:
             run_command += "play."
-        elif command in command_dictionary["details"]:
-            run_command += "details."
+        elif command in command_dictionary["detail"]:
+            run_command += "detail."
         elif command in command_dictionary["search"]:
             run_command += "search."
         elif command in command_dictionary["autoplay"]:
@@ -79,35 +81,41 @@ def content_commands(user, category_contents, user_input):
             run_command += "list."
         elif command in command_dictionary["shuffle"]:
             run_command += "shuffle."
+        elif command in command_dictionary["list playlist"]:
+            run_command += "listplaylist."
+        elif command in command_dictionary["add playlist"]:
+            run_command += "addplaylist."
 
     autoplay = False
     replay = False
     shuffle = False
 
     if run_command:
-        if "autoplay" in run_command:
+        if "autoplay." in run_command:
             print("auto play enabled")
             autoplay = True
 
-        if "replay" in run_command:
+        if "replay." in run_command:
             print("replay enabled")
             replay = True
 
-        if "shuffle" in run_command:
+        if "shuffle." in run_command:
             print("shuffle enabled")
             shuffle = True
 
-        if "play" in run_command:
+        if "play." in run_command:
             print("playing")
             play_countdown = settings.AUTOPLAY_COUNTDOWN # we set this here do it can be temp changed from a command
 
             for command in split_command:
+                #change countdown number
                 if "countdown" in command:
                     arg = [command for command in split_command if "countdown" in command][0]
                     countdown = [char for char in arg if char.isnumeric()]
                     print('new countdown',"".join(countdown))
                     play_countdown = int("".join(countdown))
 
+            # manual index input
             if split_command[0].isnumeric():
                 content_indexes = [index for index in split_command if index.isnumeric()]
                 print(content_indexes)
@@ -118,6 +126,15 @@ def content_commands(user, category_contents, user_input):
                     user.append_watched(picked_content)
                     if content_index != content_indexes[len(content_indexes)-1]:
                         autoplaying(play_countdown)
+
+            #play playlist
+            if split_command[0] in [pl.name for pl in user.current_category.playlist_lists]:
+                selected_playlist = [pl for pl in user.current_category.playlist_lists if pl.name==split_command[0]][0]
+                print(f"playing playlist{selected_playlist.name}")
+                for picked_content in selected_playlist.content_list:
+                    picked_content.play_content()
+                    autoplaying(play_countdown)
+                    user.append_watched(picked_content)
             else:
                 print("no index given... please try again")
             while replay:
@@ -162,7 +179,7 @@ def content_commands(user, category_contents, user_input):
                     shuffle = False
 
 
-        if "details" in run_command:
+        if "detail." in run_command:
             split_command = user_input.split(" ")
             print(split_command)
             if len(split_command) > 2: # default command needs 2 args. $ {number} details
@@ -177,7 +194,7 @@ def content_commands(user, category_contents, user_input):
                 content_data = find_metadata(picked_content.name)
                 [print(settings.METADATA_LIST[index], ": ", content_data[index][0]) for index in range(len(content_data))]
 
-        if "search" in run_command:
+        if "search." in run_command:
             print(split_command)
             if len(split_command) > 1:
                 picked_category = user.current_category
@@ -186,7 +203,7 @@ def content_commands(user, category_contents, user_input):
                 picked_category = user.current_category
                 search_category_contents(picked_category)
 
-        if "list" in run_command:
+        if "list." in run_command:
             if len(split_command) > 2:
                 list_range = [int(num) for num in split_command if num.isnumeric()]
                 print(list_range)
@@ -197,9 +214,18 @@ def content_commands(user, category_contents, user_input):
                 [print(index-1," : ",user.current_category.content_list[index-1].name, "\t\t",index," : ",user.current_category.content_list[index].name) for index in range(len(user.current_category.content_list)) if index%2 == 0]
             else:
                 [print(index," : ",user.current_category.content_list[index].name) for index in range(len(user.current_category.content_list))]
-        if "help" in run_command:
+        if "help." in run_command:
             print("Commands:\n")
             [print(key, item) for key, item in command_dictionary.items()]
+
+        if "addplaylist." in run_command:
+            list_range = [user.current_category.content_list[int(num)].pk for num in split_command if num.isnumeric()]
+            print(list_range)
+            playlist_name = str(split_command[-1].replace("name=",""))
+            user.create_playlist(playlist_name,list_range)
+
+        if "listplaylist." in run_command:
+            [print(index.name,"\n",[con.name for con in index.content_list]) for index in user.current_category.playlist_lists]
     else:
         print("please try again")
         return

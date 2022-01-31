@@ -13,7 +13,6 @@ class User():
         self.watched = []
         self.watched_content = []
         self.current_category = ""
-        self.playlist_stack = []
 
 
     def add_category(self,name,folder_location):
@@ -53,6 +52,8 @@ class User():
         category.user = list[3]
         category.folder_location = list[4]
         category.load_category_contents()
+        category_playlists = query(settings.PLAYLIST_TABLE,category.pk,"category_fk","find all")
+        [category.load_playlist(playlist_list) for playlist_list in category_playlists]
         return category
 
 
@@ -71,23 +72,29 @@ class User():
 
     def append_watched(self,content):
         ''' get list of watched movies per username'''
-        # print(type(self.watched))
         self.watched.append(content.pk)
         write_query(settings.WATCH_TABLE, [self.pk,content.pk,datetime.now()])
         return
 
 
-    def create_playlist(self,type="recent",size=10):
+    def create_playlist(self,name="recent",playlist_list=[],size=10):
         '''a function for creating any playlist (maybe another function for customized ones)'''
-        if type == "recent":
+        # TODO:  create a function for temporary playlists (not saved to DB like recently watched)
+        if name == "recent":
             playlist = PlayList()
             playlist.name = "Recently Played"
-            # playlist.user = self.username
+            playlist.user = self.pk
             for index in range(len(self.watched_content)):
                 playlist.content_list.append(self.watched_content[index])
-            # print(playlist.name)
-            # [print(playlist_content.name) for playlist_content in playlist.content_list]
-        self.playlist_stack.append(playlist)
+        else:
+            playlist = PlayList()
+            playlist.name = name
+            write_query(settings.PLAYLIST_TABLE,[name,self.current_category.pk])
+            new_playlist = query(settings.PLAYLIST_TABLE,playlist.name,"name")
+            [playlist.content_list.append(item) for item in playlist_list]
+            [write_query(settings.PLAYLIST_CONTENT_TABLE,[new_playlist[0],item]) for item in playlist_list]
+
+        self.current_category.load_playlist(new_playlist)
 
 
     def sync_categories(self):
@@ -110,8 +117,6 @@ class User():
 
 class Category():
 
-    # def __init__(self, user, folder_location, name):
-
     def __init__(self):
         self.pk = 0
         self.fk = 0 #user pk
@@ -119,24 +124,33 @@ class Category():
         self.folder_location = ""
         self.name = ""
         self.content_list = []
+        self.playlist_lists = []
 
 
     def load_content(self,list):
         instance = Content()
-        # print("load_content_list: ",list)
         instance.pk = list[0]
         instance.fk = list[1]
         instance.name = list[2]
         instance.category = self
         instance.subfolder = list[3]
-        instance.type = list[4]
-        instance.genre = list[5]
-        instance.tags = list[6]
+        # instance.type = list[4]
+        # instance.genre = list[5]
+        # instance.tags = list[6]
         return instance
 
 
+    def load_playlist(self,list):
+        playlist = PlayList()
+        playlist.pk = list[0]
+        playlist.name = list[1]
+        new_playlist_content = query(settings.PLAYLIST_CONTENT_TABLE,playlist.pk,"playlist_fk","find all")
+        content_data_list = [query(settings.CONTENT_TABLE,content_fk[2],"pk") for content_fk in new_playlist_content]
+        playlist.category_fk = list[2]
+        [playlist.content_list.append(self.load_content(content_data)) for content_data in content_data_list]
+        self.playlist_lists.append(playlist)
+
     def sync(self):
-        # this is NOT RECURSIVE , It should be made to have an option to be recursive
         find_files = query(settings.CONTENT_TABLE,self.pk,"fk","find all")
         found = 0
         not_found = 0
@@ -159,7 +173,6 @@ class Category():
             if os.path.isdir(self.folder_location + '/' + file):
                 print("found folder")
                 for subfile in os.listdir(str(self.folder_location + "/"+ file)):
-                    # write_query(settings.CONTENT_TABLE,[str(self.pk),str("'" + subfile + "'"),str(file),"","",""])
                     find_file = query(settings.CONTENT_TABLE,subfile,"name")
                     if find_file is not None:
                         found += 1
@@ -266,6 +279,8 @@ class PlayList():
     '''
     def __init__(self):
         self.user = ""
+        self.user_fk = ""
+        self.category_fk = ""
         self.name = ""
         self.content_list = []
 

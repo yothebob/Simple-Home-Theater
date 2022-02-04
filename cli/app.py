@@ -25,6 +25,8 @@ class CliApp(App):
         elif user_input.lower() == "create":
             self.create_user()
             return self.login()
+        elif user_input.lower() == "exit":
+            return self.logout()
         else:
             find_username = query(settings.USER_TABLE,user_input)
             if find_username is not None:
@@ -89,12 +91,11 @@ class CliApp(App):
 
 
 
-    def logout(self,user):
-        '''
-        '''
+    def logout(self):
         print('''logging out...
             hope to see you again soon! :)
         ''')
+        exit()
 
 
 

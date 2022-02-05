@@ -2,8 +2,9 @@ from core.app import App
 from core.models import Category, User, Genre, Tag, Content
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
-from flask import Flask, render_template, request, g, url_for
+from flask import Flask, render_template, request, g, url_for, send_file
 from webapp.forms import LoginForm, CreateUserForm, AddCategoryForm
+from movie_scraper.main import find_metadata
 
 FlaskApp = App()
 
@@ -48,6 +49,8 @@ def create_user_page():
         else:
             print("success! routing to login")
             return render_template("login.html",login_form=login_form)
+    return render_template("create_user.html",create_form=create_form)
+
 
 
 @app.route("/home/",methods=["GET","POST"])
@@ -84,70 +87,16 @@ def show_category(category_name):
 
 
 @app.route("/category/<category_name>/<content_name>",methods=["GET","POST"])
-def content_page(content_name):
-    for cont in FlaskApp.user.current_category:
+def show_content_page(category_name,content_name):
+    for cont in FlaskApp.user.current_category.content_list:
         if cont.name == content_name:
             content = cont
-            break
-    return render_template("content_page.html",instance=FlaskApp.user,content=content)
+            content_path = f'{content.category.folder_location}/"{content.name}"'
+            content_metadata = find_metadata(content.name)
+            return render_template("content_page.html",instance=FlaskApp.user,content=content,
+            content_metadata=content_metadata,content_path=content_path)
 
+    error = "no content found! please try again"
+    return render_template("content_page.html",instance=FlaskApp.user)
 
 app.run()
-
-# command_dictionary = {
-#     "add"    : ["add","-a","-add","--add"],
-#     "sync" : ["sync", "-s", "--sync", "reload", "load"],
-#     "watched": ["watched", "--watched", "-watched" , "-w", "watch", "--watch"],
-#     "passwd" : ["passwd", "--passwd", "password", "-p", "--password"],
-#     "exit"   : ["exit", "end", "-e", "--end", "--exit"],
-#     "help"   : ["help","-h","--help"],
-#     "category" : ["cat", "category", "-cat", "--category","ls"]
-# }
-# if user_input.lower() in command_dictionary["help"]:
-#     print("Commands: ")
-#     print([print(key,val) for key, val in command_dictionary.items()])
-#     return main_page(user)
-#
-# elif user_input.lower() in command_dictionary["category"]:
-#     user_categories = user.load_categories()
-#     show_user_categories(user_categories)
-#     user_input = input(": ")
-#     if user_input.isnumeric():
-#         picked_category = user_categories[int(user_input)]
-#         user.current_category = picked_category
-#         print(f"in {user.current_category.name} category...")
-#         get_command = input(": ")
-#         # user.create_playlist()
-#         run_command = content_commands(user,picked_category,get_command)
-#     else:
-#         print("not valid")
-#         return main_page(user)
-#     while get_command.lower() != "exit":
-#         get_command = input(": ")
-#         # user.create_playlist()
-#         run_command = content_commands(user,picked_category,get_command)
-#     return main_page(user)
-#
-# elif user_input.lower() in command_dictionary["add"]:
-#      user.add_category()
-#      return main_page(user)
-#
-# elif user_input.lower() in command_dictionary["sync"]:
-#     user.sync_categories()
-#     return main_page(user)
-#
-# elif user_input.lower() in command_dictionary["watched"]:
-#     user.get_watched()
-#     return main_page(user)
-#
-# elif user_input.lower() in command_dictionary["passwd"]:
-#     user.change_password()
-#     return main_page(user)
-#
-# elif user_input.lower() in command_dictionary["exit"]:
-#     exit()
-#
-# else:
-#     print("Sorry please try Again")
-#     return main_page(user)
-#

@@ -6,7 +6,4 @@
   <li><a href="{{url_for("home_page")}}">Log Out</a></li>
   <li><a href="{{url_for("home_page")}}">Sync</a></li>
 </ul>
- {% for category in instance.categories %}
-  <a href="#"><h3>{{category.name}}</h3></a>
-  {% endfor %}
 {% endblock %}

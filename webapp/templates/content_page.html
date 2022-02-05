@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <h3>{{content.name}}</h3>
+  <!-- <video src="{{content.category.folder_location}}/{{content.name}}"></video> -->
+  <audio src="">
+    <source src="{{url_for('play_webcontent',content_path=content_path,content_name=content.name)}}" type="audio/video">
+  </audio>
+  <p>{{content_metadata}}</p>
+
+{% endblock %}

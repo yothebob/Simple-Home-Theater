@@ -23,24 +23,9 @@ def autoplaying(time_left,start_time=settings.AUTOPLAY_COUNTDOWN):
 
 
 #for now play_next will go here but it should move to cli.main probably
-# i Need to redo this function, it is not working properly and getting the next pk in contents.csv will not work anyways, could be another users or another type of content
-# def play_next(picked_content,playlist=None):
-#     # this is just returning the next contents index number
-#     ''' play the next in a playlist (or just the next in line) given the last picked content'''
-#     if playlist is None:
-#         return picked_content + 1
-#
-# def play_random(content_list,playlist=None):
-#     if playlist is None:
-#         return choice(content_list)
-
-def find_command_list(command):
-    # a generic function for creating a list from a given command
-    # options are, manual index, playlist,
-    pass
 
 
-def play_list(user,obj_content_list=[],playstyle=[],play_countdown=3,play_count=0):
+def play_list(user,obj_content_list=[],playstyle=[],play_countdown=3):
     #a new generic function that will take care of playing a list of content OBJECTS
     # and handle shuffle, replay, autoplay and play accordingly
 
@@ -58,7 +43,7 @@ def play_list(user,obj_content_list=[],playstyle=[],play_countdown=3,play_count=
             autoplaying(play_countdown)
             obj_content.play_content()
             user.append_watched(obj_content)
-
+        return
 
 # for obj_content in obj_content_list:
     if "replay" in playstyle:
@@ -67,24 +52,26 @@ def play_list(user,obj_content_list=[],playstyle=[],play_countdown=3,play_count=
                 autoplaying(play_countdown)
                 obj_content.play_content()
                 user.append_watched(obj_content)
+            return
 
     elif "autoplay" in playstyle:
         #after playing list, play the whole category (try to start from last used index)
-        play_count +=1
-        if play_count < len(obj_content_list):
+
+        #play list
+        for index_num in obj_content_list: # number not objects here!
             autoplaying(play_countdown)
-            obj_content_list[play_count].play_content()
-            user.append_watched(obj_content)
-        else:
+            user.current_category.content_list[index_num].play_content()
+            user.append_watched(user.current_category.content_list[index_num])
+
+        remainder_index = obj_content_list[-1] + 1
+
+        # play remainder of category
+        while remainder_index < len(user.current_category.content_list):
             autoplaying(play_countdown)
-            start_index = [num for num in range(len(user.current_category.content_list)) if user.current_category.content_list[num]==obj_content_list[0]][0]
-            next_index = user.current_category.content_list[start_index + play_count]
-            if next_index < len(user.current_category.content_list):
-                user.current_category.content_list[next_index].play_content()
-            else:
-                play_count = 0
-                user.current_category.content_list[play_count].play_content()
-            user.append_watched(obj_content)
+            user.current_category.content_list[remainder_index].play_content()
+            user.append_watched(user.current_category.content_list[remainder_index])
+            remainder_index += 1
+        return
     else:
         #play the list then return
         for obj_content in obj_content_list:
@@ -92,7 +79,7 @@ def play_list(user,obj_content_list=[],playstyle=[],play_countdown=3,play_count=
             autoplaying(play_countdown)
             obj_content.play_content()
             user.append_watched(obj_content)
-
+        return
 
 
 def search_category_contents(category,user_input=""):
@@ -148,7 +135,8 @@ def content_commands(user, category_contents, user_input):
     autoplay = False
     replay = False
     shuffle = False
-    play_count = 0
+    been_played = False
+
     if run_command:
         if "autoplay." in run_command:
             print("auto play enabled")
@@ -174,78 +162,53 @@ def content_commands(user, category_contents, user_input):
                     print('new countdown',"".join(countdown))
                     play_countdown = int("".join(countdown))
 
-            print("autoplay,replay,shuffle")
-            print(autoplay,replay,shuffle)
-            # manual index input
-            if split_command[0].isnumeric():
-                content_pl = [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
-                print(content_pl)
-
 
             #get playlist
             if split_command[0] in [pl.name for pl in user.current_category.playlist_lists]:
-                content_pl = [pl for pl in user.current_category.playlist_lists if pl.name==split_command[0]][0]
+                selected_pl = [pl for pl in user.current_category.playlist_lists if pl.name==split_command[0]][0]
+                content_pl = selected_pl.content_list
+                print(content_pl)
 
-            if len(content_pl) == 0:
-                print("no index given... please try again")
 
             while replay:
                 try:
-                    play_list(user,content_pl,["replay"],play_countdown,play_count)
-                    # content_indexes = [index for index in split_command if index.isnumeric()]
-                    # for content_index in content_indexes:
-                    #     autoplaying(play_countdown)
-                    #     picked_content = category_contents.content_list[int(content_index)]
-                    #     picked_content.play_content()
-                    #     user.append_watched(picked_content)
+                    if content_pl is None:
+                        content_pl = [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
+                    play_list(user,content_pl,["replay"],play_countdown)
+                    been_played = True
                 except KeyboardInterrupt:
                     print("replay disabled")
                     replay = False
+                    been_played = True
 
             while autoplay:
                 try:
-                    play_list(user,content_pl,["autoplay"],play_countdown,play_count)
+                    #warning: autoplay does not currently work with playlists, it takes a list of index not objects
+                    content_pl = [int(index) for index in split_command if index.isnumeric()]
+                    play_list(user,content_pl,["autoplay"],play_countdown)
                     autoplay = False
+                    been_played = True
                 except KeyboardInterrupt:
                     print("auto play disabled")
                     autoplay = False
+                    been_played = True
 
             while shuffle:
                 try:
-                    play_list(user,content_pl,["shuffle"],play_countdown,play_count)
+                    if content_pl is None:
+                        content_pl = [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
+                    play_list(user,content_pl,["shuffle"],play_countdown)
                     shuffle = False
-                    # content_indexes = [index for index in split_command if index.isnumeric()]
-                    #
-                    # #randomize from a given list of indexes
-                    # if len(content_indexes) > 1:
-                    #
-                    #     #make a new randomized list
-                    #     randomized_content_list = []
-                    #     for number in range(len(content_indexes)):
-                    #         random_index = choice(content_indexes)
-                    #         content_indexes.remove(random_index)
-                    #         randomized_content_list.append(random_index)
-                    #         # picked_index = play_random(content_indexes)
-                    #         # picked_content = category_contents.content_list[int(picked_index)]
-                    #
-                    # #randomize the entire category
-                    # else:
-                    #     randomized_content_list = []
-                    #     for number in range(len(category_contents.content_list)):
-                    #         random_index = choice(content_indexes)
-                    #         content_indexes.remove(random_index)
-                    #         randomized_content_list.append(random_index)
-                    #
-                    #     picked_content = play_next(randomized_content_list)
-                    # print(f"{picked_content.name} Next up...")
-                    # autoplaying(play_countdown)
-                    # picked_content.play_content()
-                    # user.append_watched(picked_content)
+                    been_played = True
                 except KeyboardInterrupt:
                     print("shuffle disabled")
                     shuffle = False
-            else:
-                play_list(user,content_pl,[],play_countdown,play_count)
+                    been_played = True
+            if been_played == False:
+                if content_pl is None:
+                    content_pl = [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
+                play_list(user,content_pl,[],play_countdown)
+
 
         if "detail." in run_command:
             split_command = user_input.split(" ")
@@ -255,7 +218,6 @@ def content_commands(user, category_contents, user_input):
                     if content_index != len(split_command)-1:
                         content_data = find_metadata(category_contents.content_list[int(split_command[int(content_index)])].name)
                         [print(settings.METADATA_LIST[index],": ",content_data[index][0],"\n") for index in range(len(settings.METADATA_LIST))]
-            # old [print(category_contents.content_list[int(split_command[index])].name,"\n",find_metadata(category_contents.content_list[int(split_command[index])].name)) for index in range(len(split_command)) if index != (len(split_command)-1)]
             else:
                 picked_content = category_contents.content_list[int(split_command[0])]
                 print(picked_content.name)

@@ -9,7 +9,7 @@
   <a href="#"><h3>{{category.name}}</h3></a>
   {% endfor %} -->
   {% for content in category.content_list %}
-    <a href="#">{{content.name}}</a>
+    <a href="{{url_for('show_content_page',category_name=category.name,content_name=content.name)}}">{{content.name}}</a>
     <br>
   {% endfor %}
 {% endblock %}

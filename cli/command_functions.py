@@ -162,7 +162,8 @@ def content_commands(user, category_contents, user_input):
                     print('new countdown',"".join(countdown))
                     play_countdown = int("".join(countdown))
 
-
+            content_pl = None
+            
             #get playlist
             if split_command[0] in [pl.name for pl in user.current_category.playlist_lists]:
                 selected_pl = [pl for pl in user.current_category.playlist_lists if pl.name==split_command[0]][0]

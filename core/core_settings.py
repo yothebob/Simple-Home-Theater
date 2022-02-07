@@ -1,4 +1,5 @@
-PROJECT_FILEPATH = "/home/brandon/Documents/python-projects/simple-home-theater"
+import os
+PROJECT_FILEPATH = os.getcwd()
 MEDIA_PLAYER = "mpv"
 DEPLOYMENT_TYPE = "CLI"
 # DEPLOYMENT_TYPE = "WEB"

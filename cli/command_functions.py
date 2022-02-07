@@ -32,9 +32,10 @@ def play_list(user,obj_content_list=[],playstyle=[],play_countdown=3):
     if "shuffle" in playstyle:
         #randomize the list
         randomized_content_list = []
-        for number in range(len(obj_content_list)):
-            random_obj = choice(obj_content_list)
-            obj_content_list.remove(random_obj)
+        copied_list = obj_content_list.copy()
+        for number in range(len(copied_list)):
+            random_obj = choice(copied_list)
+            copied_list.remove(random_obj)
             randomized_content_list.append(random_obj)
         obj_content_list = randomized_content_list
 

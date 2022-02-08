@@ -155,6 +155,9 @@ def content_commands(user, category_contents, user_input):
             print("playing")
             play_countdown = settings.AUTOPLAY_COUNTDOWN # we set this here do it can be temp changed from a command
 
+            content_pl = []
+            selected_pl = ""
+
             for command in split_command:
                 #change countdown number
                 if "countdown" in command:
@@ -162,19 +165,16 @@ def content_commands(user, category_contents, user_input):
                     countdown = [char for char in arg if char.isnumeric()]
                     print('new countdown',"".join(countdown))
                     play_countdown = int("".join(countdown))
-
-            content_pl = None
-            
-            #get playlist
-            if split_command[0] in [pl.name for pl in user.current_category.playlist_lists]:
-                selected_pl = [pl for pl in user.current_category.playlist_lists if pl.name==split_command[0]][0]
-                content_pl = selected_pl.content_list
-                print(content_pl)
+                #get playlist
+                if command in [pl.name for pl in user.current_category.playlist_lists]:
+                    selected_pl = [pl for pl in user.current_category.playlist_lists if pl.name==command][0]
+                    content_pl += selected_pl.content_list
+                    # print(content_pl)
 
 
             while replay:
                 try:
-                    if content_pl is None:
+                    if len(content_pl) == 0:
                         content_pl = [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
                     play_list(user,content_pl,["replay"],play_countdown)
                     been_played = True
@@ -197,7 +197,7 @@ def content_commands(user, category_contents, user_input):
 
             while shuffle:
                 try:
-                    if content_pl is None:
+                    if len(content_pl) == 0:
                         content_pl = [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
                     play_list(user,content_pl,["shuffle"],play_countdown)
                     shuffle = False
@@ -206,8 +206,9 @@ def content_commands(user, category_contents, user_input):
                     print("shuffle disabled")
                     shuffle = False
                     been_played = True
+            # normal play
             if been_played == False:
-                if content_pl is None:
+                if len(content_pl) == 0:
                     content_pl = [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
                 play_list(user,content_pl,[],play_countdown)
 

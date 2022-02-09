@@ -87,7 +87,10 @@ def search_category_contents(category,user_input=""):
     if user_input == "":
         user_input = input(": ")
     print(f"searching {user_input}...")
+    print("content results...")
     [print(index,": ", category.content_list[index].name) for index in range(len(category.content_list)) if user_input.lower() in category.content_list[index].name.lower()]
+    print("playlists results...")
+    [print(category.playlist_lists[index].name,[item.name for item in category.playlist_lists[index].content_list]) for index in range(len(category.playlist_lists)) if user_input.lower() in category.playlist_lists[index].name.lower()]
 
 
 

@@ -105,6 +105,7 @@ def content_commands(user, category_contents, user_input):
     "detail"   : ["checkout", "details", 'det'],
     "list playlist" : ["-lpl","listpl"],
     "add playlist" : ["{indexes} -apl name=?","-apl","addl"],
+    "append playlist" : ["{indexes} -atpl name=?","-atpl"],
     "search"    : ["search", "-s"],
     "autoplay"  : ["-a", "auto" ,"autoplay","-auto"],
     "replay"    : ["-r", "replay", "-re"],
@@ -135,6 +136,8 @@ def content_commands(user, category_contents, user_input):
             run_command += "listplaylist."
         elif command in command_dictionary["add playlist"]:
             run_command += "addplaylist."
+        elif command in command_dictionary["append playlist"]:
+            run_command += "appendplaylist."
 
     autoplay = False
     replay = False
@@ -262,6 +265,13 @@ def content_commands(user, category_contents, user_input):
 
         if "listplaylist." in run_command:
             [print(index.name,"\n",[con.name for con in index.content_list]) for index in user.current_category.playlist_lists]
+
+        if "appendplaylist." in run_command:
+            list_range = [user.current_category.content_list[int(num)] for num in split_command if num.isnumeric()]
+            print(list_range)
+            playlist_name = str(split_command[-1].replace("name=",""))
+            found_pl = [pl for pl in user.current_category.playlist_lists if pl.name == playlist_name][0]
+            [write_query(settings.PLAYLIST_CONTENT_TABLE,[found_pl.pk,item.pk]) for item in list_range]
     else:
         print("please try again")
         return

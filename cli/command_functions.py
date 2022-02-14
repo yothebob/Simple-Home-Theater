@@ -100,41 +100,44 @@ def content_commands(user, category_contents, user_input):
     split_command = user_input.split(" ")
     print(f"In {category_contents.name} category...")
     command_dictionary = {
-    "play"      : ["play", "-p", "countdown=?"],
-    "list"      : ["ls", "(-d for double list)", "ls {start} {stop} "],
-    "detail"   : ["checkout", "details", 'det'],
-    "list playlist" : ["-lpl","listpl"],
-    "add playlist" : ["{indexes} -apl name=?","-apl","addl"],
-    "search"    : ["search", "-s"],
-    "autoplay"  : ["-a", "auto" ,"autoplay","-auto"],
-    "replay"    : ["-r", "replay", "-re"],
-    "shuffle": ["-sp","shuffle", "-shuffle", "-randomize"],
-    "help"      : ["-h", "help", "--help"],
-    "exit"      : ["exit"]
+    "play"      : {"play" : "play content", "-p" : "", "countdown=?" : "override countdown between content"},
+    "list"      : {"ls" : "list category", "ls {start} {stop}" : "list indexes in a range"},
+    "detail"   : {"details" : "show imdb content data"},
+    "list playlist" : {"-lpl" : "List playlist","listpl" : ""},
+    "add playlist" : {"-apl" : " add playlist ex:{indexes} -apl name=?"},
+    "append playlist" : {"-atpl" : " add to a playlist ex:{indexes} -atpl name=?"},
+    "search"    : {"search" :"search for multiple names", "-s": ""},
+    "autoplay"  : {"-a" : "autoplay category in index order"},
+    "replay"    : {"-r": "replay given indexes/ playlist"},
+    "shuffle"   : {"-sp" : "shuffle playlist"},
+    "help"      : {"-h" : "", "help" : ""},
+    "exit"      : {"exit" : ""}
     }
 
     run_command = ""
     for command in split_command:
-        if command in command_dictionary["play"]:
+        if command in command_dictionary["play"].keys():
             run_command += "play."
-        elif command in command_dictionary["detail"]:
+        elif command in command_dictionary["detail"].keys():
             run_command += "detail."
-        elif command in command_dictionary["search"]:
+        elif command in command_dictionary["search"].keys():
             run_command += "search."
-        elif command in command_dictionary["autoplay"]:
+        elif command in command_dictionary["autoplay"].keys():
             run_command += "autoplay."
-        elif command in command_dictionary["replay"]:
+        elif command in command_dictionary["replay"].keys():
             run_command += "replay."
-        elif command in command_dictionary["help"]:
+        elif command in command_dictionary["help"].keys():
             run_command += "help."
-        elif command in command_dictionary["list"]:
+        elif command in command_dictionary["list"].keys():
             run_command += "list."
-        elif command in command_dictionary["shuffle"]:
+        elif command in command_dictionary["shuffle"].keys():
             run_command += "shuffle."
-        elif command in command_dictionary["list playlist"]:
+        elif command in command_dictionary["list playlist"].keys():
             run_command += "listplaylist."
-        elif command in command_dictionary["add playlist"]:
+        elif command in command_dictionary["add playlist"].keys():
             run_command += "addplaylist."
+        elif command in command_dictionary["append playlist"].keys():
+            run_command += "appendplaylist."
 
     autoplay = False
     replay = False
@@ -252,7 +255,7 @@ def content_commands(user, category_contents, user_input):
                 [print(index," : ",user.current_category.content_list[index].name) for index in range(len(user.current_category.content_list))]
         if "help." in run_command:
             print("Commands:\n")
-            [print(key, item) for key, item in command_dictionary.items()]
+            [print(key, "\n\t",[f"{k} : {v}" for k,v in item.items() ]) for key, item in command_dictionary.items()]
 
         if "addplaylist." in run_command:
             list_range = [user.current_category.content_list[int(num)].pk for num in split_command if num.isnumeric()]
@@ -262,6 +265,13 @@ def content_commands(user, category_contents, user_input):
 
         if "listplaylist." in run_command:
             [print(index.name,"\n",[con.name for con in index.content_list]) for index in user.current_category.playlist_lists]
+
+        if "appendplaylist." in run_command:
+            list_range = [user.current_category.content_list[int(num)] for num in split_command if num.isnumeric()]
+            print(list_range)
+            playlist_name = str(split_command[-1].replace("name=",""))
+            found_pl = [pl for pl in user.current_category.playlist_lists if pl.name == playlist_name][0]
+            [write_query(settings.PLAYLIST_CONTENT_TABLE,[found_pl.pk,item.pk]) for item in list_range]
     else:
         print("please try again")
         return

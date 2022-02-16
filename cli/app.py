@@ -27,6 +27,8 @@ class CliApp(App):
             return self.login()
         elif user_input.lower() == "exit":
             return self.logout()
+        elif user_input.lower() == "delete":
+            return self.delete_user()
         else:
             find_username = query(settings.USER_TABLE,user_input)
             if find_username is not None:
@@ -102,8 +104,6 @@ class CliApp(App):
     def delete_user(self):
         print("deleting user...\n")
         username = input("Username:")
-        # password = input("Password:")
-        # password_again = input("Password:")
         password = getpass("Password: ")
         password_again = getpass("Password: ")
 
@@ -112,4 +112,4 @@ class CliApp(App):
             verify_username = query(settings.USER_TABLE,username)
 
         if verify_username is not None and verify_password is not None:
-            delete_query(settings.USER_TABLE,username)
+           write_query(settings.USER_TABLE,['','','',''],new=False,where={"username" : username, "password" : password})

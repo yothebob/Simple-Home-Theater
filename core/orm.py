@@ -4,7 +4,7 @@ import core_settings as settings
 
 # TODO:  make all these functions only take args/kwargs
 
-def write_query(filename,arguments,new=True,pk=None):
+def write_query(filename,arguments,new=True,pk=None,where=None):
     '''a function for writing to a "DB" file
         filename : str
             the name/path of file
@@ -14,6 +14,8 @@ def write_query(filename,arguments,new=True,pk=None):
             if new is True, it will write everything to a new line, otherwise use the pk arg to find the right row to replace
         pk : int or None
             a number for primary key, only use with new = False
+        where : dict or none
+            a dictionary of where items to match 
     '''
 
     if new == True:
@@ -43,6 +45,18 @@ def write_query(filename,arguments,new=True,pk=None):
         column_titles = database_rows[0].split(",") #get names of columns
         print(column_titles)
         for index in range(len(database_rows)):
+
+            #where handling
+            if where is not None:
+                for col in column_titles:
+                    for w_key,w_val in where.items():
+                        if col == w_key:
+                            print(f"found key {w_key}")
+                            if database_rows[index][len(database_rows)-1] == str(w_val):
+                                [database.write(str(item) + ",") for item in arguments]
+                                database.write("\n")
+                            
+            #pk handling                
             if database_rows[index][0] == str(pk):
                 print("found pk")
                 # database.write(str(index) + ",") # dont need to write pk index if it is plugged into the arguments

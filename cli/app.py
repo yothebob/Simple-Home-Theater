@@ -112,4 +112,4 @@ class CliApp(App):
             verify_username = query(settings.USER_TABLE,username)
 
         if verify_username is not None and verify_password is not None:
-           write_query(settings.USER_TABLE,['','','',''],new=False,where={"username" : username, "password" : password})
+           write_query(settings.USER_TABLE,['changetest','pp','',''],new=False,where={"username" : "b","password" : "b"})

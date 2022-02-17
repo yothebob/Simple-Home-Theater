@@ -38,32 +38,47 @@ def write_query(filename,arguments,new=True,pk=None,where=None):
         database.close()
     else:
         '''rewrite row'''
-        database_rows = [row for row in open(filename, "r")]
+        database_rows = [row.split(",") for row in open(filename, "r")]
         print(database_rows)
 
         database = open(filename, "w")
-        column_titles = database_rows[0].split(",") #get names of columns
+        column_titles = database_rows[0] #get names of columns
         print(column_titles)
         for index in range(len(database_rows)):
-
+            modified = False
+            
             #where handling
             if where is not None:
-                for col in column_titles:
+                # \/ this will keep track of num of where args satisfied, only update if all are satisfied
+                args_satisfied = 0  
+
+                for col in range(len(column_titles)):
                     for w_key,w_val in where.items():
-                        if col == w_key:
+                        if column_titles[col] == w_key:
                             print(f"found key {w_key}")
-                            if database_rows[index][len(database_rows)-1] == str(w_val):
-                                [database.write(str(item) + ",") for item in arguments]
-                                database.write("\n")
+                            print(database_rows[index][col],w_val)
+                            if database_rows[index][col] == str(w_val):
+                                print(f"updating {database_rows[index][len(database_rows)-1]}")
+                                args_satisfied += 1
+
+                print(args_satisfied,len(where.keys())-1)
+                if args_satisfied == (len(where.keys())-1):
+                    print("args satisfied")
+                    database.write(str(database_rows[index][0]) + ",")
+                    [database.write(str(item) + ",") for item in arguments]
+                    database.write("\n")
+                    modified = True
+                            
                             
             #pk handling                
             if database_rows[index][0] == str(pk):
                 print("found pk")
-                # database.write(str(index) + ",") # dont need to write pk index if it is plugged into the arguments
+                database.write(str(pk) + ",") # dont need to write pk index if it is plugged into the arguments
                 [database.write(str(item) + ",") for item in arguments]
                 database.write("\n")
             else:
-                database.write(database_rows[index])
+                if modified is not True:
+                    database.write(str(",".join(database_rows[index])))
         database.close()
 
 

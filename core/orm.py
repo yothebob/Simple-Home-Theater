@@ -4,12 +4,13 @@ import core_settings as settings
 
 # TODO:  make all these functions only take args/kwargs
 
-def write_query(filename,arguments,new=True,pk=None,where=None):
+def write_query(filename,arguments=None,new=True,pk=None,where=None):
     '''a function for writing to a "DB" file
         filename : str
             the name/path of file
         arguments : list
             a list of arguments to write to the file (a list even with one arg)
+            if args == None, then erase the row (treated as a delete query)
         new : boolean
             if new is True, it will write everything to a new line, otherwise use the pk arg to find the right row to replace
         pk : int or None
@@ -31,7 +32,6 @@ def write_query(filename,arguments,new=True,pk=None,where=None):
         if last_pk.isnumeric():
             if int(PK) <= int(last_pk):
                 PK = int(last_pk) + 1
-        print(PK)
         database.write(str(PK) + ",")
         [database.write(str(item) + ",") for item in arguments]
         database.write("\n")
@@ -39,11 +39,9 @@ def write_query(filename,arguments,new=True,pk=None,where=None):
     else:
         '''rewrite row'''
         database_rows = [row.split(",") for row in open(filename, "r")]
-        print(database_rows)
 
         database = open(filename, "w")
         column_titles = database_rows[0] #get names of columns
-        print(column_titles)
         for index in range(len(database_rows)):
             modified = False
             
@@ -55,27 +53,23 @@ def write_query(filename,arguments,new=True,pk=None,where=None):
                 for col in range(len(column_titles)):
                     for w_key,w_val in where.items():
                         if column_titles[col] == w_key:
-                            print(f"found key {w_key}")
-                            print(database_rows[index][col],w_val)
                             if database_rows[index][col] == str(w_val):
-                                print(f"updating {database_rows[index][len(database_rows)-1]}")
                                 args_satisfied += 1
 
-                print(args_satisfied,len(where.keys())-1)
-                if args_satisfied == (len(where.keys())-1):
-                    print("args satisfied")
-                    database.write(str(database_rows[index][0]) + ",")
-                    [database.write(str(item) + ",") for item in arguments]
-                    database.write("\n")
+                if args_satisfied == (len(where.keys())):
+                    if arguments is not None:
+                        database.write(str(database_rows[index][0]) + ",")# rewrite the same pk
+                        [database.write(str(item) + ",") for item in arguments]
+                        database.write("\n")
                     modified = True
                             
                             
             #pk handling                
             if database_rows[index][0] == str(pk):
-                print("found pk")
-                database.write(str(pk) + ",") # dont need to write pk index if it is plugged into the arguments
-                [database.write(str(item) + ",") for item in arguments]
-                database.write("\n")
+                if arguments is not None:
+                    database.write(str(pk) + ",") # dont need to write pk index if it is plugged into the arguments
+                    [database.write(str(item) + ",") for item in arguments]
+                    database.write("\n")
             else:
                 if modified is not True:
                     database.write(str(",".join(database_rows[index])))

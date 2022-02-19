@@ -1,6 +1,6 @@
 import os
 import sys
-import core_settings as settings
+import core.core_settings as settings
 
 # TODO:  make all these functions only take args/kwargs
 

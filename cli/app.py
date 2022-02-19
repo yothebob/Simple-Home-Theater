@@ -17,6 +17,9 @@ class CliApp(App):
 
             type in a username to login as existing user, or type 'login'.
             type 'create' to create new user.
+            type 'delete' to delete user.
+            type 'change' to change username/password.
+            
 
             """.format(settings.APP_NAME))
         user_input = input(": ")
@@ -27,6 +30,10 @@ class CliApp(App):
             return self.login()
         elif user_input.lower() == "exit":
             return self.logout()
+        elif user_input.lower() == "delete":
+            return self.delete_user()
+        elif user_input.lower() == "change":
+            return self.change_password()
         else:
             find_username = query(settings.USER_TABLE,user_input)
             if find_username is not None:
@@ -93,17 +100,14 @@ class CliApp(App):
 
     def logout(self):
         print('''logging out...
-            hope to see you again soon! :)
-        ''')
-        exit()
+           {}
+        '''.format(settings.GOODBYE))
 
 
 
     def delete_user(self):
         print("deleting user...\n")
         username = input("Username:")
-        # password = input("Password:")
-        # password_again = input("Password:")
         password = getpass("Password: ")
         password_again = getpass("Password: ")
 
@@ -112,4 +116,22 @@ class CliApp(App):
             verify_username = query(settings.USER_TABLE,username)
 
         if verify_username is not None and verify_password is not None:
-            delete_query(settings.USER_TABLE,username)
+           write_query(settings.USER_TABLE,new=False,where={"username" : username ,"password" : password})
+
+
+    def change_password(self):
+        print("Changing Password...\n")
+        username = input("Username:")
+        password = getpass("Password: ")
+        password_again = getpass("Password: ")
+
+        if password == password_again:
+            verify_password = query(settings.USER_TABLE, password)
+            verify_username = query(settings.USER_TABLE,username)
+
+        if verify_username is not None and verify_password is not None:
+            new_username = input("New Username: ")
+            new_password = input("New Password: ")
+            new_password_again = input("Password Again: ")
+            if new_password == new_password_again:
+                write_query(settings.USER_TABLE,arguments=[new_username,new_password],new=False,where={"username" : username ,"password" : password})

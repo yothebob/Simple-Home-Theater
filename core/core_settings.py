@@ -4,6 +4,7 @@ MEDIA_PLAYER = "mpv"
 DEPLOYMENT_TYPE = "CLI"
 # DEPLOYMENT_TYPE = "WEB"
 APP_NAME = "Simple Home Theater"
+GOODBYE = " hope to see you again soon! :)"
 AUTOPLAY_COUNTDOWN = 3#30
 CONTENT_FILETYPES = ["mp4","mp3","opus"]
 

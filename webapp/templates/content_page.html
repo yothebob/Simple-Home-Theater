@@ -3,7 +3,11 @@
   <h3>{{content.name}}</h3>
   <!-- <video src="{{content.category.folder_location}}/{{content.name}}"></video> -->
   <audio src="">
-    <source src="{{url_for('play_webcontent',content_path=content_path,content_name=content.name)}}" type="audio/video">
+    {% if error %}
+      <p>{{error}}</p>
+    {% else %}
+      <source src="{{content_path}}" type="audio/video">
+    {% endif %}
   </audio>
   <p>{{content_metadata}}</p>
 

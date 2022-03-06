@@ -72,7 +72,7 @@ def add_category():
 
     if request.method == "POST":
         print("adding category")
-        self.user.add_category()
+        FlaskApp.user.add_category(add_category_form.name.data,add_category_form.filepath.data)
     return render_template("add_category.html",add_category_form=add_category_form)
 
 
@@ -94,9 +94,9 @@ def show_content_page(category_name,content_name):
             content_path = f'{content.category.folder_location}/"{content.name}"'
             content_metadata = find_metadata(content.name)
             return render_template("content_page.html",instance=FlaskApp.user,content=content,
-            content_metadata=content_metadata,content_path=content_path)
+                                   content_metadata=content_metadata,content_path=content_path,error="")
 
     error = "no content found! please try again"
-    return render_template("content_page.html",instance=FlaskApp.user)
+    return render_template("content_page.html",instance=FlaskApp.user,error=error)
 
 app.run()

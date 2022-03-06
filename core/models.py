@@ -4,6 +4,7 @@ import math
 import subprocess
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
+from movie_scraper.main import find_metadata
 from datetime import datetime
 
 class User():
@@ -255,28 +256,15 @@ class Content():
             #content found recursively (subfolder)
             return os.system(f'{settings.MEDIA_PLAYER} {self.category.folder_location}/{self.subfolder}/"{self.name}"')
 
-    #not working yet
-    # def sec_to_hours(self,time):
-    #     print(time)
-    #     hours = math.floor(time/60)
-    #     remainder = time - (hours * 60)
-    #     return str(hours) + ":" + str(remainder)
-    #
-    #
-    # @property
-    # def play_length(self):
-    #     result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
-    #                              "format=duration", "-of",
-    #                              "default=noprint_wrappers=1:nokey=1", f"{self.category.folder_location}/{self.name}"],
-    #         stdout=subprocess.PIPE,
-    #         stderr=subprocess.STDOUT)
-    #     return str(self.sec_to_hours(math.floor(float(result.stdout))))
+    def save_metadata(self):
+        metadata = find_metadata(self.name,settings.METADATA_LIST)
+        # dont know what metadata we will be saving
+        write_query(settings.CONTENT_METADATA, [item for item in metadata])
+        
 
+    
 class PlayList():
-    '''
-    this class will be like genres, a list of contents put together based off a common tag or something
-    (play lists will not be saved in the DB... as of right now)
-    '''
+
     def __init__(self):
         self.user = ""
         self.user_fk = ""

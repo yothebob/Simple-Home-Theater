@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
   <h3>{{content.name}}</h3>
-  <!-- <video src="{{content.category.folder_location}}/{{content.name}}"></video> -->
-  <audio src="">
-    {% if error %}
-      <p>{{error}}</p>
-    {% else %}
-      <source src="{{content_path}}" type="audio/video">
-    {% endif %}
-  </audio>
+
+
+      <video>
+	<source src="{{url_for('static',filename=content.name)}}" type="video/mp4">
+	  your video is not working...
+      </video>
+      
   <p>{{content_metadata}}</p>
 
 {% endblock %}

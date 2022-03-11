@@ -2,7 +2,7 @@ from core.app import App
 from core.models import Category, User, Genre, Tag, Content
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
-from flask import Flask, render_template, request, g, url_for, send_file
+from flask import Flask, render_template, request, g, url_for, send_from_directory
 from webapp.forms import LoginForm, CreateUserForm, AddCategoryForm
 from movie_scraper.main import find_metadata
 
@@ -10,6 +10,8 @@ FlaskApp = App()
 
 
 app = Flask(__name__)
+
+app.static_folder = settings.STATIC_DIR
 
 @app.route("/")
 def home_page():
@@ -98,5 +100,6 @@ def show_content_page(category_name,content_name):
 
     error = "no content found! please try again"
     return render_template("content_page.html",instance=FlaskApp.user,error=error)
+
 
 app.run()

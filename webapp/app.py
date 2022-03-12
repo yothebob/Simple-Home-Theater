@@ -93,13 +93,23 @@ def show_content_page(category_name,content_name):
     for cont in FlaskApp.user.current_category.content_list:
         if cont.name == content_name:
             content = cont
-            content_path = f'{content.category.folder_location}/"{content.name}"'
+            content_path = f"{content.category.folder_location}"
             content_metadata = find_metadata(content.name)
             return render_template("content_page.html",instance=FlaskApp.user,content=content,
                                    content_metadata=content_metadata,content_path=content_path,error="")
 
     error = "no content found! please try again"
     return render_template("content_page.html",instance=FlaskApp.user,error=error)
+
+
+@app.route("/play/")
+def send_content():
+    file_id = request.args.get("file",None)
+    for cont in FlaskApp.user.current_category.content_list:
+        if cont.pk == file_id:
+            content = cont
+            return send_from_directory(FlaskApp.user.current_category.folder_location,content.name,as_attachment=False)
+    return "sorry, could not find the video :(("
 
 
 app.run()

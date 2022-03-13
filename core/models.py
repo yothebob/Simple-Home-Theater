@@ -89,9 +89,12 @@ class User():
                 playlist.content_list.append(self.watched_content[index])
         else:
             playlist = PlayList()
+            print(playlist_list)
+            print(name)
             playlist.name = name
             write_query(settings.PLAYLIST_TABLE,[name,self.current_category.pk])
             new_playlist = query(settings.PLAYLIST_TABLE,playlist.name,"name")
+            print(new_playlist)
             [playlist.content_list.append(item) for item in playlist_list]
             [write_query(settings.PLAYLIST_CONTENT_TABLE,[new_playlist[0],item]) for item in playlist_list]
 

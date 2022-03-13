@@ -1,19 +1,22 @@
 import os
 import sys
-
+import core.core_settings as settings
 
 # TODO:  make all these functions only take args/kwargs
 
-def write_query(filename,arguments,new=True,pk=None):
+def write_query(filename,arguments=None,new=True,pk=None,where=None):
     '''a function for writing to a "DB" file
         filename : str
             the name/path of file
         arguments : list
             a list of arguments to write to the file (a list even with one arg)
+            if args == None, then erase the row (treated as a delete query)
         new : boolean
             if new is True, it will write everything to a new line, otherwise use the pk arg to find the right row to replace
         pk : int or None
             a number for primary key, only use with new = False
+        where : dict or none
+            a dictionary of where items to match 
     '''
 
     if new == True:
@@ -29,27 +32,47 @@ def write_query(filename,arguments,new=True,pk=None):
         if last_pk.isnumeric():
             if int(PK) <= int(last_pk):
                 PK = int(last_pk) + 1
-        print(PK)
         database.write(str(PK) + ",")
         [database.write(str(item) + ",") for item in arguments]
         database.write("\n")
         database.close()
     else:
         '''rewrite row'''
-        database_rows = [row for row in open(filename, "r")]
-        print(database_rows)
+        database_rows = [row.split(",") for row in open(filename, "r")]
 
         database = open(filename, "w")
-        column_titles = database_rows[0].split(",") #get names of columns
-        print(column_titles)
+        column_titles = database_rows[0] #get names of columns
         for index in range(len(database_rows)):
+            modified = False
+            
+            #where handling
+            if where is not None:
+                # \/ this will keep track of num of where args satisfied, only update if all are satisfied
+                args_satisfied = 0  
+
+                for col in range(len(column_titles)):
+                    for w_key,w_val in where.items():
+                        if column_titles[col] == w_key:
+                            if database_rows[index][col] == str(w_val):
+                                args_satisfied += 1
+
+                if args_satisfied == (len(where.keys())):
+                    if arguments is not None:
+                        database.write(str(database_rows[index][0]) + ",")# rewrite the same pk
+                        [database.write(str(item) + ",") for item in arguments]
+                        database.write("\n")
+                    modified = True
+                            
+                            
+            #pk handling                
             if database_rows[index][0] == str(pk):
-                print("found pk")
-                # database.write(str(index) + ",") # dont need to write pk index if it is plugged into the arguments
-                [database.write(str(item) + ",") for item in arguments]
-                database.write("\n")
+                if arguments is not None:
+                    database.write(str(pk) + ",") # dont need to write pk index if it is plugged into the arguments
+                    [database.write(str(item) + ",") for item in arguments]
+                    database.write("\n")
             else:
-                database.write(database_rows[index])
+                if modified is not True:
+                    database.write(str(",".join(database_rows[index])))
         database.close()
 
 
@@ -133,3 +156,16 @@ def delete_query(filename, argument ,amount="full"):
                 line = [f.write(str(item) + ",") for item in line_array]
                 # print(line_array[0])
                 return
+
+
+def add_table(table_name,columns):
+    '''a function for creating a new table csv, writing it to core_settings
+    arg: table_name - (str) what to name the file/core_settings variable
+    arg: columns - what to name the columns'''
+    #create csv
+    new_table = open(f"{table_name}s.csv","w")
+    cleaned_columns = [col.replace(",",";") if "," in col else col for col in columns] # remove , to not mess up csv
+    [new_table.write(str(item) + ",") for item in cleaned_columns]
+    #add to core_settings
+    settings_file = open(settings.PROJECT_FILEPATH,'a')
+    settings_file.write(f"{table_name.upper()}_TABLE = PROJECT_FILEPATH + '/data/{table_name}s.csv'")

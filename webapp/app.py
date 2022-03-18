@@ -2,7 +2,7 @@ from core.app import App
 from core.models import Category, User, Genre, Tag, Content
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
-from flask import Flask, render_template, request, g, url_for, send_file
+from flask import Flask, render_template, request, g, url_for, send_from_directory
 from webapp.forms import LoginForm, CreateUserForm, AddCategoryForm
 from movie_scraper.main import find_metadata
 
@@ -10,6 +10,8 @@ FlaskApp = App()
 
 
 app = Flask(__name__)
+
+app.static_folder = settings.STATIC_DIR
 
 @app.route("/")
 def home_page():
@@ -72,7 +74,7 @@ def add_category():
 
     if request.method == "POST":
         print("adding category")
-        self.user.add_category()
+        FlaskApp.user.add_category(add_category_form.name.data,add_category_form.filepath.data)
     return render_template("add_category.html",add_category_form=add_category_form)
 
 
@@ -91,12 +93,23 @@ def show_content_page(category_name,content_name):
     for cont in FlaskApp.user.current_category.content_list:
         if cont.name == content_name:
             content = cont
-            content_path = f'{content.category.folder_location}/"{content.name}"'
+            content_path = f"{content.category.folder_location}"
             content_metadata = find_metadata(content.name)
             return render_template("content_page.html",instance=FlaskApp.user,content=content,
-            content_metadata=content_metadata,content_path=content_path)
+                                   content_metadata=content_metadata,content_path=content_path,error="")
 
     error = "no content found! please try again"
-    return render_template("content_page.html",instance=FlaskApp.user)
+    return render_template("content_page.html",instance=FlaskApp.user,error=error)
+
+
+@app.route("/play/")
+def send_content():
+    file_id = request.args.get("file",None)
+    for cont in FlaskApp.user.current_category.content_list:
+        if cont.pk == file_id:
+            content = cont
+            return send_from_directory(FlaskApp.user.current_category.folder_location,content.name,as_attachment=False)
+    return "sorry, could not find the video :(("
+
 
 app.run()

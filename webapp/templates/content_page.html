@@ -1,14 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
   <h3>{{content.name}}</h3>
-  <!-- <video src="{{content.category.folder_location}}/{{content.name}}"></video> -->
-  <audio src="">
-    {% if error %}
-      <p>{{error}}</p>
-    {% else %}
-      <source src="{{content_path}}" type="audio/video">
-    {% endif %}
-  </audio>
+
+      <a href="/play/?file={{content.pk}}">play {{content.name}}</a>
   <p>{{content_metadata}}</p>
 
 {% endblock %}

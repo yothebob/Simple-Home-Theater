@@ -18,3 +18,7 @@ class AddCategoryForm(Form):
     name = StringField("Category Name:")
     filepath = StringField("filepath:")
     submit = SubmitField("Add Category")
+
+class SearchCategoryForm(Form):
+    search = StringField("")
+    submit = SubmitField("Search")

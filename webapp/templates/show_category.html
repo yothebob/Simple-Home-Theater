@@ -1,14 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-<!-- <ul>
-  <li><a href="{{url_for("add_category")}}">Add Catrgory</a></li>
-  <li><a href="{{url_for("show_categories")}}">Show Categories</a></li>
-  <li><a href="{{url_for("home_page")}}">Log Out</a></li>
-</ul>
- {% for category in instance.categories %}
-  <a href="#"><h3>{{category.name}}</h3></a>
-  {% endfor %} -->
-  {% for content in category.content_list %}
+<form method="POST">
+  {{search_category_form.search()}}
+  {{search_category_form.submit.label}}
+  {{search_category_form.submit()}}
+</form>
+
+{% if search_string%}
+<h3> Results from {{search_string}}</h3>
+  {% for content in search_results %}
+    <a href="{{url_for('show_content_page',category_name=category.name,content_name=content.name)}}">{{content.name}}</a>
+    <br>
+  {% endfor %}
+
+{% endif %}
+    <br>
+    <h3>Content List for {{category.name}}</h3>
+{% for content in category.content_list %}
     <a href="{{url_for('show_content_page',category_name=category.name,content_name=content.name)}}">{{content.name}}</a>
     <br>
   {% endfor %}

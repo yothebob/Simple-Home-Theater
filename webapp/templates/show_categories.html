@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>showoing categories</h1>
-  br
+  <h1>showing categories</h1>
+  <br>
+  <form method="post">
+    {{search.label}}
+    {{search()}}
+    {{im_feeling_lucky.label}}
+    {{im_feeling_lucky()}}
+   </form>
   <ol>
     {% for category in instance.categories %}
     <li><a href="{{url_for('show_category',category_name=category.name)}}"><h3>{{category.name}}</h3></a></li>

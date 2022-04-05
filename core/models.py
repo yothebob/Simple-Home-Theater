@@ -131,12 +131,12 @@ class Category():
         self.playlist_lists = []
 
 
-    def load_content(self,list):
+    def load_content(self,list,parent_cat=None):
         instance = Content()
         instance.pk = list[0]
         instance.fk = list[1]
         instance.name = list[2]
-        instance.category = self
+        instance.category = self if parent_cat is None else parent_cat
         instance.subfolder = list[3]
         # instance.type = list[4]
         # instance.genre = list[5]
@@ -252,7 +252,12 @@ class Content():
     rating = 0
     subfolder = ""
 
-    def play_content(self):
+    def play_content(self,cross_content=None):
+        '''
+        cross_content: (OBJ) the user loaded content object (note: if you manually load a content OBJ, you need to set the param parent_cat)
+        '''
+        if cross_content is not None:
+            return os.system(f'{settings.MEDIA_PLAYER} {cross_content.category.folder_location}/"{cross_content.name}"')
         if self.subfolder is None:
             return os.system(f'{settings.MEDIA_PLAYER} {self.category.folder_location}/"{self.name}"')
         else:

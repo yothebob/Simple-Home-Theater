@@ -20,6 +20,7 @@
      - loop
      - auto play (play given content, then play rest of category)
      - change countdown 
+     - grabbing content from another category (cross-content)
 
  -  Movie IMDB Data, Ask for a movie details and it will scrape IMDB for arguments supplied from settings, such as "Director", "actors", "Runtime", "genre", Etc
  

@@ -194,7 +194,7 @@ def content_commands(user, category_contents, user_input):
             while replay:
                 try:
                     if len(content_pl) == 0:
-                        content_pl = [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
+                        content_pl += [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
                     play_list(user,content_pl,["replay"],play_countdown)
                     been_played = True
                 except KeyboardInterrupt:

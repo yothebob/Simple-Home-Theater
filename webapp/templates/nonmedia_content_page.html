@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>{{content.name}}</h3>
+
+  {% autoescape false %}
+  {{content_text}}
+  {%  endautoescape %}
+
+{% endblock %}

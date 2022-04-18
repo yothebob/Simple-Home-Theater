@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
   <h3>{{content.name}}</h3>
-
+  <video width="320" height="240" controls>
+    <source src="/play/?file={{content.pk}}">
+    your browser does not support the video tag.
+  </video>
       <a href="/play/?file={{content.pk}}">play {{content.name}}</a>
   <p>{{content_metadata}}</p>
 

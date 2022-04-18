@@ -110,6 +110,7 @@ def content_commands(user, category_contents, user_input):
     "autoplay"  : {"-a" : "autoplay category in index order"},
     "replay"    : {"-r": "replay given indexes/ playlist"},
     "shuffle"   : {"-sp" : "shuffle playlist"},
+    "cross_content"   : {"-crossc" : "grab a piece of content from another category ex:{-crossc id=(content_id)}"},
     "help"      : {"-h" : "", "help" : ""},
     "exit"      : {"exit" : ""}
     }
@@ -138,6 +139,8 @@ def content_commands(user, category_contents, user_input):
             run_command += "addplaylist."
         elif command in command_dictionary["append playlist"].keys():
             run_command += "appendplaylist."
+        elif command in command_dictionary["cross_content"].keys():
+            run_command += "cross_content."
 
     autoplay = False
     replay = False
@@ -164,6 +167,17 @@ def content_commands(user, category_contents, user_input):
             content_pl = []
             selected_pl = ""
 
+             if "cross_content." in run_command:
+                    print("added cross content")
+                    # if commanded add forign content to content_pl
+                    content_id = str(split_command[-1].replace("id=",""))
+                    foreign_content = query(settings.CONTENT_TABLE,content_id,"pk")
+                    if foreign_content:
+                        foreign_cat = [cats for cats in user.categories if cats.pk == foreign_content[1]]
+                        if foreign_cat:
+                            print("appending")
+                            content_pl.append(user.current_category.load_content(foreign_content,parent_cat=foreign_cat[0]))
+                
             for command in split_command:
                 #change countdown number
                 if "countdown" in command:
@@ -175,13 +189,12 @@ def content_commands(user, category_contents, user_input):
                 if command in [pl.name for pl in user.current_category.playlist_lists]:
                     selected_pl = [pl for pl in user.current_category.playlist_lists if pl.name==command][0]
                     content_pl += selected_pl.content_list
-                    # print(content_pl)
-
-
+                    # print(content_pl)             
+       
             while replay:
                 try:
                     if len(content_pl) == 0:
-                        content_pl = [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
+                        content_pl += [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
                     play_list(user,content_pl,["replay"],play_countdown)
                     been_played = True
                 except KeyboardInterrupt:
@@ -192,7 +205,7 @@ def content_commands(user, category_contents, user_input):
             while autoplay:
                 try:
                     #warning: autoplay does not currently work with playlists, it takes a list of index not objects
-                    content_pl = [int(index) for index in split_command if index.isnumeric()]
+                    content_pl += [int(index) for index in split_command if index.isnumeric()]
                     play_list(user,content_pl,["autoplay"],play_countdown)
                     autoplay = False
                     been_played = True
@@ -204,7 +217,7 @@ def content_commands(user, category_contents, user_input):
             while shuffle:
                 try:
                     if len(content_pl) == 0:
-                        content_pl = [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
+                        content_pl += [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
                     play_list(user,content_pl,["shuffle"],play_countdown)
                     shuffle = False
                     been_played = True
@@ -215,7 +228,7 @@ def content_commands(user, category_contents, user_input):
             # normal play
             if been_played == False:
                 if len(content_pl) == 0:
-                    content_pl = [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
+                    content_pl += [user.current_category.content_list[int(index)] for index in split_command if index.isnumeric()]
                 play_list(user,content_pl,[],play_countdown)
 
 

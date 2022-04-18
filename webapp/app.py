@@ -103,8 +103,17 @@ def show_content_page(category_name,content_name):
         if cont.name == content_name:
             content = cont
             content_path = f"{content.category.folder_location}"
-            content_metadata = find_metadata(content.name)
-            return render_template("content_page.html",instance=FlaskApp.user,content=content,
+            if ".html" in content_name:
+                content_file = open(f"{content_path}/{content_name}", "r")
+                content_text_raw = content_file.readlines()
+                content_text = "".join(content_text_raw).replace("\n","")
+                content_file.close()
+                return render_template("nonmedia_content_page.html",instance=FlaskApp.user,content=content,
+                                    content_text=content_text,content_path=content_path,error="")
+
+            else:
+                content_metadata = find_metadata(content.name)
+                return render_template("content_page.html",instance=FlaskApp.user,content=content,
                                    content_metadata=content_metadata,content_path=content_path,error="")
 
     error = "no content found! please try again"

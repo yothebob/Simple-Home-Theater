@@ -167,7 +167,7 @@ def content_commands(user, category_contents, user_input):
             content_pl = []
             selected_pl = ""
 
-             if "cross_content." in run_command:
+            if "cross_content." in run_command:
                     print("added cross content")
                     # if commanded add forign content to content_pl
                     content_id = str(split_command[-1].replace("id=",""))

@@ -9,13 +9,19 @@ from datetime import datetime
 
 class User():
 
+    if settings.STOREFRONT_USER:
+        username = settings.STOREFRONT_USER_NAME
+    else:
+        username = ""
+    
     def __init__(self):
         self.categories = []
         self.watched = []
         self.watched_content = []
         self.current_category = ""
-
-
+        self.username = ""
+        username = self.username
+        
     def add_category(self,name,folder_location):
         ''' a function for pointing to a file for a category '''
         write_query(settings.CATEGORY_TABLE, [self.pk,name,self.username,folder_location])

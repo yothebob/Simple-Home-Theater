@@ -8,6 +8,15 @@ from movie_scraper.main import find_metadata
 
 FlaskApp = App()
 
+def storefront_user_instance():
+    instance = FlaskApp.login(settings.STOREFRONT_USER_NAME,settings.STOREFRONT_USER_PASS)
+    return instance
+
+def storefront_user(template):
+    '''A function for having a user's content open as a home page'''
+    if settings.STOREFRONT_USER is not None:
+        instance = FlaskApp.login(settings.STOREFRONT_USER_NAME,settings.STOREFRONT_USER_PASS)
+        return render_template(template, instance=instance,user_categories=instance.categories)
 
 app = Flask(__name__)
 
@@ -15,13 +24,15 @@ app.static_folder = settings.STATIC_DIR
 
 @app.route("/")
 def home_page():
+    if settings.STOREFRONT_USER:
+        app_name = settings.APP_NAME
+        return storefront_user("home.html")
     app_name = settings.APP_NAME
     return render_template("index.html",app_name=app_name)
 
 
 @app.route("/login/",methods=["GET","POST"])
 def login_page():
-
     login_form = LoginForm(request.form)
     print(login_form)
     if request.method == "POST":
@@ -57,15 +68,20 @@ def create_user_page():
 
 @app.route("/home/",methods=["GET","POST"])
 def application():
-    # create playlists here and stuff
-    display_amount = 10
-    return render_template("home.html",instance=FlaskApp.user)
+    if FlaskApp.user.username == settings.STOREFRONT_USER_NAME or settings.STOREFRONT_USER is not None:
+        return storefront_user("home.html")
+    else:
+        # create playlists here and stuff
+        return render_template("home.html",instance=FlaskApp.user)
 
 
 @app.route("/category/",methods=["GET","POST"])
 def show_categories():
-    user_categories = FlaskApp.user.categories
-    return render_template("show_categories.html",instance=FlaskApp.user, user_categories=user_categories)
+    if FlaskApp.user.username == settings.STOREFRONT_USER_NAME and settings.STOREFRONT_USER is not None:
+        return storefront_user("show_categories.html")
+    else:
+        user_categories = FlaskApp.user.categories
+        return render_template("show_categories.html",instance=FlaskApp.user, user_categories=user_categories)
 
 
 @app.route("/category/add/",methods=["GET","POST"])
@@ -84,51 +100,104 @@ def im_feeling_lucky():
 @app.route("/category/<category_name>",methods=["GET","POST"])
 def show_category(category_name):
     search_category_form = SearchCategoryForm(request.form)
-    for cat in FlaskApp.user.categories:
-        if cat.name == category_name:
-            FlaskApp.user.current_category = cat
-            category = FlaskApp.user.current_category
-            break
-    if request.method == "POST":
-        search_string = search_category_form.search.data
-        if search_string != "":
-            search_results = [FlaskApp.user.current_category.content_list[index] for index in range(len(FlaskApp.user.current_category.content_list)) if search_string.lower() in FlaskApp.user.current_category.content_list[index].name.lower()]
-            return render_template("show_category.html",instance=FlaskApp.user,category=category, search_results=search_results,search_string=search_string, search_category_form=search_category_form )
-    return render_template("show_category.html",instance=FlaskApp.user,category=category,search_category_form=search_category_form)
+    #storefront User \/ 
+    if FlaskApp.user.username == settings.STOREFRONT_USER_NAME and settings.STOREFRONT_USER is not None:
+        instance = storefront_user_instance()
+        for cat in instance.categories:
+            if cat.name == category_name:
+                instance.current_category = cat
+                category = instance.current_category
+                break
+        if request.method == "POST":
+            search_string = search_category_form.search.data
+            if search_string != "":
+                search_results = [instance.current_category.content_list[index] for index in range(len(instance.current_category.content_list)) if search_string.lower() in instance.current_category.content_list[index].name.lower()]
+                return render_template("show_category.html",instance=instance,category=category, search_results=search_results,search_string=search_string, search_category_form=search_category_form )
+        return render_template("show_category.html",instance=instance,category=category,search_category_form=search_category_form)
+    #No Storefront User \/
+    else:
+        for cat in FlaskApp.user.categories:
+            if cat.name == category_name:
+                FlaskApp.user.current_category = cat
+                category = FlaskApp.user.current_category
+                break
+        if request.method == "POST":
+            search_string = search_category_form.search.data
+            if search_string != "":
+                search_results = [FlaskApp.user.current_category.content_list[index] for index in range(len(FlaskApp.user.current_category.content_list)) if search_string.lower() in FlaskApp.user.current_category.content_list[index].name.lower()]
+                return render_template("show_category.html",instance=FlaskApp.user,category=category, search_results=search_results,search_string=search_string, search_category_form=search_category_form )
+        return render_template("show_category.html",instance=FlaskApp.user,category=category,search_category_form=search_category_form)
 
 
 @app.route("/category/<category_name>/<content_name>",methods=["GET","POST"])
 def show_content_page(category_name,content_name):
-    for cont in FlaskApp.user.current_category.content_list:
-        if cont.name == content_name:
-            content = cont
-            content_path = f"{content.category.folder_location}"
-            if ".html" in content_name:
-                content_file = open(f"{content_path}/{content_name}", "r")
-                content_text_raw = content_file.readlines()
-                content_text = "".join(content_text_raw).replace("\n","")
-                content_file.close()
-                return render_template("nonmedia_content_page.html",instance=FlaskApp.user,content=content,
-                                    content_text=content_text,content_path=content_path,error="")
+    #storefront User
+    if FlaskApp.user.username == settings.STOREFRONT_USER_NAME and settings.STOREFRONT_USER is not None:
+        instance = storefront_user_instance()
+        for cont in instance.current_category.content_list:
+            if cont.name == content_name:
+                content = cont
+                content_path = f"{content.category.folder_location}"
+                if ".html" in content_name:
+                    content_file = open(f"{content_path}/{content_name}", "r")
+                    content_text_raw = content_file.readlines()
+                    content_text = "".join(content_text_raw).replace("\n","")
+                    content_file.close()
+                    return render_template("nonmedia_content_page.html",instance=instance,content=content,
+                                           content_text=content_text,content_path=content_path,error="")
 
-            else:
-                content_metadata = find_metadata(content.name)
-                return render_template("content_page.html",instance=FlaskApp.user,content=content,
-                                   content_metadata=content_metadata,content_path=content_path,error="")
+                else:
+                    content_metadata = find_metadata(content.name)
+                    return render_template("content_page.html",instance=instance,content=content,
+                                           content_metadata=content_metadata,content_path=content_path,error="")
 
-    error = "no content found! please try again"
-    return render_template("content_page.html",instance=FlaskApp.user,error=error)
+                error = "no content found! please try again"
+                return render_template("content_page.html",instance=instance,error=error)
+
+    else:
+        #no Storefront User
+        for cont in FlaskApp.user.current_category.content_list:
+            if cont.name == content_name:
+                content = cont
+                content_path = f"{content.category.folder_location}"
+                if ".html" in content_name:
+                    content_file = open(f"{content_path}/{content_name}", "r")
+                    content_text_raw = content_file.readlines()
+                    content_text = "".join(content_text_raw).replace("\n","")
+                    content_file.close()
+                    return render_template("nonmedia_content_page.html",instance=FlaskApp.user,content=content,
+                                           content_text=content_text,content_path=content_path,error="")
+
+                else:
+                    content_metadata = find_metadata(content.name)
+                    return render_template("content_page.html",instance=FlaskApp.user,content=content,
+                                           content_metadata=content_metadata,content_path=content_path,error="")
+
+                error = "no content found! please try again"
+                return render_template("content_page.html",instance=FlaskApp.user,error=error)
 
 
 @app.route("/play/")
 def send_content():
-    file_id = request.args.get("file",None)
-    for cont in FlaskApp.user.current_category.content_list:
-        if cont.pk == file_id:
-            content = cont
-            FlaskApp.user.append_watched(content)
-            return send_from_directory(FlaskApp.user.current_category.folder_location,content.name,as_attachment=False)
-    return "sorry, could not find the video :(("
+    #storefront User
+    if FlaskApp.user.username == settings.STOREFRONT_USER_NAME and settings.STOREFRONT_USER is not None:
+        instance = storefront_user_instance()
+        file_id = request.args.get("file",None)
+        for cont in instance.current_category.content_list:
+            if cont.pk == file_id:
+                content = cont
+                instance.append_watched(content)
+                return send_from_directory(instance.current_category.folder_location,content.name,as_attachment=False)
+            return "sorry, could not find the video :(("
+    else:
+        # not storefront user
+        file_id = request.args.get("file",None)
+        for cont in FlaskApp.user.current_category.content_list:
+            if cont.pk == file_id:
+                content = cont
+                FlaskApp.user.append_watched(content)
+                return send_from_directory(FlaskApp.user.current_category.folder_location,content.name,as_attachment=False)
+            return "sorry, could not find the video :(("
 
 
 app.run()

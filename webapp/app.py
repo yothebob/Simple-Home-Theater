@@ -26,7 +26,7 @@ app.static_folder = settings.STATIC_DIR
 def home_page():
     if settings.STOREFRONT_USER:
         app_name = settings.APP_NAME
-        return storefront_user("home.html")
+        return storefront_user("index.html")
     app_name = settings.APP_NAME
     return render_template("index.html",app_name=app_name)
 
@@ -134,6 +134,9 @@ def show_content_page(category_name,content_name):
     #storefront User
     if FlaskApp.user.username == settings.STOREFRONT_USER_NAME and settings.STOREFRONT_USER is not None:
         instance = storefront_user_instance()
+        instance.load_categories()
+        instance.current_category = [cat for cat in instance.categories if cat.name == category_name][0]
+        instance.current_category.load_category_contents()
         for cont in instance.current_category.content_list:
             if cont.name == content_name:
                 content = cont

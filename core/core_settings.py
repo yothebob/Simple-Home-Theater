@@ -12,8 +12,8 @@ METADATA_LIST = ["plot","rating","runtimes"] #get these from imdbpy, there is a 
 STATIC_DIR = "static"
 
 STOREFRONT_USER = True
-STOREFRONT_USER_NAME = "brandon"
-STOREFRONT_USER_PASS = "bb"
+STOREFRONT_USER_NAME = "store"
+STOREFRONT_USER_PASS = "store"
 
 USER_TABLE =  PROJECT_FILEPATH + "/data/users.csv"
 CATEGORY_TABLE = PROJECT_FILEPATH + "/data/categories.csv"

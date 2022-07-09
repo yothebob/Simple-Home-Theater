@@ -44,7 +44,7 @@ def home_page():
     app_name = settings.APP_NAME
     return render_template("index.html",app_name=app_name)
 
-@app.route('/logout', methods=['GET', 'POST'])
+@app.route('/logout/', methods=['GET', 'POST'])
 @login_required
 def logout():
     print(current_user)

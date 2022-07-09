@@ -4,18 +4,27 @@ import math
 import subprocess
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
+# import core.app as App
+from flask_login import UserMixin
 from movie_scraper.main import find_metadata
 from datetime import datetime
 
-class User():
+class User(UserMixin):
 
     def __init__(self):
+        self.id = 0
+        self.pk = 0
         self.categories = []
         self.watched = []
         self.watched_content = []
         self.current_category = ""
+        # self.is_active = 0
+        # self.is_authenticated = 0
+        # self.is_anonymous = 0    
 
-
+    def get_id(self):
+        return str(self.pk)
+        
     def add_category(self,name,folder_location):
         ''' a function for pointing to a file for a category '''
         write_query(settings.CATEGORY_TABLE, [self.pk,name,self.username,folder_location])

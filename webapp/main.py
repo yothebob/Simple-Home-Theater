@@ -1,7 +1,39 @@
 # from webapp.app import FlaskApp
 import webapp.app
 
-# app = FlaskApp()
+    #     # if form.validate_on_submit():
+    #     # Login and validate the user.
+    #     # user should be an instance of your `User` class
+
+    #     flask.flash('Logged in successfully.')
+
+    #     next = flask.request.args.get('next')
+    #     # is_safe_url should check if the url is safe for redirects.
+    #     # See http://flask.pocoo.org/snippets/62/ for an example.
+    #     if not is_safe_url(next):
+    #         return flask.abort(400)
+
+    #     return flask.redirect(next or flask.url_for('index'))
+    # return flask.render_template('login.html', form=form)
+
+
+# @app.route("/login/",methods=["GET","POST"])
+# def login_page():
+#     login_form = LoginForm(request.form)
+#     print(login_form)
+#     if request.method == "POST":
+#         instance = FlaskApp.login(login_form.username.data,login_form.password.data)
+#         if isinstance(instance,User):
+#             current_user = instance
+#             #successful login
+#             return render_template("home.html",instance=instance)
+#         else:
+#             #error
+#             return render_template("login.html",error=instance[1],login_form=login_form)
+#     else:
+#         return render_template("login.html",login_form=login_form)
+
+
 
 #
 # def show_user_categories(user_categories):

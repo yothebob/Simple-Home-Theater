@@ -48,7 +48,7 @@ class App():
         if verify_credidentials is not None:
             #user found, attempting to authenticate
             if verify_credidentials[1] == username and verify_credidentials[2] == password:
-                instance = self.load_user(verify_credidentials[0])
+                instance = self.load_userz(verify_credidentials[0])
                 '''take to movie screen'''
                 return instance
             else:
@@ -71,11 +71,12 @@ class App():
         return
 
 
-    def load_user(self,pk):
+    def load_userz(self,pk):
         load = query(settings.USER_TABLE, pk, "pk")
         [print(index,load[index]) for index in range(len(load))]
         user = User()
         user.pk = load[0]
+        user.id = load[0]
         user.username = load[1]
         user.password = load[2]
         user.load_categories()

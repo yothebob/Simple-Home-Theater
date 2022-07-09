@@ -84,7 +84,7 @@ class CliApp(App):
         if verify_credidentials is not None:
             #user found, attempting to authenticate
             if verify_credidentials[1] == username and verify_credidentials[2] == password:
-                instance = self.load_user(verify_credidentials[0])
+                instance = self.load_userz(verify_credidentials[0])
                 '''take to movie screen'''
                 print("logged in...\n")
                 return instance

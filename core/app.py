@@ -86,7 +86,7 @@ class App():
 
     def load_userz(self,pk):
         load = query(settings.USER_TABLE, pk, "pk")
-        [print(index,load[index]) for index in range(len(load))]
+        # [print(index,load[index]) for index in range(len(load))]
         user = User()
         user.pk = load[0]
         user.id = load[0]

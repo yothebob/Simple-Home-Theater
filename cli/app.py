@@ -35,9 +35,9 @@ class CliApp(App):
         elif user_input.lower() == "change":
             return self.change_password()
         else:
-            find_username = query(settings.USER_TABLE,user_input)
+            find_username = query(settings.USER_TABLE,self.encrypt(user_input))
             if find_username is not None:
-                if user_input == find_username[1]:
+                if self.encrypt(user_input) == find_username[1]:
                     return self.login(user_input)
             else:
                 print("Please try again...")
@@ -80,10 +80,10 @@ class CliApp(App):
         # password = input("Password: ")
         password = getpass("Password: ")
 
-        verify_credidentials = query(settings.USER_TABLE, username)
+        verify_credidentials = query(settings.USER_TABLE, self.encrypt(username))
         if verify_credidentials is not None:
             #user found, attempting to authenticate
-            if verify_credidentials[1] == username and verify_credidentials[2] == password:
+            if verify_credidentials[1] == self.encrypt(username) and verify_credidentials[2] == self.encrypt(password):
                 instance = self.load_userz(verify_credidentials[0])
                 '''take to movie screen'''
                 print("logged in...\n")

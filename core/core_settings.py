@@ -12,8 +12,11 @@ METADATA_LIST = ["plot","rating","runtimes"] #get these from imdbpy, there is a 
 STATIC_DIR = "static"
 
 STOREFRONT_USER = False
-STOREFRONT_USER_NAME = "store"
-STOREFRONT_USER_PASS = "store"
+STOREFRONT_USER_NAME = "clgSgRKosfG/gcymKx+XkE37lAVzxylZjD4kxb88LPU="
+STOREFRONT_USER_PASS = "clgSgRKosfG/gcymKx+XkE37lAVzxylZjD4kxb88LPU="
+ENCRYPT = True
+SECRET = b"S3cr3tpa33w0r6"# use if encrypt = True
+
 
 USER_TABLE =  PROJECT_FILEPATH + "/data/users.csv"
 CATEGORY_TABLE = PROJECT_FILEPATH + "/data/categories.csv"

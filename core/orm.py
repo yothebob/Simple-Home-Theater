@@ -18,7 +18,6 @@ def write_query(filename,arguments=None,new=True,pk=None,where=None):
         where : dict or none
             a dictionary of where items to match 
     '''
-
     if new == True:
         database = open(filename, "a")
         PK = len([line for line in open(filename, 'r')])

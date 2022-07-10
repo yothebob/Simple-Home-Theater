@@ -47,7 +47,6 @@ def home_page():
 @app.route('/logout/', methods=['GET', 'POST'])
 @login_required
 def logout():
-    print(current_user)
     logout_user()
     return redirect("/")
 
@@ -56,7 +55,7 @@ def logout():
 def login_page():
     login_form = LoginForm(request.form)
     if request.method == "POST":
-        instance = FlaskApp.login(login_form.username.data,login_form.password.data)
+        instance = FlaskApp.login(FlaskApp.encrypt(login_form.username.data),FlaskApp.encrypt(login_form.password.data))
         if isinstance(instance,User):
             login_user(instance)
             return render_template("home.html",instance=current_user)
@@ -74,8 +73,7 @@ def create_user_page():
     create_form = CreateUserForm(request.form)
     login_form = LoginForm(request.form)
     if request.method == "POST":
-        print("posted")
-        new_user = FlaskApp.create_user(create_form.username.data,create_form.password.data,create_form.password_again.data)
+        new_user = FlaskApp.create_user(FlaskApp.encrypt(create_form.username.data),FlaskApp.encrypt(create_form.password.data),FlaskApp.encrypt(create_form.password_again.data))
         if isinstance(new_user,str):
             print(f"error: {new_user}")
             return render_template("create_user.html",error=new_user[1],create_form=create_form)
@@ -111,99 +109,51 @@ def add_category():
     if current_user.username != settings.STOREFRONT_USER_NAME:
         add_category_form = AddCategoryForm(request.form)
         if request.method == "POST":
-            print("adding category")
             current_user.add_category(add_category_form.name.data,add_category_form.filepath.data)
             return redirect("/category/")
         return render_template("add_category.html",add_category_form=add_category_form)
     return redirect("/category/")
 
-def im_feeling_lucky():
-    # this will return a random recommendation, maybe most watched or etc
-    pass
 
 @app.route("/category/<category_name>",methods=["GET","POST"])
 @login_required
 def show_category(category_name):
     search_category_form = SearchCategoryForm(request.form)
-    #storefront User \/ 
-    if current_user.is_anonymous:
-        instance = storefront_user_instance()
-        for cat in instance.categories:
-            if cat.name == category_name:
-                instance.current_category = cat
-                category = instance.current_category
-                break
-        if request.method == "POST":
-            search_string = search_category_form.search.data
-            if search_string != "":
-                search_results = [instance.current_category.content_list[index] for index in range(len(instance.current_category.content_list)) if search_string.lower() in instance.current_category.content_list[index].name.lower()]
-                return render_template("show_category.html",instance=instance,category=category, search_results=search_results,search_string=search_string, search_category_form=search_category_form )
-        return render_template("show_category.html",instance=instance,category=category,search_category_form=search_category_form)
-    #No Storefront User \/
-    else:
-        for cat in current_user.categories:
-            if cat.name == category_name:
-                current_user.current_category = cat
-                category = current_user.current_category
-                break
-        if request.method == "POST":
-            search_string = search_category_form.search.data
-            if search_string != "":
-                search_results = [current_user.current_category.content_list[index] for index in range(len(current_user.current_category.content_list)) if search_string.lower() in current_user.current_category.content_list[index].name.lower()]
-                return render_template("show_category.html",instance=current_user,category=category, search_results=search_results,search_string=search_string, search_category_form=search_category_form )
-        return render_template("show_category.html",instance=current_user,category=category,search_category_form=search_category_form)
+    for cat in current_user.categories:
+        if cat.name == category_name:
+            current_user.current_category = cat
+            category = current_user.current_category
+            break
+    if request.method == "POST":
+        search_string = search_category_form.search.data
+        if search_string != "":
+            search_results = [current_user.current_category.content_list[index] for index in range(len(current_user.current_category.content_list)) if search_string.lower() in current_user.current_category.content_list[index].name.lower()]
+            return render_template("show_category.html",instance=current_user,category=category, search_results=search_results,search_string=search_string, search_category_form=search_category_form )
+    return render_template("show_category.html",instance=current_user,category=category,search_category_form=search_category_form)
 
 
 @app.route("/category/<category_name>/<content_name>",methods=["GET","POST"])
 @login_required
 def show_content_page(category_name,content_name):
-    #storefront User
-    if current_user.is_anonymous:
-        instance = storefront_user_instance()
-        instance.load_categories()
-        instance.current_category = [cat for cat in instance.categories if cat.name == category_name][0]
-        instance.current_category.load_category_contents()
-        for cont in instance.current_category.content_list:
-            if cont.name == content_name:
-                content = cont
-                content_path = f"{content.category.folder_location}"
-                if ".html" in content_name:
-                    content_file = open(f"{content_path}/{content_name}", "r")
-                    content_text_raw = content_file.readlines()
-                    content_text = "".join(content_text_raw).replace("\n","")
-                    content_file.close()
-                    return render_template("nonmedia_content_page.html",instance=instance,content=content,
-                                           content_text=content_text,content_path=content_path,error="")
+    for cont in current_user.current_category.content_list:
+        if cont.name == content_name:
+            content = cont
+            content_path = f"{content.category.folder_location}"
+            if ".html" in content_name:
+                content_file = open(f"{content_path}/{content_name}", "r")
+                content_text_raw = content_file.readlines()
+                content_text = "".join(content_text_raw).replace("\n","")
+                content_file.close()
+                return render_template("nonmedia_content_page.html",instance=current_user,content=content,
+                                       content_text=content_text,content_path=content_path,error="")
 
-                else:
-                    content_metadata = find_metadata(content.name)
-                    return render_template("content_page.html",instance=instance,content=content,
-                                           content_metadata=content_metadata,content_path=content_path,error="")
+            else:
+                content_metadata = find_metadata(content.name)
+                return render_template("content_page.html",instance=current_user,content=content,
+                                       content_metadata=content_metadata,content_path=content_path,error="")
 
-                error = "no content found! please try again"
-                return render_template("content_page.html",instance=instance,error=error)
-
-    else:
-        #no Storefront User
-        for cont in current_user.current_category.content_list:
-            if cont.name == content_name:
-                content = cont
-                content_path = f"{content.category.folder_location}"
-                if ".html" in content_name:
-                    content_file = open(f"{content_path}/{content_name}", "r")
-                    content_text_raw = content_file.readlines()
-                    content_text = "".join(content_text_raw).replace("\n","")
-                    content_file.close()
-                    return render_template("nonmedia_content_page.html",instance=current_user,content=content,
-                                           content_text=content_text,content_path=content_path,error="")
-
-                else:
-                    content_metadata = find_metadata(content.name)
-                    return render_template("content_page.html",instance=current_user,content=content,
-                                           content_metadata=content_metadata,content_path=content_path,error="")
-
-                error = "no content found! please try again"
-                return render_template("content_page.html",instance=current_user,error=error)
+            error = "no content found! please try again"
+            return render_template("content_page.html",instance=current_user,error=error)
 
 
 @app.route("/play/")

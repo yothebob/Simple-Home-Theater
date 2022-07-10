@@ -1,3 +1,7 @@
+import hashlib
+import hmac
+import base64
+import time
 from core.models import Category, User, Genre, Tag, Content
 from core.orm import query, write_query, delete_query
 import core.core_settings as settings
@@ -23,6 +27,15 @@ class App():
         return True
 
 
+    def encrypt(self,data):
+        message = base64.b64encode(bytes(data, 'utf-8'));
+        hash = hmac.new(settings.SECRET, message, hashlib.sha256);
+        hash =  base64.b64encode(hash.digest());
+        hash = hash.decode("utf-8");
+        return hash
+
+
+    
     def create_user(self,username,password,password_again):
         '''create and save a new user to database '''
         #maybe i should store them as .lower() and as regular (so I know if there is just a caps problem)?

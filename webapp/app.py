@@ -135,23 +135,23 @@ def show_category(category_name):
 @app.route("/category/<category_name>/<content_name>",methods=["GET","POST"])
 @login_required
 def show_content_page(category_name,content_name):
-    for cont in current_user.current_category.content_list:
-        if cont.name == content_name:
-            content = cont
-            content_path = f"{content.category.folder_location}"
-            if ".html" in content_name:
-                content_file = open(f"{content_path}/{content_name}", "r")
-                content_text_raw = content_file.readlines()
-                content_text = "".join(content_text_raw).replace("\n","")
-                content_file.close()
+    for cat in current_user.categories:
+        for cont in cat:
+            if cont.name == content_name:
+                content = cont
+                content_path = f"{content.category.folder_location}"
+                if ".html" in content_name:
+                    content_file = open(f"{content_path}/{content_name}", "r")
+                    content_text_raw = content_file.readlines()
+                    content_text = "".join(content_text_raw).replace("\n","")
+                    content_file.close()
                 return render_template("nonmedia_content_page.html",instance=current_user,content=content,
                                        content_text=content_text,content_path=content_path,error="")
-
-            else:
-                content_metadata = find_metadata(content.name)
-                return render_template("content_page.html",instance=current_user,content=content,
+                else:
+                    content_metadata = find_metadata(content.name)
+                    return render_template("content_page.html",instance=current_user,content=content,
                                        content_metadata=content_metadata,content_path=content_path,error="")
-
+                
             error = "no content found! please try again"
             return render_template("content_page.html",instance=current_user,error=error)
 
@@ -160,11 +160,12 @@ def show_content_page(category_name,content_name):
 @login_required
 def send_content():
     file_id = request.args.get("file",None)
-    for cont in current_user.current_category.content_list:
-        if cont.pk == file_id:
-            content = cont
-            current_user.append_watched(content)
-            return send_from_directory(current_user.current_category.folder_location,content.name,as_attachment=False)
+    for cat in current_user.categories:
+        for cont in cat:
+            if cont.pk == file_id:
+                content = cont
+                current_user.append_watched(content)
+                return send_from_directory(current_user.current_category.folder_location,content.name,as_attachment=False)
     return "sorry, could not find the video :(("
 
 
